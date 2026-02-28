@@ -36,15 +36,11 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition-all px-3 py-1 rounded-lg hover:text-orange-500 hover:-translate-y-0.5 ${
+              className={`text-sm font-medium transition-colors hover:text-orange-500 ${
                 pathname === link.href
                   ? "text-orange-500"
                   : "text-slate-500"
               }`}
-              style={{
-                border: "2px solid #1A1A1A",
-                boxShadow: "3px 3px 0px #1A1A1A",
-              }}
             >
               {link.label}
             </Link>
