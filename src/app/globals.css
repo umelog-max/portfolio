@@ -39,6 +39,26 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.7s ease-out both;
+}
+
+.fade-up-delay-1 { animation-delay: 0.1s; }
+.fade-up-delay-2 { animation-delay: 0.25s; }
+.fade-up-delay-3 { animation-delay: 0.35s; }
+.fade-up-delay-4 { animation-delay: 0.45s; }
+
 .glass-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
