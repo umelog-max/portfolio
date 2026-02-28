@@ -7,8 +7,8 @@ const sections = [
     description: "プロフィール・経歴・スキル",
   },
   {
-    href: "/works",
-    label: "Works",
+    href: "/portfolio",
+    label: "Portfolio",
     description: "個人開発・制作実績",
   },
   {
