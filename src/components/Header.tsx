@@ -19,7 +19,13 @@ export default function Header() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <span className="font-black text-lg tracking-tight gradient-text">
+          <span
+            className="font-black text-lg tracking-tight gradient-text px-3 py-1 rounded-lg"
+            style={{
+              border: "2px solid #1A1A1A",
+              boxShadow: "4px 4px 0px #1A1A1A",
+            }}
+          >
             Ume.log
           </span>
         </Link>
