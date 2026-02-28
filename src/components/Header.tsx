@@ -18,12 +18,10 @@ export default function Header() {
     <header className="glass-header fixed top-0 left-0 right-0 z-50">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <span className="text-orange-500 text-xl">🔥</span>
-          <span className="font-black text-lg text-slate-900 tracking-tight group-hover:text-orange-500 transition-colors">
+        <Link href="/" className="flex items-center">
+          <span className="font-black text-lg tracking-tight gradient-text">
             Ume.log
           </span>
-          <span className="font-mono text-xs text-slate-400">.v1</span>
         </Link>
 
         {/* Nav */}
