@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
-      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">Contact</h1>
-      <p className="mb-12 font-mono text-xs tracking-widest text-white leading-relaxed">
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight fade-up">Contact</h1>
+      <p className="mb-12 font-mono text-sm font-semibold tracking-widest text-white leading-relaxed fade-up fade-up-delay-1">
         案件のご相談・取材・その他お問い合わせはこちらから。通常 2〜3 営業日以内にご返信します。
       </p>
 
-      <div className="glass-card p-8">
+      <div className="glass-card p-8 fade-up fade-up-delay-2">
         <form className="space-y-5">
           <div>
             <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">

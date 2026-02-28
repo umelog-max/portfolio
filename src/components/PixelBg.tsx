@@ -89,7 +89,7 @@ export default function PixelBg() {
         `}</style>
 
         {/* 奥の山の地面帯（隙間を埋める） */}
-        <rect x="0" y="860" width="1440" height="40" fill="#90CEBE" />
+        <rect x="0" y="860" width="1440" height="40" fill="#A07850" />
 
         {/* 奥の山（霞色） */}
         {backMountains.map((d, i) => (
@@ -97,7 +97,7 @@ export default function PixelBg() {
         ))}
 
         {/* 手前の山の地面帯（隙間を埋める） */}
-        <rect x="0" y="875" width="1440" height="25" fill="#4FAD72" />
+        <rect x="0" y="875" width="1440" height="25" fill="#8B5E3C" />
 
         {/* 手前の山（緑） */}
         {frontMountains.map((d, i) => (

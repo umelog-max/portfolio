@@ -38,11 +38,11 @@ const certifications = [
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">About</h1>
-      <p className="mb-12 font-mono text-xs tracking-widest text-white">このサイトについて</p>
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight fade-up">About</h1>
+      <p className="mb-12 font-mono text-sm font-semibold tracking-widest text-white fade-up fade-up-delay-1">このサイトについて</p>
 
       {/* Profile Card */}
-      <section className="glass-card p-8 mb-8">
+      <section className="glass-card p-8 mb-8 fade-up fade-up-delay-2">
         <div className="flex items-center gap-6 mb-6">
           <div
             className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl text-white text-2xl font-black"
@@ -65,7 +65,7 @@ export default function AboutPage() {
       </section>
 
       {/* Career */}
-      <section className="mb-8">
+      <section className="mb-8 fade-up fade-up-delay-3">
         <h2 className="text-xl font-black text-slate-900 tracking-tight mb-6">Career History</h2>
         <div className="glass-card p-6">
           <div className="relative">
@@ -90,7 +90,7 @@ export default function AboutPage() {
       </section>
 
       {/* Certifications */}
-      <section>
+      <section className="fade-up fade-up-delay-4">
         <h2 className="text-xl font-black text-slate-900 tracking-tight mb-6">Certifications</h2>
         <div className="glass-card p-6">
           <ul className="space-y-3">

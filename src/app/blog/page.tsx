@@ -15,16 +15,16 @@ export default async function BlogPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">Blog</h1>
-      <p className="mb-10 font-mono text-xs tracking-widest text-white">雑多な日記</p>
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight fade-up">Blog</h1>
+      <p className="mb-10 font-mono text-sm font-semibold tracking-widest text-white fade-up fade-up-delay-1">雑多な日記</p>
 
       {/* Post List */}
       {posts.length === 0 ? (
-        <div className="glass-card px-5 py-10 text-center text-slate-400 text-sm">
+        <div className="glass-card px-5 py-10 text-center text-slate-400 text-sm fade-up fade-up-delay-2">
           まだ記事がありません
         </div>
       ) : (
-        <div className="glass-card divide-y divide-slate-100">
+        <div className="glass-card divide-y divide-slate-100 fade-up fade-up-delay-2">
           {posts.map((post) => {
             const cat = categoryStyles[post.category];
             const tags = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
