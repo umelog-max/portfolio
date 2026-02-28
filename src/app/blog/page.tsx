@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPosts } from "@/lib/microcms";
-import { categoryStyles, type PostCategory } from "@/lib/mock-data";
+import { categoryStyles } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -10,37 +10,13 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-const categories: { key: PostCategory | "ALL"; label: string }[] = [
-  { key: "ALL", label: "ALL" },
-  { key: "TECH", label: "TECH — 技術" },
-  { key: "DEV", label: "DEV — 個人開発" },
-  { key: "LIFE", label: "LIFE — 日常・趣味" },
-];
-
 export default async function BlogPage() {
   const posts = await getPosts();
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <p className="font-mono text-xs tracking-widest text-slate-400 uppercase mb-2">Log</p>
-      <h1 className="mb-4 text-4xl font-black text-slate-900 tracking-tight">Blog</h1>
-      <p className="mb-10 text-slate-500">技術・個人開発・日常の記録</p>
-
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((cat) => (
-          <span
-            key={cat.key}
-            className={`font-mono text-xs font-semibold px-3 py-1.5 rounded-full border cursor-pointer transition-colors ${
-              cat.key === "ALL"
-                ? "bg-slate-900 text-white border-slate-900"
-                : "bg-white text-slate-500 border-slate-200 hover:border-orange-300 hover:text-orange-500"
-            }`}
-          >
-            {cat.label}
-          </span>
-        ))}
-      </div>
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">Blog</h1>
+      <p className="mb-10 font-mono text-xs tracking-widest text-white">雑多な日記</p>
 
       {/* Post List */}
       {posts.length === 0 ? (

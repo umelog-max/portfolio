@@ -2,14 +2,11 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --bg-light: #f8fafc;
-  --grid-color: rgba(203, 213, 225, 0.6);
+  --bg-light: #5BC8E8;
   --text-main: #1e293b;
   --text-sub: #64748b;
   --accent-orange: #f97316;
   --accent-cyan: #06b6d4;
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.9);
 }
 
 @theme inline {
@@ -28,11 +25,6 @@ body {
   background-color: var(--bg-light);
   color: var(--text-main);
   font-family: var(--font-inter), 'Inter', sans-serif;
-  background-image:
-    linear-gradient(var(--grid-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-attachment: fixed;
 }
 
 html {
@@ -60,26 +52,23 @@ html {
 .fade-up-delay-4 { animation-delay: 0.45s; }
 
 .glass-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid #1A1A1A;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(148, 163, 184, 0.15);
-  transition: all 0.3s ease;
+  box-shadow: 4px 4px 0px #1A1A1A;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(148, 163, 184, 0.25);
-  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0px #1A1A1A;
 }
 
 .glass-header {
-  background: rgba(248, 250, 252, 0.8);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(203, 213, 225, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .gradient-text {

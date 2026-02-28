@@ -8,11 +8,9 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
-      <p className="font-mono text-xs tracking-widest text-slate-400 uppercase mb-2">Contact</p>
-      <h1 className="mb-4 text-4xl font-black text-slate-900 tracking-tight">Get in touch</h1>
-      <p className="mb-12 text-slate-500 leading-relaxed">
-        案件のご相談・取材・その他お問い合わせはこちらから。
-        通常 2〜3 営業日以内にご返信します。
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">Contact</h1>
+      <p className="mb-12 font-mono text-xs tracking-widest text-white leading-relaxed">
+        案件のご相談・取材・その他お問い合わせはこちらから。通常 2〜3 営業日以内にご返信します。
       </p>
 
       <div className="glass-card p-8">
