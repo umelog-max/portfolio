@@ -11,10 +11,10 @@ export default async function PortfolioPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">Portfolio</h1>
-      <p className="mb-12 font-mono text-xs tracking-widest text-white">個人開発・制作実績</p>
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight fade-up">Portfolio</h1>
+      <p className="mb-12 font-mono text-sm font-semibold tracking-widest text-white fade-up fade-up-delay-1">個人開発・制作実績</p>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 fade-up fade-up-delay-2">
         {works.map((work) => {
           const primaryHref = work.demo ?? work.github ?? "#";
           return (
