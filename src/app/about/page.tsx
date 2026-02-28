@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "バックエンド・インフラエンジニアのプロフィールと経歴",
+  description: "プロフィールと経歴",
 };
 
 const timeline = [
