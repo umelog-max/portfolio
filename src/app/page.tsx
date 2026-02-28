@@ -1,15 +1,19 @@
 "use client";
 import Link from "next/link";
 import { useRef, useCallback } from "react";
-import ParticleCanvas from "@/components/ParticleCanvas";
+import PixelBg from "@/components/PixelBg";
 
 const sections = [
-  { href: "/about", label: "About", description: "プロフィール・経歴・スキル" },
-  { href: "/portfolio", label: "Portfolio", description: "個人開発・制作実績" },
-  { href: "/blog", label: "Blog", description: "技術・個人開発・日常の記録" },
+  { href: "/about",     label: "About",     description: "プロフィール・経歴・スキル", bgColor: "#F5E6C3" },
+  { href: "/portfolio", label: "Portfolio",  description: "個人開発・制作実績",         bgColor: "#FFFFFF" },
+  { href: "/blog",      label: "Blog",       description: "技術・個人開発・日常の記録", bgColor: "#F5D66A" },
 ];
 
-function TiltCard({ href, label, description }: { href: string; label: string; description: string }) {
+function TiltCard({
+  href, label, description, bgColor,
+}: {
+  href: string; label: string; description: string; bgColor: string;
+}) {
   const cardRef = useRef<HTMLAnchorElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -18,7 +22,7 @@ function TiltCard({ href, label, description }: { href: string; label: string; d
     const rect = card.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    card.style.transform = `perspective(600px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) translateY(-6px)`;
+    card.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateY(-6px)`;
     card.style.transition = "transform 0.05s ease-out";
   };
 
@@ -35,15 +39,26 @@ function TiltCard({ href, label, description }: { href: string; label: string; d
       href={href}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="glass-card p-8 flex flex-col items-center text-center group h-full w-full"
+      className="p-8 flex flex-col items-center text-center h-full w-full rounded-xl group"
+      style={{
+        backgroundColor: bgColor,
+        border: "2.5px solid #1A1A1A",
+        boxShadow: "5px 5px 0px #1A1A1A",
+      }}
     >
-      <h2 className="text-xl font-black text-slate-900 group-hover:text-orange-500 transition-colors mb-2 tracking-tight">
+      <h2
+        className="text-xl font-black mb-2 tracking-tight group-hover:opacity-70 transition-opacity"
+        style={{ color: "#1A1A1A" }}
+      >
         {label}
       </h2>
-      <p className="text-sm text-slate-400 leading-relaxed">
+      <p className="text-sm leading-relaxed" style={{ color: "#444444" }}>
         {description}
       </p>
-      <span className="mt-4 text-slate-300 group-hover:text-orange-400 transition-colors">
+      <span
+        className="mt-4 font-bold text-lg group-hover:translate-x-1 transition-transform inline-block"
+        style={{ color: "#E85544" }}
+      >
         →
       </span>
     </Link>
@@ -66,30 +81,32 @@ export default function Home() {
   }, []);
 
   return (
-    <div
-      className="mx-auto max-w-3xl px-6 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      <ParticleCanvas />
+    <>
+      <PixelBg />
 
-      <div className="text-center mb-16 fade-up">
-        <h1
-          ref={titleRef}
-          className="text-8xl font-black tracking-tighter gradient-text pb-2"
-          style={{ transition: "transform 0.1s ease-out" }}
-        >
-          Ume.log
-        </h1>
-      </div>
+      <div
+        className="mx-auto max-w-3xl px-6 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="text-center mb-16 fade-up">
+          <h1
+            ref={titleRef}
+            className="text-8xl font-black tracking-tighter pb-2 gradient-text"
+            style={{ transition: "transform 0.1s ease-out" }}
+          >
+            Ume.log
+          </h1>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-        {sections.map((section, i) => (
-          <div key={section.href} className={`fade-up fade-up-delay-${i + 2}`}>
-            <TiltCard {...section} />
-          </div>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+          {sections.map((section, i) => (
+            <div key={section.href} className={`fade-up fade-up-delay-${i + 2}`}>
+              <TiltCard {...section} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

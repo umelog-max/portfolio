@@ -27,23 +27,19 @@ const timeline = [
 ];
 
 const certifications = [
-  { name: "AWS Certified Solutions Architect - Professional", icon: "🥇" },
-  { name: "AWS Certified DevOps Engineer - Professional", icon: "🥇" },
-  { name: "AWS Certified Developer - Associate", icon: "🥈" },
-];
-
-const techStacks = [
-  { category: "バックエンド", items: ["Go", "Python", "Node.js", "REST API", "gRPC"] },
-  { category: "インフラ / クラウド", items: ["AWS (EC2/ECS/Lambda/RDS/S3)", "Terraform", "Docker", "GitHub Actions"] },
-  { category: "データベース", items: ["PostgreSQL", "MySQL", "DynamoDB", "Redis"] },
-  { category: "フロントエンド", items: ["Next.js", "TypeScript", "Tailwind CSS"] },
+  "AWS Certified Solutions Architect - Associate (SAA)",
+  "AWS Certified Cloud Practitioner",
+  "Microsoft Azure Fundamentals (AZ-900)",
+  "普通自動車免許",
+  "普通自動二輪免許",
+  "食品衛生責任者",
 ];
 
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <p className="font-mono text-xs tracking-widest text-slate-400 uppercase mb-2">Profile</p>
-      <h1 className="mb-12 text-4xl font-black text-slate-900 tracking-tight">About Me</h1>
+      <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight">About</h1>
+      <p className="mb-12 font-mono text-xs tracking-widest text-white">このサイトについて</p>
 
       {/* Profile Card */}
       <section className="glass-card p-8 mb-8">
@@ -57,9 +53,8 @@ export default function AboutPage() {
           <div>
             <h2 className="text-xl font-black text-slate-900">Yuta Umeda</h2>
             <p className="text-sm font-medium" style={{ color: "#f97316" }}>
-              Backend & Infrastructure Engineer
+              Engineer
             </p>
-            <p className="text-sm text-slate-400 mt-1 font-mono">Tokyo, Japan · 6yr exp</p>
           </div>
         </div>
         <p className="text-slate-600 leading-relaxed">
@@ -94,38 +89,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Tech Stack */}
-      <section className="mb-8">
-        <h2 className="text-xl font-black text-slate-900 tracking-tight mb-6">Tech Stack</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {techStacks.map((stack) => (
-            <div key={stack.category} className="glass-card p-5">
-              <h3 className="text-xs font-bold text-orange-500 uppercase tracking-wider mb-3">
-                {stack.category}
-              </h3>
-              <ul className="space-y-1.5">
-                {stack.items.map((item) => (
-                  <li key={item} className="text-sm text-slate-600 flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Certifications */}
       <section>
         <h2 className="text-xl font-black text-slate-900 tracking-tight mb-6">Certifications</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {certifications.map((cert) => (
-            <div key={cert.name} className="glass-card p-5 text-center">
-              <span className="text-3xl mb-3 block">{cert.icon}</span>
-              <p className="text-xs text-slate-600 leading-relaxed">{cert.name}</p>
-            </div>
-          ))}
+        <div className="glass-card p-6">
+          <ul className="space-y-3">
+            {certifications.map((cert) => (
+              <li key={cert} className="flex items-center gap-3 text-sm text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
+                {cert}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>
