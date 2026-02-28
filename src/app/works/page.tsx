@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { works } from "@/lib/mock-data";
+import { getWorks } from "@/lib/microcms";
 
 export const metadata: Metadata = {
   title: "Works",
   description: "個人開発・制作実績の一覧",
 };
 
-export default function WorksPage() {
+export default async function WorksPage() {
+  const works = await getWorks();
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
       <p className="font-mono text-xs tracking-widest text-slate-400 uppercase mb-2">Portfolio</p>
@@ -17,8 +19,8 @@ export default function WorksPage() {
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {works.map((work) => (
           <Link
-            key={work.slug}
-            href={`/works/${work.slug}`}
+            key={work.id}
+            href={`/works/${work.id}`}
             className="glass-card p-6 flex flex-col group"
           >
             <div className="flex items-start justify-between mb-3">

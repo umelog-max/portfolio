@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { works } from "@/lib/mock-data";
+import { getWork, getWorks } from "@/lib/microcms";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -9,19 +9,28 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const work = works.find((w) => w.slug === slug);
-  if (!work) return {};
-  return { title: work.title, description: work.description };
+  try {
+    const work = await getWork(slug);
+    return { title: work.title, description: work.description };
+  } catch {
+    return {};
+  }
 }
 
 export async function generateStaticParams() {
-  return works.map((work) => ({ slug: work.slug }));
+  const works = await getWorks();
+  return works.map((work) => ({ slug: work.id }));
 }
 
 export default async function WorkDetailPage({ params }: Props) {
   const { slug } = await params;
-  const work = works.find((w) => w.slug === slug);
-  if (!work) notFound();
+
+  let work;
+  try {
+    work = await getWork(slug);
+  } catch {
+    notFound();
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
@@ -48,6 +57,13 @@ export default async function WorkDetailPage({ params }: Props) {
         </div>
         <p className="text-slate-600 leading-relaxed">{work.description}</p>
       </div>
+
+      {work.content && (
+        <div
+          className="glass-card p-8 mb-6 prose prose-slate max-w-none"
+          dangerouslySetInnerHTML={{ __html: work.content }}
+        />
+      )}
 
       {(work.github || work.demo) && (
         <div className="flex gap-3">
