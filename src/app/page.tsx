@@ -66,7 +66,7 @@ function TiltCard({
 }
 
 export default function Home() {
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!titleRef.current) return;
@@ -89,14 +89,20 @@ export default function Home() {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="text-center mb-16 fade-up">
-          <h1
+        <div className="mb-16 fade-up mx-auto w-fit">
+          <div
             ref={titleRef}
-            className="text-8xl font-black tracking-tighter pb-2 gradient-text"
-            style={{ transition: "transform 0.1s ease-out" }}
+            className="px-10 py-5 rounded-xl"
+            style={{
+              border: "2.5px solid #1A1A1A",
+              boxShadow: "8px 8px 0px #1A1A1A",
+              transition: "transform 0.1s ease-out",
+            }}
           >
-            Ume.log
-          </h1>
+            <h1 className="text-8xl font-black tracking-tighter pb-2 gradient-text">
+              Ume.log
+            </h1>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
