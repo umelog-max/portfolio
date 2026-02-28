@@ -2,17 +2,17 @@ import type { Metadata } from "next";
 import { getWorks } from "@/lib/microcms";
 
 export const metadata: Metadata = {
-  title: "Works",
+  title: "Portfolio",
   description: "個人開発・制作実績の一覧",
 };
 
-export default async function WorksPage() {
+export default async function PortfolioPage() {
   const works = await getWorks();
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <p className="font-mono text-xs tracking-widest text-slate-400 uppercase mb-2">Portfolio</p>
-      <h1 className="mb-4 text-4xl font-black text-slate-900 tracking-tight">Works</h1>
+      <p className="font-mono text-xs tracking-widest text-slate-400 uppercase mb-2">Projects</p>
+      <h1 className="mb-4 text-4xl font-black text-slate-900 tracking-tight">Portfolio</h1>
       <p className="mb-12 text-slate-500">個人開発・制作実績</p>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
