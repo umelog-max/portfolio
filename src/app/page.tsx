@@ -4,9 +4,9 @@ import { useRef, useCallback } from "react";
 import PixelBg from "@/components/PixelBg";
 
 const sections = [
-  { href: "/about",     label: "About",     description: "プロフィール・経歴・スキル", bgColor: "#F5E6C3" },
-  { href: "/portfolio", label: "Portfolio",  description: "個人開発・制作実績",         bgColor: "#FFFFFF" },
-  { href: "/blog",      label: "Blog",       description: "技術・個人開発・日常の記録", bgColor: "#F5D66A" },
+  { href: "/about",     label: "About",     description: "このサイトについて",   bgColor: "#F5E6C3" },
+  { href: "/portfolio", label: "Portfolio",  description: "個人開発・制作実績",   bgColor: "#FFFFFF" },
+  { href: "/blog",      label: "Blog",       description: "日常の記録",           bgColor: "#F5D66A" },
 ];
 
 function TiltCard({
