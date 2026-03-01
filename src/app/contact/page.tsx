@@ -41,10 +41,18 @@ export default function ContactPage() {
 
       <div className="glass-card p-8 fade-up fade-up-delay-3">
         {status === "done" ? (
-          <div className="text-center py-8">
-            <p className="text-2xl mb-3">✅</p>
-            <p className="font-bold text-slate-800 mb-1">送信しました！</p>
-            <p className="text-sm text-slate-500">内容を確認次第、ご返信いたします。</p>
+          <div className="flex flex-col items-center py-8">
+            <div
+              className="w-16 h-16 border-[3px] border-slate-800 bg-orange-50 flex items-center justify-center mb-5"
+              style={{ boxShadow: "4px 4px 0px #1A1A1A" }}
+            >
+              <svg viewBox="0 0 24 24" className="w-9 h-9" fill="none" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
+                <polyline points="4,13 9,18 20,7" />
+              </svg>
+            </div>
+            <p className="font-black text-slate-800 text-xl mb-2">送信しました！</p>
+            <p className="text-sm text-slate-600 mb-1">内容を確認次第、ご返信いたします。</p>
+            <p className="text-xs text-slate-400">自動返信メールをお送りしました。ご確認ください。</p>
           </div>
         ) : (
           <form className="space-y-5" onSubmit={handleSubmit}>
