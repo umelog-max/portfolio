@@ -100,7 +100,7 @@ export default function Home() {
             }}
           >
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter pb-2 gradient-text">
-              Ume.log
+              UmeBlog
             </h1>
           </div>
         </div>
