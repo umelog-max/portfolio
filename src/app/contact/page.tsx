@@ -51,8 +51,8 @@ export default function ContactPage() {
               </svg>
             </div>
             <p className="font-black text-slate-800 text-xl mb-2">送信しました！</p>
-            <p className="text-sm text-slate-600 mb-1">内容を確認次第、ご返信いたします。</p>
-            <p className="text-xs text-slate-400">自動返信メールをお送りしました。ご確認ください。</p>
+            <p className="text-sm text-slate-600 mb-1">自動返信メールをお送りしましたのでご確認ください。</p>
+            <p className="text-sm text-slate-600">内容を確認次第、ご返信いたします。</p>
           </div>
         ) : (
           <form className="space-y-5" onSubmit={handleSubmit}>
