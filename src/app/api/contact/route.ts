@@ -32,9 +32,7 @@ export async function POST(req: NextRequest) {
   const sentAt = formatJST();
 
   const notifyBody = [
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "Ume.Blog | 新しいお問い合わせ",
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "",
     "■ お名前",
     name,
@@ -48,9 +46,7 @@ export async function POST(req: NextRequest) {
     "■ メッセージ",
     message,
     "",
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     `送信日時: ${sentAt} (JST)`,
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
   ].join("\n");
 
   const replyBody = [
@@ -76,40 +72,31 @@ export async function POST(req: NextRequest) {
   ].join("\n");
 
   try {
-    const [notifyResult, replyResult] = await Promise.allSettled([
-      // 管理者への通知メール
-      ses.send(
-        new SendEmailCommand({
-          Destination: { ToAddresses: [toAddress] },
-          Message: {
-            Subject: { Data: `[Ume.Blog お問い合わせ] ${subject}`, Charset: "UTF-8" },
-            Body: { Text: { Data: notifyBody, Charset: "UTF-8" } },
-          },
-          Source: fromAddress,
-          ReplyToAddresses: [email],
-        })
-      ),
-      // 送信者への自動返信
-      ses.send(
-        new SendEmailCommand({
-          Destination: { ToAddresses: [email] },
-          Message: {
-            Subject: { Data: "【自動返信】お問い合わせを受け付けました", Charset: "UTF-8" },
-            Body: { Text: { Data: replyBody, Charset: "UTF-8" } },
-          },
-          Source: fromAddress,
-          ReplyToAddresses: [toAddress],
-        })
-      ),
-    ]);
+    // 管理者への通知メール
+    await ses.send(
+      new SendEmailCommand({
+        Destination: { ToAddresses: [toAddress] },
+        Message: {
+          Subject: { Data: `[Ume.Blog お問い合わせ] ${subject}`, Charset: "UTF-8" },
+          Body: { Text: { Data: notifyBody, Charset: "UTF-8" } },
+        },
+        Source: fromAddress,
+        ReplyToAddresses: [email],
+      })
+    );
 
-    if (notifyResult.status === "rejected") {
-      console.error("Notify email failed:", notifyResult.reason);
-      return NextResponse.json({ error: "送信に失敗しました" }, { status: 500 });
-    }
-    if (replyResult.status === "rejected") {
-      console.error("Auto-reply failed:", replyResult.reason);
-    }
+    // 送信者への自動返信
+    ses.send(
+      new SendEmailCommand({
+        Destination: { ToAddresses: [email] },
+        Message: {
+          Subject: { Data: "【自動返信】お問い合わせを受け付けました", Charset: "UTF-8" },
+          Body: { Text: { Data: replyBody, Charset: "UTF-8" } },
+        },
+        Source: fromAddress,
+        ReplyToAddresses: [toAddress],
+      })
+    ).catch((e) => console.error("Auto-reply failed:", e));
 
     return NextResponse.json({ ok: true });
   } catch (e) {
