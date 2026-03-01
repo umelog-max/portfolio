@@ -5,7 +5,7 @@ import { categoryStyles } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "技術・個人開発・日常の記録",
+  description: "日常の記録",
 };
 
 export const revalidate = 60;

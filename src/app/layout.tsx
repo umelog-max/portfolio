@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ume.Blog | バックエンド・インフラエンジニア",
+    default: "Ume.Blog",
     template: "%s | Ume.Blog",
   },
   description:
