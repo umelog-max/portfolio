@@ -2,36 +2,49 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "プロフィールと経歴",
+  description: "このサイトについて・経験案件・資格一覧",
 };
 
 const timeline = [
   {
-    period: "2024年〜現在",
-    role: "バックエンドエンジニア",
-    company: "株式会社〇〇",
-    description: "Go を用いたマイクロサービス設計・開発。AWS 上のインフラ構築・運用。Terraform による IaC 推進。",
+    period: "経験案件1",
+    role: "PMO補佐、サーバー保守",
+    project: "大規模官公庁プロジェクト",
+    description: "Linuxサーバーの保守、ヘルプデスク、エンドユーザー対応、エンドユーザー向けマニュアルの作成",
   },
   {
-    period: "2022年〜2024年",
-    role: "サーバーサイドエンジニア",
-    company: "株式会社△△",
-    description: "Python / Django による Web アプリ開発。RDS・ElastiCache の設計・運用。",
+    period: "経験案件2",
+    role: "サーバー構築、テスト",
+    project: "Avaya製品での音声基盤構築",
+    description: "Avaya製品の構築（ACM、CMS、AgentMAP、CMSWebService、AMS、AES、SMGR、WebLM）",
   },
   {
-    period: "2020年〜2022年",
-    role: "インフラエンジニア",
-    company: "株式会社□□",
-    description: "オンプレ〜AWS への移行プロジェクトを担当。EC2・VPC・S3 の設計・構築。",
+    period: "経験案件3",
+    role: "DB管理",
+    project: "Grafanaを用いたリソース可視化推進業務",
+    description: "Grafanaの運用保守",
+  },
+  {
+    period: "経験案件4",
+    role: "社内SE（他社）",
+    project: "Microsoft Entra IDプロジェクト支援",
+    description: "Microsoft Entra IDを中心とした認証に関する新機能の導入や既存機能、サービスの改善作業、プロジェクトPM支援、各機能利用プロセスの改善支援、新機能・新サービスの調査、動作検証、調査・検証結果まとめ",
+  },
+  {
+    period: "経験案件5",
+    role: "SNSマーケター",
+    project: "Instagramの運用代行",
+    description: "コンテンツの提案作成から数値分析まで（フォロワー400から2000まで増加）",
   },
 ];
 
 const certifications = [
-  "AWS Certified Solutions Architect - Associate (SAA)",
   "AWS Certified Cloud Practitioner",
+  "AWS Certified Solutions Architect - Associate (SAA)",
   "Microsoft Azure Fundamentals (AZ-900)",
   "普通自動車免許",
   "普通自動二輪免許",
+  "第二級陸上特殊無線技士",
   "食品衛生責任者",
 ];
 
@@ -51,17 +64,25 @@ export default function AboutPage() {
             YU
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900">Yuta Umeda</h2>
+            <h2 className="text-xl font-black text-slate-900">Umeda</h2>
             <p className="text-sm font-medium" style={{ color: "#f97316" }}>
               Engineer
             </p>
           </div>
         </div>
-        <p className="text-slate-600 leading-relaxed">
-          Go・Python を中心としたバックエンド開発と、AWS を使ったクラウドインフラ設計・構築を得意としています。
-          スケーラブルで運用しやすいシステムを作ることにこだわりを持っています。
-          仕事以外では、サウナとロードバイクで気分転換しながら個人開発に取り組んでいます。
+        <p className="text-slate-600 leading-relaxed mb-4">
+          このサイトは、日々の学びや生活を発信するための、いわば「遊び場」です。
+          現在は、AWSの資格取得に向けて学習を進めながら、AIを活用した個人開発勤しんでいます。
+          煮詰まったときは、散歩やサウナで心身を整えるのがルーティンです。
         </p>
+        <ul className="space-y-1 text-slate-600 text-sm">
+          <li className="font-semibold text-slate-700">■ 趣味</li>
+          <li>・散歩</li>
+          <li>・筋トレ</li>
+          <li>・ラーメン</li>
+          <li>・ガジェット</li>
+          <li>・アニメ/漫画</li>
+        </ul>
       </section>
 
       {/* Career */}
@@ -80,7 +101,7 @@ export default function AboutPage() {
                 <div>
                   <p className="font-mono text-xs text-slate-400 mb-1">{item.period}</p>
                   <h3 className="font-bold text-slate-900">{item.role}</h3>
-                  <p className="text-sm text-orange-500 font-medium mb-2">{item.company}</p>
+                  <p className="text-sm text-orange-500 font-medium mb-2">{item.project}</p>
                   <p className="text-sm text-slate-500 leading-relaxed">{item.description}</p>
                 </div>
               </div>
