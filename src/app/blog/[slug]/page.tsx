@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: Props) {
     <div className="mx-auto max-w-3xl px-6 py-12">
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-orange-500 transition-colors mb-10"
+        className="inline-flex items-center gap-2 text-sm text-white hover:text-orange-300 transition-colors mb-10"
       >
         ← ブログ一覧に戻る
       </Link>
