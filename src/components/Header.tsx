@@ -29,7 +29,7 @@ export default function Header() {
               boxShadow: "4px 4px 0px #1A1A1A",
             }}
           >
-            Ume.log
+            UmeBlog
           </span>
         </Link>
 

@@ -19,8 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ume.log | バックエンド・インフラエンジニア",
-    template: "%s | Ume.log",
+    default: "UmeBlog | バックエンド・インフラエンジニア",
+    template: "%s | UmeBlog",
   },
   description:
     "Go・AWSを中心に、バックエンドとインフラを設計・構築するエンジニアのポートフォリオ。技術記事・個人開発・日常を発信しています。",
