@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import WeatherTicker from "@/components/WeatherTicker";
 
 const navLinks = [
   { href: "/", label: "Top" },
@@ -47,14 +48,8 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Status */}
-        <div className="hidden md:flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-          </span>
-          <span className="text-xs text-slate-400 font-mono">ONLINE</span>
-        </div>
+        {/* Weather Ticker */}
+        <WeatherTicker />
       </div>
     </header>
   );
