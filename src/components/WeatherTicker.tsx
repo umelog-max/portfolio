@@ -69,7 +69,7 @@ export default function WeatherTicker() {
 
   if (data.length === 0) {
     return (
-      <div className="hidden md:flex items-center min-w-[120px]">
+      <div className="hidden sm:flex items-center min-w-[120px]">
         <span className="text-xs text-slate-400 font-mono">--</span>
       </div>
     );
@@ -79,7 +79,7 @@ export default function WeatherTicker() {
 
   return (
     <div
-      className="hidden md:flex items-center min-w-[120px]"
+      className="hidden sm:flex items-center min-w-[120px]"
       style={{ opacity: visible ? 1 : 0, transition: "opacity 0.4s ease" }}
     >
       <span className="text-xs font-mono text-slate-500">
