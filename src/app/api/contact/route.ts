@@ -57,16 +57,11 @@ export async function POST(req: NextRequest) {
     "",
     "通常 2〜3 営業日以内にご返信いたします。しばらくお待ちください。",
     "",
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "■ 件名",
     subject,
     "",
     "■ メッセージ",
     message,
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-    "",
-    "Ume.Blog",
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "",
     "※ このメールは自動返信です。このメールへの返信は受け付けておりません。",
   ].join("\n");
@@ -90,7 +85,7 @@ export async function POST(req: NextRequest) {
       new SendEmailCommand({
         Destination: { ToAddresses: [email] },
         Message: {
-          Subject: { Data: "【自動返信】お問い合わせを受け付けました", Charset: "UTF-8" },
+          Subject: { Data: "【Ume.Blog】問い合わせを受け付けました。", Charset: "UTF-8" },
           Body: { Text: { Data: replyBody, Charset: "UTF-8" } },
         },
         Source: fromAddress,
