@@ -85,7 +85,7 @@ export default function Home() {
       <PixelBg />
 
       <div
-        className="mx-auto max-w-3xl px-6 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]"
+        className="mx-auto max-w-3xl px-6 pt-12 sm:pt-0 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >

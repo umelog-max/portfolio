@@ -34,7 +34,7 @@ export default function Header() {
         </Link>
 
         {/* Nav（PC） */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden sm:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -53,7 +53,7 @@ export default function Header() {
 
         {/* ハンバーガーボタン（モバイル） */}
         <button
-          className="md:hidden flex flex-col justify-center items-center gap-1.5 p-2"
+          className="sm:hidden flex flex-col justify-center items-center gap-1.5 p-2"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="メニュー"
         >
@@ -71,7 +71,7 @@ export default function Header() {
 
       {/* モバイルメニュー */}
       {menuOpen && (
-        <nav className="md:hidden border-t border-slate-100 bg-white/95 backdrop-blur-sm px-6 py-4 flex flex-col gap-4">
+        <nav className="sm:hidden border-t border-slate-100 bg-white/95 backdrop-blur-sm px-6 py-4 flex flex-col gap-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
