@@ -11,10 +11,11 @@ export default function ContactPage() {
       <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight fade-up">Contact</h1>
       <p className="mb-12 font-mono text-sm font-semibold tracking-widest text-white fade-up fade-up-delay-1">お問い合わせ</p>
 
-      <div className="glass-card p-8 fade-up fade-up-delay-2">
-        <p className="text-sm text-slate-500 leading-relaxed mb-6">
-          案件のご相談・取材・その他お問い合わせはこちらから。通常 2〜3 営業日以内にご返信します。
-        </p>
+      <p className="text-sm text-slate-100 leading-relaxed mb-8 fade-up fade-up-delay-2">
+        案件のご相談・取材・その他お問い合わせはこちらから。通常 2〜3 営業日以内にご返信します。
+      </p>
+
+      <div className="glass-card p-8 fade-up fade-up-delay-3">
         <form className="space-y-5">
           <div>
             <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
