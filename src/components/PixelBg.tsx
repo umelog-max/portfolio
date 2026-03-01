@@ -57,9 +57,9 @@ export default function PixelBg() {
   ];
 
   const clouds: Rect[] = [
-    ...cloudRects(180, 130, CPX),
-    ...cloudRects(1080, 100, 10),
-    ...cloudRects(640, 70, 8),
+    ...cloudRects(180, 210, CPX),
+    ...cloudRects(1080, 185, 10),
+    ...cloudRects(640, 160, 8),
   ];
 
   return (
