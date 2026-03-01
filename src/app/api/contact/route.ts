@@ -19,6 +19,18 @@ export async function POST(req: NextRequest) {
   const toAddress = process.env.CONTACT_TO_EMAIL!;
   const fromAddress = process.env.CONTACT_FROM_EMAIL!;
 
+  // デバッグ用（確認後削除）
+  const debugInfo = {
+    hasSesRegion: !!process.env.SES_REGION,
+    hasSesKey: !!process.env.SES_ACCESS_KEY_ID,
+    hasSesSecret: !!process.env.SES_SECRET_ACCESS_KEY,
+    hasToEmail: !!process.env.CONTACT_TO_EMAIL,
+    hasFromEmail: !!process.env.CONTACT_FROM_EMAIL,
+  };
+  if (!debugInfo.hasSesKey || !debugInfo.hasSesSecret) {
+    return NextResponse.json({ error: "env missing", debug: debugInfo }, { status: 500 });
+  }
+
   try {
     await ses.send(
       new SendEmailCommand({
