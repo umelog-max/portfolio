@@ -70,11 +70,11 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-        <p className="text-slate-600 leading-relaxed mb-4">
-          このサイトは、日々の学びや生活を発信するための、いわば「遊び場」です。
-          現在は、AWSの資格取得に向けて学習を進めながら、AIを活用した個人開発勤しんでいます。
-          煮詰まったときは、散歩やサウナで心身を整えるのがルーティンです。
-        </p>
+        <div className="text-slate-600 text-sm leading-relaxed mb-4 space-y-2">
+          <p>このサイトは、日々の学びや生活を発信するための、いわば「遊び場」です。</p>
+          <p>現在は、AWSの資格取得に向けて学習を進めながら、AIを活用した個人開発に勤しんでいます。</p>
+          <p>煮詰まったときは、散歩やサウナで心身を整えるのがルーティンです。</p>
+        </div>
         <ul className="space-y-1 text-slate-600 text-sm">
           <li className="font-semibold text-slate-700">■ 趣味</li>
           <li>・散歩</li>
