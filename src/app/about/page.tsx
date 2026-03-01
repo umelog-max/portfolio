@@ -61,7 +61,7 @@ export default function AboutPage() {
             className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl text-white text-2xl font-black"
             style={{ background: "linear-gradient(135deg, #f97316, #06b6d4)" }}
           >
-            YU
+            U
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-900">Umeda</h2>

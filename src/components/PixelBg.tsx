@@ -35,11 +35,11 @@ function birdRects(cx: number, cy: number, p: number): Rect[] {
 }
 
 const BIRDS: { cx: number; cy: number; p: number; animClass: string }[] = [
-  { cx: 360,  cy: 235, p: 7, animClass: "bird-1" },
-  { cx: 490,  cy: 195, p: 5, animClass: "bird-2" },
-  { cx: 425,  cy: 265, p: 4, animClass: "bird-3" },
-  { cx: 960,  cy: 210, p: 6, animClass: "bird-4" },
-  { cx: 1110, cy: 175, p: 5, animClass: "bird-5" },
+  { cx: 360,  cy: 430, p: 7, animClass: "bird-1" },
+  { cx: 490,  cy: 400, p: 5, animClass: "bird-2" },
+  { cx: 425,  cy: 460, p: 4, animClass: "bird-3" },
+  { cx: 960,  cy: 415, p: 6, animClass: "bird-4" },
+  { cx: 1110, cy: 390, p: 5, animClass: "bird-5" },
 ];
 
 export default function PixelBg() {
@@ -57,9 +57,9 @@ export default function PixelBg() {
   ];
 
   const clouds: Rect[] = [
-    ...cloudRects(180, 210, CPX),
-    ...cloudRects(1080, 185, 10),
-    ...cloudRects(640, 160, 8),
+    ...cloudRects(180, 360, CPX),
+    ...cloudRects(1080, 330, 10),
+    ...cloudRects(640, 345, 8),
   ];
 
   return (
