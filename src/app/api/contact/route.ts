@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   const notifyBody = [
     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-    "UmeBlog | 新しいお問い合わせ",
+    "Ume.Blog | 新しいお問い合わせ",
     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "",
     "■ お名前",
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
   const replyBody = [
     `${name} 様`,
     "",
-    "UmeBlog へのお問い合わせありがとうございます。",
+    "Ume.Blog へのお問い合わせありがとうございます。",
     "以下の内容でお問い合わせを受け付けました。",
     "",
     "通常 2〜3 営業日以内にご返信いたします。しばらくお待ちください。",
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     message,
     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "",
-    "UmeBlog",
+    "Ume.Blog",
     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "",
     "※ このメールは自動返信です。このメールへの返信は受け付けておりません。",
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       new SendEmailCommand({
         Destination: { ToAddresses: [toAddress] },
         Message: {
-          Subject: { Data: `[UmeBlog お問い合わせ] ${subject}`, Charset: "UTF-8" },
+          Subject: { Data: `[Ume.Blog お問い合わせ] ${subject}`, Charset: "UTF-8" },
           Body: { Text: { Data: notifyBody, Charset: "UTF-8" } },
         },
         Source: fromAddress,
