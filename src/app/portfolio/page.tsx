@@ -16,15 +16,22 @@ export default async function PortfolioPage() {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 fade-up fade-up-delay-2">
         {works.map((work) => {
-          const primaryHref = work.demo ?? work.github ?? "#";
+          const primaryHref = work.demo ?? work.github ?? null;
           return (
-            <a
+            <div
               key={work.id}
-              href={primaryHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card p-6 flex flex-col group"
+              className="glass-card p-6 flex flex-col group relative"
             >
+              {/* カード全体のリンク（stretched-link） */}
+              {primaryHref && (
+                <a
+                  href={primaryHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute inset-0 rounded-xl"
+                  aria-label={work.title}
+                />
+              )}
               <div className="flex items-start justify-between mb-3">
                 <span className="font-mono text-xs text-slate-400">{work.period}</span>
                 {work.github && (
@@ -32,8 +39,7 @@ export default async function PortfolioPage() {
                     href={work.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-slate-300 hover:text-slate-600 transition-colors"
+                    className="relative z-10 text-slate-300 hover:text-slate-600 transition-colors"
                     aria-label="GitHub"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -55,7 +61,7 @@ export default async function PortfolioPage() {
                   </span>
                 ))}
               </div>
-            </a>
+            </div>
           );
         })}
       </div>
