@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.1000.0",
     "@tailwindcss/typography": "^0.5.19",
     "microcms-js-sdk": "^3.3.0",
     "next": "16.1.6",
