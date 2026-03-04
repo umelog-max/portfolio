@@ -73,7 +73,7 @@ export default function PixelBg() {
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 w-full h-full"
         viewBox="0 0 1440 900"
-        preserveAspectRatio="xMidYMax slice"
+        preserveAspectRatio="xMidYMax meet"
         shapeRendering="crispEdges"
       >
         <style>{`
