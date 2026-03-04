@@ -51,9 +51,19 @@ export type MicroCMSWork = {
   period: string;
   github?: string;
   demo?: string;
+  body?: string;
 };
 
 export type NormalizedWork = Omit<MicroCMSWork, "tags"> & { tags: string[] };
+
+// Work 1件を取得
+export async function getWork(contentId: string): Promise<NormalizedWork> {
+  const data = await client.getListDetail<MicroCMSWork>({
+    endpoint: "works",
+    contentId,
+  });
+  return normalizeWork(data);
+}
 
 function normalizeWork(work: MicroCMSWork): NormalizedWork {
   return {
