@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getWorks } from "@/lib/microcms";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Portfolio",
   description: "個人開発・制作実績の一覧",

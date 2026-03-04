@@ -17,13 +17,30 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+const siteUrl = "https://www.umeblog.com";
+const siteDescription =
+  "Go・AWSを中心に、バックエンドとインフラを設計・構築するエンジニアのポートフォリオ。技術記事・個人開発・日常を発信しています。";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Ume.Blog",
     template: "%s | Ume.Blog",
   },
-  description:
-    "Go・AWSを中心に、バックエンドとインフラを設計・構築するエンジニアのポートフォリオ。技術記事・個人開発・日常を発信しています。",
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    locale: "ja_JP",
+    url: siteUrl,
+    siteName: "Ume.Blog",
+    title: "Ume.Blog",
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ume.Blog",
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({
