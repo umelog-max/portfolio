@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
+    MICROCMS_SERVICE_DOMAIN: process.env.MICROCMS_SERVICE_DOMAIN,
+    MICROCMS_API_KEY: process.env.MICROCMS_API_KEY,
     SES_REGION: process.env.SES_REGION,
     SES_ACCESS_KEY_ID: process.env.SES_ACCESS_KEY_ID,
     SES_SECRET_ACCESS_KEY: process.env.SES_SECRET_ACCESS_KEY,
