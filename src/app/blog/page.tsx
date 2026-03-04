@@ -40,20 +40,20 @@ export default async function BlogPage() {
                   {cat.label}
                 </span>
                 <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="font-mono text-xs text-slate-400">{post.publishedAt.slice(0, 10)}</span>
+                    <span className="font-mono text-xs text-slate-400">{post.readTime} min</span>
+                  </div>
                   <p className="font-semibold text-slate-800 group-hover:text-orange-500 transition-colors mb-1">
                     {post.title}
                   </p>
                   <p className="text-sm text-slate-400 line-clamp-1">{post.excerpt}</p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="font-mono text-xs text-slate-400">{post.publishedAt.slice(0, 10)}</span>
-                    <span className="font-mono text-xs text-slate-400">{post.readTime} min</span>
-                    <div className="flex gap-1">
-                      {tags.map((tag) => (
-                        <span key={tag} className="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="flex gap-1 mt-2">
+                    {tags.map((tag) => (
+                      <span key={tag} className="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
                 <span className="text-slate-300 group-hover:text-orange-400 transition-colors text-sm shrink-0 mt-1">→</span>
