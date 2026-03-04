@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "日常の記録",
 };
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function BlogPage() {
   const posts = await getPosts();
