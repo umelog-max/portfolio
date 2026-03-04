@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPost } from "@/lib/microcms";
+import { getPost, getPosts } from "@/lib/microcms";
 import { categoryStyles } from "@/lib/mock-data";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,10 +14,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
     const post = await getPost(slug);
-    return { title: post.title, description: post.excerpt };
+    return {
+      title: post.title,
+      description: post.excerpt,
+      openGraph: {
+        title: post.title,
+        description: post.excerpt,
+        type: "article",
+        publishedTime: post.publishedAt,
+        url: `https://www.umeblog.com/blog/${slug}`,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: post.title,
+        description: post.excerpt,
+      },
+    };
   } catch {
     return {};
   }
+}
+
+export async function generateStaticParams() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ slug: post.id }));
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -44,17 +64,17 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Header */}
       <div className="glass-card p-8 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <span className={`font-mono text-xs font-semibold px-2 py-0.5 rounded border ${cat.bg} ${cat.text} ${cat.border}`}>
-            {cat.label}
-          </span>
+        <div className="flex items-center gap-3 mb-2">
           <span className="font-mono text-xs text-slate-400">{post.publishedAt.slice(0, 10)}</span>
           <span className="font-mono text-xs text-slate-400">{post.readTime} min read</span>
         </div>
         <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug mb-4">
           {post.title}
         </h1>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`font-mono text-xs font-semibold px-2 py-0.5 rounded border ${cat.bg} ${cat.text} ${cat.border}`}>
+            {cat.label}
+          </span>
           {tags.map((tag) => (
             <span key={tag} className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
               #{tag}
