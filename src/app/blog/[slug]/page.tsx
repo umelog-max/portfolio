@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPost, getPosts } from "@/lib/microcms";
+import { getPost } from "@/lib/microcms";
 import { categoryStyles } from "@/lib/mock-data";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -18,11 +18,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch {
     return {};
   }
-}
-
-export async function generateStaticParams() {
-  const posts = await getPosts();
-  return posts.map((post) => ({ slug: post.id }));
 }
 
 export default async function BlogPostPage({ params }: Props) {
