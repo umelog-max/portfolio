@@ -32,12 +32,13 @@ export default async function PortfolioPage() {
                 aria-label={work.title}
               />
               {work.thumbnail && (
-                <div className="relative w-full h-40 mb-4 rounded-lg overflow-hidden">
+                <div className="relative w-full mb-4 rounded-lg overflow-hidden bg-slate-900">
                   <Image
                     src={work.thumbnail.url}
                     alt={work.title}
-                    fill
-                    className="object-cover"
+                    width={work.thumbnail.width}
+                    height={work.thumbnail.height}
+                    className="w-full h-auto"
                   />
                 </div>
               )}
