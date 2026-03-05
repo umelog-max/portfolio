@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getWorks } from "@/lib/microcms";
 
@@ -30,6 +31,16 @@ export default async function PortfolioPage() {
                 className="absolute inset-0 rounded-xl"
                 aria-label={work.title}
               />
+              {work.thumbnail && (
+                <div className="relative w-full h-40 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src={work.thumbnail.url}
+                    alt={work.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
               <div className="flex items-start justify-between mb-3">
                 <span className="font-mono text-xs text-slate-400">{work.period}</span>
                 {work.github && (

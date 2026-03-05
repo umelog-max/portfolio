@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWork, getWorks } from "@/lib/microcms";
@@ -53,6 +54,16 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
       {/* Header */}
       <div className="glass-card p-8 mb-6">
+        {work.thumbnail && (
+          <div className="relative w-full h-56 mb-6 rounded-lg overflow-hidden">
+            <Image
+              src={work.thumbnail.url}
+              alt={work.title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
         <span className="font-mono text-xs text-slate-400">{work.period}</span>
         <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug mt-2 mb-4">
           {work.title}
