@@ -207,7 +207,7 @@ const I18N={
       hard:  ['ことわざが迫りくる','高速・長文連続','上級者向け'],
     },
     selectKey:' で選択',
-    hudPause:'[P] 停止',
+    hudPause:'停止',
     pauseTitle:'PAUSE',
     resumeBtn:'▶  再開',
     quitBtn:'■  中止',
@@ -243,7 +243,7 @@ const I18N={
       hard:  ['Long proverbs incoming','High speed, long words','For experts'],
     },
     selectKey:' to select',
-    hudPause:'[P] Pause',
+    hudPause:'Pause',
     pauseTitle:'PAUSE',
     resumeBtn:'▶  Resume',
     quitBtn:'■  Quit',
@@ -671,7 +671,6 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(G.phase!=='play')return;
-  if(e.key==='p'||e.key==='P'){G.paused=!G.paused;return;}
   if(G.paused)return;
 
   if(e.key==='Backspace'){
