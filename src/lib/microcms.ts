@@ -51,7 +51,7 @@ export type MicroCMSWork = {
   period: string;
   github?: string;
   demo?: string;
-  body?: string;
+  content?: string;
 };
 
 export type NormalizedWork = Omit<MicroCMSWork, "tags"> & { tags: string[] };
