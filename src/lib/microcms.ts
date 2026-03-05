@@ -52,6 +52,7 @@ export type MicroCMSWork = {
   github?: string;
   demo?: string;
   content?: string;
+  thumbnail?: { url: string; width: number; height: number };
 };
 
 export type NormalizedWork = Omit<MicroCMSWork, "tags"> & { tags: string[] };
