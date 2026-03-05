@@ -55,12 +55,13 @@ export default async function PortfolioDetailPage({ params }: Props) {
       {/* Header */}
       <div className="glass-card p-8 mb-6">
         {work.thumbnail && (
-          <div className="relative w-full h-56 mb-6 rounded-lg overflow-hidden">
+          <div className="relative w-full mb-6 rounded-lg overflow-hidden bg-slate-900 flex items-center justify-center">
             <Image
               src={work.thumbnail.url}
               alt={work.title}
-              fill
-              className="object-cover"
+              width={work.thumbnail.width}
+              height={work.thumbnail.height}
+              className="w-full h-auto"
             />
           </div>
         )}
