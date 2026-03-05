@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 const siteUrl = "https://www.umeblog.com";
 const siteDescription =
-  "Go・AWSを中心に、バックエンドとインフラを設計・構築するエンジニアのポートフォリオ。技術記事・個人開発・日常を発信しています。";
+  "気づいたらラーメン屋の前にいるエンジニアが、技術と日常を書き殴るブログ。";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
