@@ -92,10 +92,10 @@ export default async function PortfolioDetailPage({ params }: Props) {
       </div>
 
       {/* Body */}
-      {work.body && (
+      {work.content && (
         <div
           className="glass-card p-8 prose prose-slate max-w-none"
-          dangerouslySetInnerHTML={{ __html: work.body }}
+          dangerouslySetInnerHTML={{ __html: work.content }}
         />
       )}
     </div>
