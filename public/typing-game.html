@@ -2,11 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>METEOR TYPING</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:#000015; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:monospace; user-select:none; }
-canvas { display:block; border:1px solid #1a1a5a; box-shadow:0 0 60px rgba(0,80,255,0.2),0 0 120px rgba(0,40,180,0.1); cursor:default; }
+body { background:#000015; display:flex; justify-content:center; align-items:center; min-height:100vh; min-height:100dvh; font-family:monospace; user-select:none; overflow:hidden; }
+canvas { display:block; border:1px solid #1a1a5a; box-shadow:0 0 60px rgba(0,80,255,0.2),0 0 120px rgba(0,40,180,0.1); cursor:default; max-width:100vw; max-height:100dvh; }
 </style>
 </head>
 <body>
@@ -16,6 +17,13 @@ const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 const W = canvas.width  = 900;
 const H = canvas.height = 560;
+function fitCanvas(){
+  const scale=Math.min(window.innerWidth/W, window.innerHeight/H, 1);
+  canvas.style.transform=`scale(${scale})`;
+  canvas.style.transformOrigin='center center';
+}
+fitCanvas();
+window.addEventListener('resize', fitCanvas);
 
 // ── サウンド ───────────────────────────────────────────────────────────────────
 let AC;
