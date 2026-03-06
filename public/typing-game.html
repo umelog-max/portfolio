@@ -404,7 +404,7 @@ function drawHUD(){
   const cfg=DIFF_CFG[G.diff];
   ctx.font='bold 17px monospace';ctx.textAlign='left';ctx.fillStyle='#ffffff';ctx.fillText(`SCORE: ${G.score}`,130,30);
   ctx.textAlign='center';ctx.fillStyle='#aaddff';ctx.fillText(`LEVEL ${G.level}`,W/2,30);
-  ctx.font='bold 11px monospace';ctx.fillStyle=cfg.color;ctx.fillText(`[${cfg.name}]`,W/2,48);
+  ctx.font='bold 17px monospace';ctx.fillStyle=cfg.color;ctx.fillText(`[${cfg.name}]`,W/2,50);
   const hx=W-165,hy=14,hw=145,hh=19;
   ctx.fillStyle='#1a1a2a';roundRect(hx,hy,hw,hh,4);ctx.fill();
   const ratio=G.lives/G.maxLives;ctx.fillStyle=ratio>0.6?'#44ff66':ratio>0.3?'#ffaa22':'#ff3333';
@@ -412,7 +412,7 @@ function drawHUD(){
   ctx.strokeStyle='#445566';ctx.lineWidth=1;roundRect(hx,hy,hw,hh,4);ctx.stroke();
   ctx.font='bold 11px monospace';ctx.textAlign='center';ctx.fillStyle='#ffffff';ctx.fillText(`HP  ${G.lives} / ${G.maxLives}`,hx+hw/2,hy+hh-3);
   // ストック & ミス表示
-  ctx.font='11px monospace';ctx.textAlign='right';
+  ctx.font='bold 11px monospace';ctx.textAlign='right';
   ctx.fillStyle=G.healStock>0?'#00ffee':'#336655';ctx.fillText(`STOCK: ${G.healStock}`,W-18,hy+hh+16);
   ctx.fillStyle=G.misses>0?'#ff6644':'#445566';ctx.fillText(`MISS: ${G.misses}`,W-18,hy+hh+30);
   // ポーズボタン
