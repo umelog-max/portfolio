@@ -87,7 +87,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg transition-colors"
             >
-              デモを見る →
+              Check！
             </a>
           )}
           {work.github && (
