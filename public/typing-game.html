@@ -126,7 +126,7 @@ const WORD_DB = {
     {j:'前途多難',k:'ぜんとたなん',r:'zentotanan'},
     {j:'危機一髪',k:'ききいっぱつ',r:'kikiippatsu'},
     {j:'馬耳東風',k:'ばじとうふう',r:'bajitoufuu'},
-    {j:'大器晩成',k:'たいきばんせい',r:'taikibansEI'.toLowerCase()},
+    {j:'大器晩成',k:'たいきばんせい',r:'taikibansei'},
     {j:'善は急げ',k:'ぜんはいそげ',r:'zenhaisoge'},
     {j:'目から鱗',k:'めからうろこ',r:'mekarauroko'},
   ],
@@ -207,7 +207,7 @@ const I18N={
       hard:  ['ことわざが迫りくる','高速・長文連続','上級者向け'],
     },
     selectKey:' で選択',
-    hudPause:'停止',
+    hudPause:'[P] 停止',
     pauseTitle:'PAUSE',
     resumeBtn:'▶  再開',
     quitBtn:'■  中止',
@@ -225,6 +225,8 @@ const I18N={
     noRecord:'まだ記録がありません',
     rankIn:(p)=>`ランキング ${p}位 にランクイン！`,
     langBtn:'English',
+    ranksBtn:'[ T ]  称号一覧',
+    ranksTitle:'─── 称号一覧 ───',
   },
   en:{
     tagline:'Type the incoming meteors in romaji to blast them!',
@@ -243,7 +245,7 @@ const I18N={
       hard:  ['Long proverbs incoming','High speed, long words','For experts'],
     },
     selectKey:' to select',
-    hudPause:'Pause',
+    hudPause:'[P] Pause',
     pauseTitle:'PAUSE',
     resumeBtn:'▶  Resume',
     quitBtn:'■  Quit',
@@ -261,6 +263,8 @@ const I18N={
     noRecord:'No records yet',
     rankIn:(p)=>`Ranked #${p}!`,
     langBtn:'日本語',
+    ranksBtn:'[ T ]  Ranks',
+    ranksTitle:'─── Rank List ───',
   },
 };
 function T(key,...a){const v=I18N[lang][key];return typeof v==='function'?v(...a):v;}
@@ -446,6 +450,8 @@ const RANKING_BTN={x:W/2-80,y:H/2+169,w:160,h:33};
 function isHoverRankingBtn(){const c=RANKING_BTN;return mouseX>=c.x&&mouseX<=c.x+c.w&&mouseY>=c.y&&mouseY<=c.y+c.h;}
 const LANG_BTN   ={x:W-108,y:12,   w:96, h:28};
 function isHoverLangBtn(){const c=LANG_BTN;return G.phase==='title'&&mouseX>=c.x&&mouseX<=c.x+c.w&&mouseY>=c.y&&mouseY<=c.y+c.h;}
+const RANKS_BTN  ={x:W/2-80,y:H/2+207,w:160,h:30};
+function isHoverRanksBtn(){const c=RANKS_BTN;return G.phase==='title'&&mouseX>=c.x&&mouseX<=c.x+c.w&&mouseY>=c.y&&mouseY<=c.y+c.h;}
 const PAUSE_BTN  ={x:W-92, y:H-42, w:80, h:28};
 const RESUME_BTN ={x:W/2-115,y:H/2+20,w:106,h:38};
 const QUIT_BTN   ={x:W/2+15, y:H/2+20,w:96, h:38};
@@ -501,6 +507,14 @@ function drawTitleScreen(){
   roundRect(LANG_BTN.x,LANG_BTN.y,LANG_BTN.w,LANG_BTN.h,5);ctx.stroke();ctx.shadowBlur=0;
   ctx.font=`bold ${hovL?13:12}px monospace`;ctx.textAlign='center';ctx.fillStyle=hovL?'#ffffff':'#88cc88';
   ctx.textBaseline='middle';ctx.fillText(T('langBtn'),LANG_BTN.x+LANG_BTN.w/2,LANG_BTN.y+LANG_BTN.h/2);ctx.textBaseline='alphabetic';
+  // 称号一覧ボタン
+  const hovRk=isHoverRanksBtn();
+  ctx.fillStyle=hovRk?'rgba(80,50,150,0.5)':'rgba(50,25,110,0.35)';
+  roundRect(RANKS_BTN.x,RANKS_BTN.y,RANKS_BTN.w,RANKS_BTN.h,6);ctx.fill();
+  ctx.shadowBlur=hovRk?12:4;ctx.shadowColor='#9966ff';ctx.strokeStyle=hovRk?'#bb88ff':'#664499';ctx.lineWidth=hovRk?2:1;
+  roundRect(RANKS_BTN.x,RANKS_BTN.y,RANKS_BTN.w,RANKS_BTN.h,6);ctx.stroke();ctx.shadowBlur=0;
+  ctx.font=`bold ${hovRk?14:13}px monospace`;ctx.fillStyle=hovRk?'#ffffff':'#9977cc';
+  ctx.textBaseline='middle';ctx.fillText(T('ranksBtn'),W/2,RANKS_BTN.y+RANKS_BTN.h/2);ctx.textBaseline='alphabetic';
 }
 
 // ── 難易度選択 ────────────────────────────────────────────────────────────────
@@ -572,10 +586,12 @@ function drawOverResults(){
   ctx.font='bold 20px monospace';ctx.fillStyle='#ffffff';ctx.fillText(`SCORE:  ${G.score}`,W/2-70,95);
   drawRankBadge(rank,W/2+90,95,false);
   if(G.myRankPos>0){ctx.font='bold 13px monospace';ctx.fillStyle='#ffee88';ctx.fillText(T('rankIn',G.myRankPos),W/2,118);}
+  const nr2=getNextRank(G.score);
+  if(nr2){const nr2Y=G.myRankPos>0?133:118;ctx.font='12px monospace';ctx.fillStyle='#88ccaa';ctx.fillText(T('nextRankMsg',nr2.name,nr2.min-G.score),W/2,nr2Y);}
   // ランキングテーブル
-  ctx.font='bold 12px monospace';ctx.fillStyle='#6688aa';ctx.fillText(T('rankingTopLbl'),W/2,142);
-  const sy=155,rh=26;
-  board.slice(0,8).forEach((e,i)=>{
+  ctx.font='bold 12px monospace';ctx.fillStyle='#6688aa';ctx.fillText(T('rankingTopLbl'),W/2,150);
+  const sy=163,rh=26;
+  board.slice(0,7).forEach((e,i)=>{
     const y=sy+i*rh,isMe=(i+1)===G.myRankPos;
     if(isMe){ctx.fillStyle='rgba(80,130,60,0.3)';roundRect(40,y-13,W-80,rh-2,3);ctx.fill();}
     ctx.font=`bold 12px monospace`;
@@ -641,12 +657,45 @@ function drawRankingScreen(){
   ctx.textBaseline='middle';ctx.fillText(T('backBtn'),W/2,BACK_BTN.y+BACK_BTN.h/2);ctx.textBaseline='alphabetic';
 }
 
+// ── 称号一覧画面 ───────────────────────────────────────────────────────────────
+function drawRanksScreen(){
+  ctx.fillStyle='rgba(0,0,20,0.92)';ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';ctx.font='bold 22px monospace';ctx.shadowBlur=14;ctx.shadowColor='#7744ff';
+  ctx.fillStyle='#ccaaff';ctx.fillText(T('ranksTitle'),W/2,44);ctx.shadowBlur=0;
+  ctx.strokeStyle='#334455';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(40,54);ctx.lineTo(W-40,54);ctx.stroke();
+  const half=Math.ceil(RANKS.length/2); // 9 per column
+  RANKS.forEach((r,i)=>{
+    const col=i<half?0:1;
+    const row=i<half?i:i-half;
+    const bx=col===0?22:472;
+    const y=70+row*47;
+    const next=RANKS[i+1];
+    const rangeStr=next?`${r.min.toLocaleString()}〜${(next.min-1).toLocaleString()}`:`${r.min.toLocaleString()}〜`;
+    // 背景行
+    if(row%2===0){ctx.fillStyle='rgba(255,255,255,0.02)';roundRect(bx,y-14,410,38,3);ctx.fill();}
+    drawRankBadge(r,bx+82,y+5,false);
+    ctx.font='11px monospace';ctx.textAlign='left';ctx.fillStyle='#5588aa';
+    ctx.fillText(rangeStr,bx+172,y+9);
+  });
+  // 戻るボタン
+  const hov=isHoverBackBtn();
+  ctx.fillStyle=hov?'rgba(50,80,180,0.5)':'rgba(30,50,130,0.35)';roundRect(BACK_BTN.x,BACK_BTN.y,BACK_BTN.w,BACK_BTN.h,6);ctx.fill();
+  ctx.shadowBlur=hov?12:4;ctx.shadowColor='#4466ff';ctx.strokeStyle=hov?'#8899ff':'#445588';ctx.lineWidth=hov?2:1;roundRect(BACK_BTN.x,BACK_BTN.y,BACK_BTN.w,BACK_BTN.h,6);ctx.stroke();ctx.shadowBlur=0;
+  ctx.font=`bold ${hov?15:13}px monospace`;ctx.textAlign='center';ctx.fillStyle=hov?'#ffffff':'#8899cc';
+  ctx.textBaseline='middle';ctx.fillText(T('backBtn'),W/2,BACK_BTN.y+BACK_BTN.h/2);ctx.textBaseline='alphabetic';
+}
+
 // ── 入力処理 ──────────────────────────────────────────────────────────────────
 document.addEventListener('keydown',e=>{
   initAudio();
   if(G.phase==='title'){
     if(e.key==='Enter'||e.key===' '){G.phase='select';}
     else if(e.key==='r'||e.key==='R'){G.phase='ranking';}
+    else if(e.key==='t'||e.key==='T'){G.phase='ranks';}
+    return;
+  }
+  if(G.phase==='ranks'){
+    if(e.key==='Escape'||e.key==='Enter'||e.key===' '){initGame();G.phase='title';}
     return;
   }
   if(G.phase==='select'){
@@ -671,6 +720,7 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(G.phase!=='play')return;
+  if(e.key==='p'||e.key==='P'){G.paused=!G.paused;return;}
   if(G.paused)return;
 
   if(e.key==='Backspace'){
@@ -721,10 +771,11 @@ canvas.addEventListener('mousemove',e=>{
   const hovCard=G.phase==='select'&&DIFF_KEYS.some(k=>isHoverCard(k));
   const hovHome=G.phase==='over'&&G.nameSaved&&isHoverHomeBtn();
   const hovRank=G.phase==='title'&&isHoverRankingBtn();
-  const hovBack=G.phase==='ranking'&&isHoverBackBtn();
+  const hovBack=(G.phase==='ranking'||G.phase==='ranks')&&isHoverBackBtn();
   const hovPause=G.phase==='play'&&(!G.paused&&isHoverPauseBtn()||G.paused&&(isHoverResumeBtn()||isHoverQuitBtn()));
   const hovLang2=isHoverLangBtn();
-  canvas.style.cursor=(hovCard||hovHome||hovRank||hovBack||hovPause||hovLang2)?'pointer':'default';
+  const hovRanks2=isHoverRanksBtn();
+  canvas.style.cursor=(hovCard||hovHome||hovRank||hovBack||hovPause||hovLang2||hovRanks2)?'pointer':'default';
 });
 canvas.addEventListener('click',e=>{
   initAudio();
@@ -734,9 +785,11 @@ canvas.addEventListener('click',e=>{
   else if(G.phase==='title'){
     const c=RANKING_BTN;if(mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h)G.phase='ranking';
     const l=LANG_BTN;if(mx>=l.x&&mx<=l.x+l.w&&my>=l.y&&my<=l.y+l.h)lang=lang==='ja'?'en':'ja';
+    const rk=RANKS_BTN;if(mx>=rk.x&&mx<=rk.x+rk.w&&my>=rk.y&&my<=rk.y+rk.h)G.phase='ranks';
   }
   else if(G.phase==='over'&&G.nameSaved){if(mx>=HOME_BTN.x&&mx<=HOME_BTN.x+HOME_BTN.w&&my>=HOME_BTN.y&&my<=HOME_BTN.y+HOME_BTN.h){initGame();G.phase='title';}}
   else if(G.phase==='ranking'){const c=BACK_BTN;if(mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h){initGame();G.phase='title';}}
+  else if(G.phase==='ranks'){const c=BACK_BTN;if(mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h){initGame();G.phase='title';}}
   else if(G.phase==='play'){
     if(!G.paused&&mx>=PAUSE_BTN.x&&mx<=PAUSE_BTN.x+PAUSE_BTN.w&&my>=PAUSE_BTN.y&&my<=PAUSE_BTN.y+PAUSE_BTN.h){G.paused=true;}
     else if(G.paused){
@@ -805,6 +858,7 @@ function render(){
   if(G.phase==='select')drawSelectScreen();
   if(G.phase==='over'){ctx.fillStyle='rgba(0,0,20,0.9)';ctx.fillRect(0,0,W,H);if(!G.nameSaved)drawOverNameInput();else drawOverResults();}
   if(G.phase==='ranking')drawRankingScreen();
+  if(G.phase==='ranks')drawRanksScreen();
 }
 
 // ── メインループ ──────────────────────────────────────────────────────────────
