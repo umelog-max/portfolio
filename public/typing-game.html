@@ -690,8 +690,6 @@ document.addEventListener('keydown',e=>{
   initAudio();
   if(G.phase==='title'){
     if(e.key==='Enter'||e.key===' '){G.phase='select';}
-    else if(e.key==='r'||e.key==='R'){G.phase='ranking';}
-    else if(e.key==='t'||e.key==='T'){G.phase='ranks';}
     return;
   }
   if(G.phase==='ranks'){
@@ -720,7 +718,6 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(G.phase!=='play')return;
-  if(e.key==='p'||e.key==='P'){G.paused=!G.paused;return;}
   if(G.paused)return;
 
   if(e.key==='Backspace'){
