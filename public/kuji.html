@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>くじびき</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #1a0533 0%, #0d1b4b 50%, #001a33 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px #ff6bcb, 0 0 40px #ff6bcb;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #aad4ff;
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+    opacity: 0.8;
+  }
+
+  /* --- Setup Screen --- */
+  #setup-screen {
+    display: block;
+  }
+
+  #spin-screen, #result-screen {
+    display: none;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 28px 24px;
+    backdrop-filter: blur(10px);
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffdf70;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .choices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .choice-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .choice-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .choice-input {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 9px 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .choice-input::placeholder {
+    color: rgba(255,255,255,0.3);
+    font-weight: 700;
+  }
+
+  .choice-input:focus {
+    border-color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.15);
+  }
+
+  .remove-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,80,80,0.25);
+    color: #ff8888;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .remove-btn:hover {
+    background: rgba(255,80,80,0.5);
+  }
+
+  .add-btn {
+    width: 100%;
+    padding: 9px;
+    border-radius: 10px;
+    border: 1.5px dashed rgba(255,255,255,0.3);
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .add-btn:hover {
+    border-color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .start-btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 18px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #ff6bcb, #ff8c42);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 30px rgba(255,107,203,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .start-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 40px rgba(255,107,203,0.7);
+  }
+
+  .start-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* --- Spin Screen --- */
+  .spin-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .roulette-box {
+    width: 100%;
+    max-width: 400px;
+    height: 80px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 2px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.4);
+  }
+
+  /* side fade */
+  .roulette-box::before,
+  .roulette-box::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 70px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .roulette-box::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
+  }
+
+  .roulette-box::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.8), transparent);
+  }
+
+  /* center highlight */
+  .roulette-highlight {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    border-left: 2px solid rgba(255,220,80,0.8);
+    border-right: 2px solid rgba(255,220,80,0.8);
+    z-index: 3;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px rgba(255,220,80,0.15);
+  }
+
+  .roulette-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+  }
+
+  .roulette-item {
+    height: 80px;
+    width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #fff;
+    padding: 0 16px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .spin-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    height: 20px;
+  }
+
+  /* --- Result Screen --- */
+  .result-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .result-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #aad4ff;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .result-answer {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 30px currentColor;
+    animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    line-height: 1.2;
+    word-break: break-all;
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0.4); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .result-decided {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ffdf70;
+    text-shadow: 0 0 20px #ffdf70;
+    animation: fade-up 0.5s 0.2s ease both;
+  }
+
+  @keyframes fade-up {
+    0% { transform: translateY(10px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .result-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .btn-again {
+    padding: 13px 28px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #7b61ff, #a855f7);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(123,97,255,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn-again:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(123,97,255,0.7);
+  }
+
+  .btn-reset {
+    padding: 13px 28px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.8);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-reset:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.5);
+    color: #fff;
+  }
+
+  /* Confetti canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Palette for choice bullets */
+  .palette-0  { background: #ff6bcb; }
+  .palette-1  { background: #ff8c42; }
+  .palette-2  { background: #ffd600; }
+  .palette-3  { background: #4cde80; }
+  .palette-4  { background: #00c9ff; }
+  .palette-5  { background: #7b61ff; }
+  .palette-6  { background: #ff4d6d; }
+  .palette-7  { background: #00e5c3; }
+  .palette-8  { background: #ffb347; }
+  .palette-9  { background: #b76eff; }
+
+  .color-0  { color: #ff6bcb; text-shadow: 0 0 20px #ff6bcb; }
+  .color-1  { color: #ff8c42; text-shadow: 0 0 20px #ff8c42; }
+  .color-2  { color: #ffd600; text-shadow: 0 0 20px #ffd600; }
+  .color-3  { color: #4cde80; text-shadow: 0 0 20px #4cde80; }
+  .color-4  { color: #00c9ff; text-shadow: 0 0 20px #00c9ff; }
+  .color-5  { color: #7b61ff; text-shadow: 0 0 20px #7b61ff; }
+  .color-6  { color: #ff4d6d; text-shadow: 0 0 20px #ff4d6d; }
+  .color-7  { color: #00e5c3; text-shadow: 0 0 20px #00e5c3; }
+  .color-8  { color: #ffb347; text-shadow: 0 0 20px #ffb347; }
+  .color-9  { color: #b76eff; text-shadow: 0 0 20px #b76eff; }
+
+  @media (max-width: 420px) {
+    h1 { font-size: 2rem; }
+    .result-answer { font-size: 2.2rem; }
+    .roulette-item { font-size: 1rem; width: 120px; }
+    .roulette-highlight { width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="container">
+  <h1>くじびき</h1>
+  <p class="subtitle">運命にすべてを委ねよう</p>
+
+  <!-- Setup Screen -->
+  <div id="setup-screen">
+    <div class="card">
+      <div class="card-title">選択肢を入力</div>
+      <div class="choices-list" id="choices-list"></div>
+      <button class="add-btn" id="add-btn">＋ 選択肢を追加</button>
+    </div>
+    <button class="start-btn" id="start-btn">くじをひく !</button>
+  </div>
+
+  <!-- Spin Screen -->
+  <div id="spin-screen">
+    <div class="card">
+      <div class="spin-wrapper">
+        <div class="spin-label" id="spin-label">まわっています...</div>
+        <div class="roulette-box">
+          <div class="roulette-highlight"></div>
+          <div class="roulette-track" id="roulette-track"></div>
+        </div>
+        <div style="height:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Screen -->
+  <div id="result-screen">
+    <div class="card">
+      <div class="result-wrapper">
+        <div class="result-label">決まった！</div>
+        <div class="result-answer" id="result-answer"></div>
+        <div class="result-decided">これに決まり！</div>
+        <div class="result-buttons">
+          <button class="btn-again" id="btn-again">もう一度ひく</button>
+          <button class="btn-reset" id="btn-reset">← やり直す</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- State ----
+const PALETTE_COLORS = [
+  '#ff6bcb','#ff8c42','#ffd600','#4cde80','#00c9ff',
+  '#7b61ff','#ff4d6d','#00e5c3','#ffb347','#b76eff'
+];
+const MIN_CHOICES = 2;
+const MAX_CHOICES = 10;
+
+let choices = ['', ''];
+
+// ---- Elements ----
+const setupScreen  = document.getElementById('setup-screen');
+const spinScreen   = document.getElementById('spin-screen');
+const resultScreen = document.getElementById('result-screen');
+const choicesList  = document.getElementById('choices-list');
+const addBtn       = document.getElementById('add-btn');
+const startBtn     = document.getElementById('start-btn');
+const rouletteTrack= document.getElementById('roulette-track');
+const spinLabel    = document.getElementById('spin-label');
+const resultAnswer = document.getElementById('result-answer');
+const btnAgain     = document.getElementById('btn-again');
+const btnReset     = document.getElementById('btn-reset');
+
+// ---- Render setup ----
+function renderSetup() {
+  choicesList.innerHTML = '';
+  choices.forEach((val, i) => {
+    const row = document.createElement('div');
+    row.className = 'choice-row';
+
+    const num = document.createElement('div');
+    num.className = `choice-num palette-${i % 10}`;
+    num.textContent = i + 1;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'choice-input';
+    input.placeholder = `選択肢 ${i + 1}`;
+    input.maxLength = 20;
+    input.value = val;
+    input.addEventListener('input', e => { choices[i] = e.target.value; });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        if (i < choices.length - 1) {
+          choicesList.querySelectorAll('.choice-input')[i + 1]?.focus();
+        } else if (choices.length < MAX_CHOICES) {
+          addChoice();
+          setTimeout(() => {
+            choicesList.querySelectorAll('.choice-input')[choices.length - 1]?.focus();
+          }, 0);
+        }
+      }
+    });
+
+    row.appendChild(num);
+    row.appendChild(input);
+
+    if (choices.length > MIN_CHOICES) {
+      const rm = document.createElement('button');
+      rm.className = 'remove-btn';
+      rm.innerHTML = '&times;';
+      rm.title = '削除';
+      rm.addEventListener('click', () => {
+        choices.splice(i, 1);
+        renderSetup();
+      });
+      row.appendChild(rm);
+    }
+
+    choicesList.appendChild(row);
+  });
+
+  addBtn.style.display = choices.length >= MAX_CHOICES ? 'none' : '';
+}
+
+function addChoice() {
+  if (choices.length < MAX_CHOICES) {
+    choices.push('');
+    renderSetup();
+  }
+}
+
+addBtn.addEventListener('click', () => {
+  addChoice();
+  setTimeout(() => {
+    choicesList.querySelectorAll('.choice-input')[choices.length - 1]?.focus();
+  }, 0);
+});
+
+// ---- Start ----
+startBtn.addEventListener('click', () => {
+  const filled = choices.filter(c => c.trim() !== '');
+  if (filled.length < 2) {
+    alert('選択肢を2つ以上入力してください！');
+    return;
+  }
+  // update choices to only filled ones
+  choices = filled;
+  renderSetup();
+  startSpin();
+});
+
+// ---- Spin ----
+const ITEM_WIDTH = 140;
+
+function startSpin() {
+  setupScreen.style.display = 'none';
+  resultScreen.style.display = 'none';
+  spinScreen.style.display = 'block';
+  spinLabel.textContent = 'まわっています...';
+
+  const winner = Math.floor(Math.random() * choices.length);
+
+  // Build a long repeating list ending on winner
+  const REPS = 6; // full cycles
+  const items = [];
+  for (let r = 0; r < REPS; r++) {
+    for (let i = 0; i < choices.length; i++) {
+      items.push(i);
+    }
+  }
+  // Add extra items so winner lands in center
+  // Center is at track offset = items.length * ITEM_WIDTH - (boxWidth/2 - ITEM_WIDTH/2)
+  // We want the winner at index = items.length at end
+  items.push(winner);
+
+  // Build DOM
+  rouletteTrack.innerHTML = '';
+  // We start so item[0] is centered, so initial offset = -(boxWidth/2 - ITEM_WIDTH/2) = -130
+  // Actually: center item is at left = 50% - 70px = boxCenter - 70
+  // We'll translate the track so items[centerIdx] is centered
+
+  items.forEach(idx => {
+    const el = document.createElement('div');
+    el.className = 'roulette-item';
+    el.textContent = choices[idx];
+    el.style.color = PALETTE_COLORS[idx % PALETTE_COLORS.length];
+    rouletteTrack.appendChild(el);
+  });
+
+  const boxWidth = rouletteTrack.parentElement.offsetWidth;
+  const centerOffset = boxWidth / 2 - ITEM_WIDTH / 2;
+
+  // Start: first item centered
+  const startX = centerOffset;
+  // End: last item (winner) centered
+  const endX = centerOffset - (items.length - 1) * ITEM_WIDTH;
+
+  rouletteTrack.style.transform = `translateX(${startX}px)`;
+
+  const DURATION = 3200; // ms
+  const startTime = performance.now();
+
+  function easeOut(t) {
+    // cubic ease out
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function tick(now) {
+    const elapsed = now - startTime;
+    const t = Math.min(elapsed / DURATION, 1);
+    const eased = easeOut(t);
+    const currentX = startX + (endX - startX) * eased;
+    rouletteTrack.style.transform = `translateX(${currentX}px)`;
+
+    if (t < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      // Done
+      setTimeout(() => showResult(winner), 200);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// ---- Result ----
+function showResult(winnerIdx) {
+  spinScreen.style.display = 'none';
+  resultScreen.style.display = 'block';
+
+  resultAnswer.textContent = choices[winnerIdx];
+  resultAnswer.className = `result-answer color-${winnerIdx % 10}`;
+
+  launchConfetti();
+}
+
+btnAgain.addEventListener('click', () => {
+  startSpin();
+});
+
+btnReset.addEventListener('click', () => {
+  resultScreen.style.display = 'none';
+  setupScreen.style.display = 'block';
+  renderSetup();
+});
+
+// ---- Confetti ----
+const confCanvas = document.getElementById('confetti-canvas');
+const confCtx = confCanvas.getContext('2d');
+let confParticles = [];
+let confAnimId = null;
+
+function launchConfetti() {
+  confCanvas.width = window.innerWidth;
+  confCanvas.height = window.innerHeight;
+
+  confParticles = [];
+  const COLORS = PALETTE_COLORS;
+  for (let i = 0; i < 120; i++) {
+    confParticles.push({
+      x: Math.random() * confCanvas.width,
+      y: -10 - Math.random() * 100,
+      vx: (Math.random() - 0.5) * 4,
+      vy: 2 + Math.random() * 4,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      size: 6 + Math.random() * 8,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.2,
+      shape: Math.random() < 0.5 ? 'rect' : 'circle',
+      alpha: 1
+    });
+  }
+
+  if (confAnimId) cancelAnimationFrame(confAnimId);
+  animateConfetti();
+}
+
+function animateConfetti() {
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+
+  confParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.08;
+    p.rotation += p.rotSpeed;
+    if (p.y > confCanvas.height * 0.7) p.alpha -= 0.02;
+
+    confCtx.save();
+    confCtx.globalAlpha = Math.max(p.alpha, 0);
+    confCtx.translate(p.x, p.y);
+    confCtx.rotate(p.rotation);
+    confCtx.fillStyle = p.color;
+    if (p.shape === 'rect') {
+      confCtx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+    } else {
+      confCtx.beginPath();
+      confCtx.arc(0, 0, p.size/2, 0, Math.PI*2);
+      confCtx.fill();
+    }
+    confCtx.restore();
+  });
+
+  confParticles = confParticles.filter(p => p.alpha > 0);
+  if (confParticles.length > 0) {
+    confAnimId = requestAnimationFrame(animateConfetti);
+  } else {
+    confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  }
+}
+
+// ---- Init ----
+renderSetup();
+</script>
+</body>
+</html>
