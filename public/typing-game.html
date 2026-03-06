@@ -300,15 +300,20 @@ function roundRect(x,y,w,h,r){
 }
 
 // ── LocalStorage ──────────────────────────────────────────────────────────────
-function getLeaderboard(){ try{return JSON.parse(localStorage.getItem('meteorTypingScores'))||[];}catch{return[];} }
-function saveScore(){
-  const board=getLeaderboard();
-  const rank=getRank(G.score);
-  const entry={name:G.nameInput.trim()||'名無し',score:G.score,level:G.level,diff:G.diff,rankName:rank.name,rankColor:rank.color,destroyed:G.destroyed,date:new Date().toLocaleDateString('ja-JP')};
-  board.push(entry); board.sort((a,b)=>b.score-a.score); board.splice(10);
-  localStorage.setItem('meteorTypingScores',JSON.stringify(board));
-  G.myRankPos=board.findIndex(e=>e.score===entry.score&&e.name===entry.name)+1;
+const API='https://q4dpsjm005.execute-api.ap-northeast-1.amazonaws.com/rankings';
+let boardCache=[];
+function getLeaderboard(){ return boardCache; }
+async function fetchBoard(){
+  try{ const r=await fetch(API); boardCache=await r.json(); }catch(e){ console.error(e); }
 }
+async function saveScore(){
+  const rank=getRank(G.score);
+  const entry={name:G.nameInput.trim()||'名無し',score:G.score,level:G.level,diff:G.diff,rankName:rank.name,destroyed:G.destroyed};
+  try{ await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)}); }catch(e){ console.error(e); }
+  await fetchBoard();
+  G.myRankPos=boardCache.findIndex(e=>e.score===entry.score&&e.name===entry.name)+1;
+}
+fetchBoard();
 
 // ── ローマ字バリアント ─────────────────────────────────────────────────────────
 const SUBS=[['sha',['sya']],['shi',['si']],['shu',['syu']],['sho',['syo']],['chi',['ti']],['cha',['tya','cya']],['chu',['tyu','cyu']],['cho',['tyo','cyo']],['tsu',['tu']],['fu',['hu']],['ji',['zi']],['ja',['jya','zya']],['ju',['jyu','zyu']],['jo',['jyo','zyo']]];
@@ -708,7 +713,7 @@ document.addEventListener('keydown',e=>{
   }
   if(G.phase==='over'){
     if(!G.nameSaved){
-      if(e.key==='Enter'&&G.nameInput.trim()){saveScore();G.nameSaved=true;}
+      if(e.key==='Enter'&&G.nameInput.trim()){G.nameSaved=true;saveScore();}
       else if(e.key==='Escape'){G.nameSaved=true;}
       else if(e.key==='Backspace'){e.preventDefault();G.nameInput=G.nameInput.slice(0,-1);}
       else if(e.key.length===1&&G.nameInput.length<12){G.nameInput+=e.key;}
@@ -780,7 +785,7 @@ canvas.addEventListener('click',e=>{
   const mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
   if(G.phase==='select'){for(const k of DIFF_KEYS){const c=CARDS[k];if(mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h){initGame(k);break;}}}
   else if(G.phase==='title'){
-    const c=RANKING_BTN;if(mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h)G.phase='ranking';
+    const c=RANKING_BTN;if(mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h){G.phase='ranking';fetchBoard();}
     const l=LANG_BTN;if(mx>=l.x&&mx<=l.x+l.w&&my>=l.y&&my<=l.y+l.h)lang=lang==='ja'?'en':'ja';
     const rk=RANKS_BTN;if(mx>=rk.x&&mx<=rk.x+rk.w&&my>=rk.y&&my<=rk.y+rk.h)G.phase='ranks';
   }
