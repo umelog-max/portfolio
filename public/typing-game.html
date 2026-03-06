@@ -219,7 +219,7 @@ const I18N={
     destroyedUnit:(n)=>`${n}語  `,
     rankingTitle:'RANKING  TOP 10',
     rankingTopLbl:'─  TOP RANKING  ─',
-    cols:[{x:45,t:'#'},{x:72,t:'名前'},{x:240,t:'スコア'},{x:340,t:'称号'},{x:460,t:'難易度'},{x:530,t:'Lv'},{x:600,t:'撃破'},{x:855,t:'日付',r:true}],
+    cols:[{x:45,t:'#'},{x:72,t:'名前'},{x:240,t:'スコア'},{x:340,t:'称号'},{x:460,t:'難易度'},{x:530,t:'Lv'},{x:600,t:'撃破'},{x:700,t:'日付'}],
     backBtn:'▲ タイトルへ戻る',
     homeBtn:'▲ ホームへ戻る',
     noRecord:'まだ記録がありません',
@@ -257,7 +257,7 @@ const I18N={
     destroyedUnit:(n)=>`${n}  `,
     rankingTitle:'RANKING  TOP 10',
     rankingTopLbl:'─  TOP RANKING  ─',
-    cols:[{x:45,t:'#'},{x:72,t:'Name'},{x:240,t:'Score'},{x:340,t:'Rank'},{x:460,t:'Diff'},{x:530,t:'Lv'},{x:600,t:'Kill'},{x:855,t:'Date',r:true}],
+    cols:[{x:45,t:'#'},{x:72,t:'Name'},{x:240,t:'Score'},{x:340,t:'Rank'},{x:460,t:'Diff'},{x:530,t:'Lv'},{x:600,t:'Kill'},{x:700,t:'Date'}],
     backBtn:'▲ Back to Title',
     homeBtn:'▲ Back to Home',
     noRecord:'No records yet',
@@ -652,7 +652,7 @@ function drawRankingScreen(){
     // 撃破数
     ctx.fillStyle='#aaaaaa';ctx.fillText(e.destroyed||0,600,y);
     // 日付
-    ctx.textAlign='right';ctx.fillStyle='#778899';ctx.font='13px monospace';ctx.fillText(e.date||'',W-45,y);
+    ctx.textAlign='left';ctx.fillStyle='#778899';ctx.font='13px monospace';ctx.fillText(e.date||'',700,y);
   });
   // 戻るボタン
   const hov=isHoverBackBtn();
