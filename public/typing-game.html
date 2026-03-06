@@ -219,7 +219,7 @@ const I18N={
     destroyedUnit:(n)=>`${n}語  `,
     rankingTitle:'RANKING  TOP 10',
     rankingTopLbl:'─  TOP RANKING  ─',
-    cols:[{x:45,t:'#'},{x:72,t:'名前'},{x:240,t:'スコア'},{x:340,t:'称号'},{x:460,t:'難易度'},{x:510,t:'Lv'},{x:580,t:'撃破'},{x:680,t:'日付'}],
+    cols:[{x:45,t:'#'},{x:72,t:'名前'},{x:240,t:'スコア'},{x:340,t:'称号'},{x:460,t:'難易度'},{x:530,t:'Lv'},{x:600,t:'撃破'},{x:855,t:'日付',r:true}],
     backBtn:'▲ タイトルへ戻る',
     homeBtn:'▲ ホームへ戻る',
     noRecord:'まだ記録がありません',
@@ -257,7 +257,7 @@ const I18N={
     destroyedUnit:(n)=>`${n}  `,
     rankingTitle:'RANKING  TOP 10',
     rankingTopLbl:'─  TOP RANKING  ─',
-    cols:[{x:45,t:'#'},{x:72,t:'Name'},{x:240,t:'Score'},{x:340,t:'Rank'},{x:460,t:'Diff'},{x:510,t:'Lv'},{x:580,t:'Kill'},{x:680,t:'Date'}],
+    cols:[{x:45,t:'#'},{x:72,t:'Name'},{x:240,t:'Score'},{x:340,t:'Rank'},{x:460,t:'Diff'},{x:530,t:'Lv'},{x:600,t:'Kill'},{x:855,t:'Date',r:true}],
     backBtn:'▲ Back to Title',
     homeBtn:'▲ Back to Home',
     noRecord:'No records yet',
@@ -627,16 +627,16 @@ function drawRankingScreen(){
   ctx.fillStyle='rgba(0,0,20,0.9)';ctx.fillRect(0,0,W,H);
   ctx.textAlign='center';ctx.font='bold 26px monospace';ctx.shadowBlur=16;ctx.shadowColor='#0066ff';ctx.fillStyle='#ffffff';ctx.fillText(T('rankingTitle'),W/2,52);ctx.shadowBlur=0;
   // ヘッダ
-  ctx.font='bold 11px monospace';ctx.fillStyle='#556677';ctx.textAlign='left';
-  T('cols').forEach(c=>{ctx.textAlign='left';ctx.fillText(c.t,c.x,78);});
+  ctx.font='bold 13px monospace';ctx.fillStyle='#556677';
+  T('cols').forEach(c=>{ctx.textAlign=c.r?'right':'left';ctx.fillText(c.t,c.x,78);});
   ctx.strokeStyle='#334455';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(40,85);ctx.lineTo(W-40,85);ctx.stroke();
   const board=getLeaderboard();
   if(!board.length){ctx.font='15px monospace';ctx.textAlign='center';ctx.fillStyle='#445566';ctx.fillText(T('noRecord'),W/2,250);}
   board.slice(0,10).forEach((e,i)=>{
-    const y=100+i*37, alt=i%2===1;
-    if(alt){ctx.fillStyle='rgba(255,255,255,0.03)';roundRect(40,y-14,W-80,34,3);ctx.fill();}
+    const y=100+i*40, alt=i%2===1;
+    if(alt){ctx.fillStyle='rgba(255,255,255,0.03)';roundRect(40,y-16,W-80,37,3);ctx.fill();}
     const rank=getRank(e.score);
-    ctx.font='bold 13px monospace';
+    ctx.font='bold 14px monospace';
     // 順位
     ctx.textAlign='center';ctx.fillStyle=i<3?['#ffdd44','#cccccc','#cc8833'][i]:'#556677';ctx.fillText(`${i+1}`,54,y);
     // 名前
@@ -646,13 +646,13 @@ function drawRankingScreen(){
     // 称号バッジ（小）
     drawRankBadge(rank,400,y-1,false);
     // 難易度
-    const dc=DIFF_CFG[e.diff];ctx.fillStyle=dc?dc.color:'#888';ctx.textAlign='center';ctx.font='bold 11px monospace';ctx.fillText(e.diff?e.diff.toUpperCase().slice(0,1):'?',470,y);
+    const dc=DIFF_CFG[e.diff];ctx.fillStyle=dc?dc.color:'#888';ctx.textAlign='center';ctx.font='bold 14px monospace';ctx.fillText(e.diff?e.diff.toUpperCase():'?',490,y);
     // レベル
-    ctx.fillStyle='#aaddff';ctx.fillText(e.level||'-',520,y);
+    ctx.fillStyle='#aaddff';ctx.fillText(e.level||'-',530,y);
     // 撃破数
-    ctx.fillStyle='#aaaaaa';ctx.fillText(e.destroyed||0,590,y);
+    ctx.fillStyle='#aaaaaa';ctx.fillText(e.destroyed||0,600,y);
     // 日付
-    ctx.textAlign='right';ctx.fillStyle='#445566';ctx.font='12px monospace';ctx.fillText(e.date||'',W-45,y);
+    ctx.textAlign='right';ctx.fillStyle='#778899';ctx.font='13px monospace';ctx.fillText(e.date||'',W-45,y);
   });
   // 戻るボタン
   const hov=isHoverBackBtn();
