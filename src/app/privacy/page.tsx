@@ -92,7 +92,7 @@ export default function PrivacyPage() {
         {sections.map((section) => (
           <section key={section.title} className="glass-card p-6">
             <h2 className="text-base font-black text-slate-900 mb-3">{section.title}</h2>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {section.body.map((sentence, i) => (
                 <p key={i} className="text-sm text-slate-600 leading-relaxed">{sentence}</p>
               ))}
@@ -101,7 +101,7 @@ export default function PrivacyPage() {
         ))}
       </div>
 
-      <p className="mt-10 text-xs text-slate-400 text-right fade-up">
+      <p className="mt-10 text-xs text-slate-300 text-right fade-up">
         制定日：2026年3月6日
       </p>
     </div>
