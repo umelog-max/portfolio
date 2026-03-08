@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>サブスク奉行</title>
+<meta name="description" content="サブスクを完全管理。買い切り・広告なし。">
+<meta name="theme-color" content="#e8855a">
+<link rel="manifest" href="data:application/json,{}">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --surface2: #f3f0eb;
+  --border: #ede9e3;
+  --text: #2d2926;
+  --text-dim: #a09890;
+  --text-mid: #6e6460;
+  --accent: #e8855a;
+  --accent-light: rgba(232,133,90,0.12);
+  --accent2: #7bbfa5;
+  --accent2-light: rgba(123,191,165,0.12);
+  --yellow: #f5c842;
+  --yellow-light: rgba(245,200,66,0.15);
+  --red: #e8706a;
+  --red-light: rgba(232,112,106,0.12);
+  --shadow: 0 2px 12px rgba(45,41,38,0.07);
+  --r: 16px;
+  --nav-h: 68px;
+}
+body.dark {
+  --bg: #131313;
+  --surface: #1c1c1c;
+  --surface2: #252525;
+  --border: #303030;
+  --text: #f0ede8;
+  --text-dim: #555;
+  --text-mid: #888;
+  --shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+  overscroll-behavior: none;
+}
+
+/* ===== LAYOUT ===== */
+.app { max-width: 480px; margin: 0 auto; }
+.screen { display: none; padding-bottom: calc(var(--nav-h) + 20px); animation: screenIn 0.25s ease; }
+.screen.active { display: block; }
+@keyframes screenIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===== HEADER ===== */
+.top-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px 0;
+  position: sticky; top: 0; background: var(--bg); z-index: 10;
+  padding-bottom: 12px;
+}
+.logo-wrap { display: flex; align-items: center; gap: 8px; }
+.logo-icon {
+  width: 36px; height: 36px; border-radius: 12px;
+  background: linear-gradient(135deg, #e8855a, #f0a882);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; box-shadow: 0 3px 10px rgba(232,133,90,0.3);
+}
+.logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.logo-text span { color: var(--accent); }
+.theme-toggle { display: flex; background: var(--surface2); border-radius: 50px; padding: 3px; gap: 2px; }
+.theme-btn {
+  width: 30px; height: 30px; border-radius: 50px; border: none;
+  background: none; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.theme-btn.active { background: var(--surface); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.screen-header {
+  padding: max(20px, env(safe-area-inset-top)) 20px 16px;
+  position: sticky; top: 0; background: var(--bg); z-index: 10;
+}
+.screen-header-title { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+
+/* ===== GREETING ===== */
+.greeting-section { padding: 4px 20px 0; }
+.greeting { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.3; }
+.greeting span { color: var(--accent); }
+.greeting-sub { font-size: 13px; color: var(--text-dim); margin-top: 4px; font-weight: 600; }
+
+/* ===== ALERT ===== */
+.alert-card {
+  margin: 16px 20px 0;
+  background: var(--red-light);
+  border: 1.5px solid rgba(232,112,106,0.2);
+  border-radius: var(--r); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
+.alert-emoji { font-size: 22px; flex-shrink: 0; }
+.alert-body { flex: 1; min-width: 0; }
+.alert-title { font-size: 12px; font-weight: 800; color: var(--red); }
+.alert-desc { font-size: 11px; color: var(--text-mid); margin-top: 2px; }
+.btn-alert {
+  background: var(--red); color: white; border: none;
+  padding: 7px 13px; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+
+/* ===== STATS ===== */
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 20px 0; }
+.stat-card {
+  background: var(--surface); border-radius: var(--r);
+  padding: 16px; box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease both;
+}
+.stat-card.wide { grid-column: 1 / -1; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.stat-card:nth-child(1){animation-delay:0.05s} .stat-card:nth-child(2){animation-delay:0.1s} .stat-card:nth-child(3){animation-delay:0.15s}
+.stat-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:10px; }
+.stat-icon.orange{background:var(--accent-light)} .stat-icon.green{background:var(--accent2-light)} .stat-icon.yellow{background:var(--yellow-light)}
+.stat-label { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-bottom: 4px; }
+.stat-value { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.stat-value .unit { font-size: 13px; font-weight: 600; color: var(--text-mid); }
+.stat-trend { display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:800; padding:3px 8px; border-radius:20px; margin-top:6px; }
+.stat-trend.up{background:var(--red-light);color:var(--red)} .stat-trend.ok{background:var(--surface2);color:var(--text-dim)}
+.stat-wide-inner { display: flex; justify-content: space-between; align-items: flex-start; }
+.budget-bar-wrap { flex: 1; margin-left: 16px; margin-top: 6px; }
+.budget-label { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
+.budget-bar { height: 6px; background: var(--surface2); border-radius: 50px; overflow: hidden; }
+.budget-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--accent2), var(--accent)); width: 0%; transition: width 1s ease; }
+.budget-value { font-size: 10px; color: var(--text-dim); font-weight: 600; margin-top: 4px; }
+
+/* ===== SECTION TITLE ===== */
+.section-title { font-size: 14px; font-weight: 800; padding: 20px 20px 12px; }
+
+/* ===== CATEGORY PILLS ===== */
+.category-scroll { display:flex; gap:8px; padding:0 20px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.category-scroll::-webkit-scrollbar { display: none; }
+.category-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border-radius: 50px;
+  padding: 9px 14px; box-shadow: var(--shadow);
+  font-size: 12px; font-weight: 700;
+  white-space: nowrap; flex-shrink: 0;
+  cursor: pointer; transition: all 0.2s;
+  border: 1.5px solid transparent;
+}
+.category-pill.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+.category-pill:active { transform: scale(0.96); }
+.pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pill-amount { color: var(--text-mid); font-weight: 600; font-size: 11px; }
+
+/* ===== SUBSCRIPTION ITEMS ===== */
+.sub-list { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; }
+.sub-item {
+  background: var(--surface); border-radius: var(--r);
+  padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow); cursor: pointer;
+  transition: transform 0.15s; animation: fadeUp 0.4s ease both;
+}
+.sub-item:active { transform: scale(0.98); }
+.sub-icon { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.sub-info { flex: 1; min-width: 0; }
+.sub-name { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sub-cat { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.sub-right { text-align: right; flex-shrink: 0; }
+.sub-amount { font-size: 15px; font-weight: 800; }
+.sub-unit { font-size: 11px; font-weight: 600; color: var(--text-mid); }
+.sub-yearly { font-size: 10px; color: var(--text-dim); font-weight: 600; }
+.sub-renewal { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:800; padding:3px 8px; border-radius:20px; margin-top:4px; }
+.sub-renewal.urgent{background:var(--red-light);color:var(--red)}
+.sub-renewal.soon{background:var(--yellow-light);color:#a07800}
+.sub-renewal.ok{background:var(--accent2-light);color:var(--accent2)}
+.renewal-dot { width:5px; height:5px; border-radius:50%; background:currentColor; display:inline-block; }
+.sub-renewal.urgent .renewal-dot { animation: blink 1.4s infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ===== EMPTY STATE ===== */
+.empty-state { display:flex; flex-direction:column; align-items:center; padding:60px 20px; gap:12px; text-align:center; }
+.empty-emoji { font-size: 48px; }
+.empty-title { font-size: 16px; font-weight: 800; }
+.empty-desc { font-size: 13px; color: var(--text-dim); font-weight: 600; line-height: 1.6; }
+.btn-empty {
+  margin-top: 8px; padding: 12px 24px;
+  background: var(--accent); color: white; border: none;
+  border-radius: 50px; font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(232,133,90,0.3); transition: transform 0.15s;
+}
+.btn-empty:active { transform: scale(0.97); }
+
+/* ===== NOTIFICATION LIST ===== */
+.notif-list { display:flex; flex-direction:column; gap:10px; padding:0 20px; }
+.notif-item {
+  background: var(--surface); border-radius: var(--r);
+  padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s;
+}
+.notif-item:active { transform: scale(0.98); }
+.notif-date { font-size: 11px; color: var(--text-dim); font-weight: 700; padding: 20px 20px 8px; }
+
+/* ===== SETTINGS ===== */
+.settings-group { margin: 0 20px; background: var(--surface); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+.settings-group-label { font-size: 11px; font-weight: 800; color: var(--text-dim); padding: 14px 16px 6px; letter-spacing: 0.05em; }
+.settings-row { display:flex; align-items:center; padding:14px 16px; gap:12px; border-top:1px solid var(--border); }
+.settings-row:first-of-type { border-top: none; }
+.settings-row-icon { font-size: 18px; flex-shrink: 0; }
+.settings-row-label { font-size: 14px; font-weight: 700; flex: 1; }
+.settings-row-value { font-size: 13px; color: var(--text-dim); font-weight: 600; }
+.settings-input {
+  width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700;
+  color: var(--text); outline: none; transition: border-color 0.2s;
+}
+.settings-input:focus { border-color: var(--accent); }
+.settings-input-label { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
+.settings-field { display:flex; flex-direction:column; width:100%; }
+.theme-setting-row { display: flex; gap: 8px; width: 100%; }
+.theme-setting-btn {
+  flex: 1; padding: 10px 0;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 10px; font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 700; color: var(--text-dim);
+  cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.theme-setting-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+.btn-primary {
+  display: block; width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--accent), #f0a882);
+  color: white; border: none; border-radius: var(--r);
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(232,133,90,0.3);
+  transition: transform 0.15s;
+}
+.btn-primary:active { transform: scale(0.98); }
+.btn-danger {
+  display: block; width: 100%; padding: 14px;
+  background: transparent; color: var(--red);
+  border: 1.5px solid var(--red); border-radius: var(--r);
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-danger:active { background: var(--red-light); }
+.settings-spacer { height: 16px; }
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+  position: fixed; bottom: 0;
+  left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  background: var(--surface); border-top: 1px solid var(--border);
+  display: flex; padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06); z-index: 100;
+}
+.nav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  flex: 1; cursor: pointer; padding: 4px 0;
+  transition: transform 0.15s; border: none; background: none;
+  font-family: 'Nunito', sans-serif; position: relative;
+}
+.nav-btn:active { transform: scale(0.9); }
+.nav-btn-icon {
+  width: 40px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all 0.2s; position: relative;
+}
+.nav-btn.active .nav-btn-icon { background: var(--accent-light); }
+.nav-btn-label { font-size: 10px; font-weight: 700; color: var(--text-dim); }
+.nav-btn.active .nav-btn-label { color: var(--accent); }
+.nav-badge {
+  position: absolute; top: 0; right: 0;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--red); color: white;
+  font-size: 9px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ===== FAB ===== */
+.fab {
+  position: fixed;
+  bottom: max(calc(var(--nav-h) + 12px), calc(env(safe-area-inset-bottom) + var(--nav-h) + 4px));
+  right: 20px; width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #f0a882);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; color: white;
+  box-shadow: 0 4px 16px rgba(232,133,90,0.4);
+  transition: transform 0.15s; z-index: 99;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ===== MODAL (Add/Edit) ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  width: 100%; max-width: 480px; background: var(--bg);
+  border-radius: 24px 24px 0 0;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  max-height: 92vh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+}
+.modal-overlay.active .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 50px; margin: 12px auto 0; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; padding: 16px 20px; }
+.modal-title { font-size: 18px; font-weight: 800; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface2); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--text-mid);
+}
+.form-body { padding: 0 20px; display: flex; flex-direction: column; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 12px; font-weight: 800; color: var(--text-dim); }
+.form-input, .form-select, .form-textarea {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 12px 14px;
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700;
+  color: var(--text); outline: none; transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+.form-textarea { resize: none; height: 72px; }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+.form-hint { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+.form-amount-wrap { position: relative; }
+.form-amount-prefix {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; font-weight: 800; color: var(--text-mid); pointer-events: none;
+}
+.form-input.has-prefix { padding-left: 28px; }
+/* Icon picker */
+.icon-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.icon-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+/* Error */
+.form-error { color: var(--red); font-size: 13px; font-weight: 700; display: none; padding: 4px 0; }
+.btn-submit {
+  margin: 20px 20px;
+  padding: 16px; background: linear-gradient(135deg, var(--accent), #f0a882);
+  color: white; border: none; border-radius: var(--r);
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800;
+  cursor: pointer; width: calc(100% - 40px);
+  box-shadow: 0 4px 16px rgba(232,133,90,0.3); transition: transform 0.15s;
+}
+.btn-submit:active { transform: scale(0.98); }
+
+/* ===== DETAIL BOTTOM SHEET ===== */
+.detail-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.detail-overlay.active { opacity: 1; pointer-events: all; }
+.detail-sheet {
+  width: 100%; max-width: 480px; background: var(--bg);
+  border-radius: 24px 24px 0 0;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+}
+.detail-overlay.active .detail-sheet { transform: translateY(0); }
+.detail-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 24px 20px 16px; border-bottom: 1px solid var(--border);
+}
+.detail-icon-wrap { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+.detail-name { font-size: 20px; font-weight: 800; }
+.detail-cat { font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.detail-body { padding: 8px 20px; }
+.detail-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
+.detail-row:last-child { border-bottom: none; }
+.detail-row-label { font-size: 13px; color: var(--text-dim); font-weight: 700; }
+.detail-row-value { font-size: 14px; font-weight: 800; }
+.detail-actions { display: flex; gap: 10px; padding: 4px 20px 8px; }
+.btn-detail-edit, .btn-detail-delete {
+  flex: 1; padding: 14px; border-radius: var(--r);
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all 0.15s; border: none;
+}
+.btn-detail-edit { background: var(--accent-light); color: var(--accent); }
+.btn-detail-delete { background: var(--red-light); color: var(--red); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: calc(var(--nav-h) + 16px);
+  left: 50%; transform: translateX(-50%) translateY(12px);
+  background: var(--text); color: var(--bg);
+  padding: 10px 20px; border-radius: 50px;
+  font-size: 13px; font-weight: 700; z-index: 300;
+  opacity: 0; transition: all 0.25s; white-space: nowrap; pointer-events: none;
+}
+.toast.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== ABOUT BOX ===== */
+.about-box {
+  margin: 0 20px; background: var(--accent-light);
+  border-radius: var(--r); padding: 16px;
+  border: 1.5px solid rgba(232,133,90,0.2);
+}
+.about-box-title { font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+.about-box-desc { font-size: 12px; color: var(--text-mid); font-weight: 600; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== HOME SCREEN ===== -->
+  <div id="screen-home" class="screen active">
+    <div class="top-header">
+      <div class="logo-wrap">
+        <div class="logo-icon">👑</div>
+        <div class="logo-text">サブスク<span>奉行</span></div>
+      </div>
+      <div class="theme-toggle">
+        <button class="theme-btn" data-theme="light">☀️</button>
+        <button class="theme-btn" data-theme="dark">🌙</button>
+        <button class="theme-btn" data-theme="auto">💻</button>
+      </div>
+    </div>
+    <div class="greeting-section">
+      <div class="greeting" id="greeting-name">こんにちは 👋</div>
+      <div class="greeting-sub" id="greeting-sub"></div>
+    </div>
+    <div id="alert-section"></div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon orange">💰</div>
+        <div class="stat-label">今月の合計</div>
+        <div class="stat-value" id="stat-total"><span class="unit">¥</span>0</div>
+        <div class="stat-trend ok" id="total-trend">サブスクなし</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">🔄</div>
+        <div class="stat-label">今月の更新</div>
+        <div class="stat-value" id="stat-renewals">0<span class="unit"> 件</span></div>
+        <div class="stat-trend ok" id="renewal-trend">期限間近なし</div>
+      </div>
+      <div class="stat-card wide">
+        <div class="stat-wide-inner">
+          <div>
+            <div class="stat-icon green" style="margin-bottom:6px">📅</div>
+            <div class="stat-label">年間換算</div>
+            <div class="stat-value" id="stat-yearly"><span class="unit">¥</span>0</div>
+          </div>
+          <div class="budget-bar-wrap">
+            <div class="budget-label">月予算の使用率</div>
+            <div class="budget-bar"><div class="budget-fill" id="budgetFill"></div></div>
+            <div class="budget-value" id="budget-value">¥0 / 未設定</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title">🗂 カテゴリ別</div>
+    <div class="category-scroll" id="home-category-scroll"></div>
+    <div class="section-title">📋 更新が近い順</div>
+    <div class="sub-list" id="home-sub-list"></div>
+    <div class="empty-state" id="home-empty" style="display:none">
+      <div class="empty-emoji">📦</div>
+      <div class="empty-title">まだサービスがありません</div>
+      <div class="empty-desc">右下の ＋ ボタンから<br>サブスクを登録しよう！</div>
+      <button class="btn-empty" onclick="openAddModal()">最初のサービスを追加</button>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+
+  <!-- ===== LIST SCREEN ===== -->
+  <div id="screen-list" class="screen">
+    <div class="screen-header">
+      <div class="screen-header-title">📋 サービス一覧</div>
+    </div>
+    <div style="padding:0 20px 12px">
+      <div class="category-scroll" id="list-category-scroll" style="padding:0"></div>
+    </div>
+    <div class="sub-list" id="list-sub-list"></div>
+    <div class="empty-state" id="list-empty" style="display:none">
+      <div class="empty-emoji">📦</div>
+      <div class="empty-title">まだサービスがありません</div>
+      <div class="empty-desc">右下の ＋ ボタンから追加しよう</div>
+    </div>
+  </div>
+
+  <!-- ===== NOTIFICATIONS SCREEN ===== -->
+  <div id="screen-notifications" class="screen">
+    <div class="screen-header">
+      <div class="screen-header-title">🔔 更新スケジュール</div>
+    </div>
+    <div id="notif-list"></div>
+    <div class="empty-state" id="notif-empty" style="display:none">
+      <div class="empty-emoji">🎉</div>
+      <div class="empty-title">登録済みのサービスなし</div>
+      <div class="empty-desc">サービスを追加すると<br>更新日を一覧で確認できます</div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS SCREEN ===== -->
+  <div id="screen-settings" class="screen">
+    <div class="screen-header">
+      <div class="screen-header-title">⚙️ 設定</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:8px">
+      <div class="settings-group">
+        <div class="settings-group-label">プロフィール</div>
+        <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:6px">
+          <div class="settings-field">
+            <div class="settings-input-label">お名前</div>
+            <input type="text" id="settings-name" class="settings-input" placeholder="あなたの名前">
+          </div>
+        </div>
+        <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:6px">
+          <div class="settings-field">
+            <div class="settings-input-label">月の予算（円）</div>
+            <input type="number" id="settings-budget" class="settings-input" placeholder="20000" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <div class="settings-group-label">テーマ</div>
+        <div class="settings-row">
+          <div class="theme-setting-row">
+            <button class="theme-setting-btn" data-theme="light" onclick="applyThemeAndSave('light')">☀️<span>ライト</span></button>
+            <button class="theme-setting-btn" data-theme="dark" onclick="applyThemeAndSave('dark')">🌙<span>ダーク</span></button>
+            <button class="theme-setting-btn" data-theme="auto" onclick="applyThemeAndSave('auto')">💻<span>自動</span></button>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 20px">
+        <button class="btn-primary" onclick="saveSettings()">設定を保存</button>
+      </div>
+      <div class="settings-group">
+        <div class="settings-group-label">データ管理</div>
+        <div class="settings-row" style="cursor:pointer" onclick="exportData()">
+          <div class="settings-row-icon">📤</div>
+          <div class="settings-row-label">バックアップを書き出す</div>
+          <div class="settings-row-value">JSON →</div>
+        </div>
+        <div class="settings-row" style="cursor:pointer" onclick="importData()">
+          <div class="settings-row-icon">📥</div>
+          <div class="settings-row-label">バックアップから復元</div>
+          <div class="settings-row-value">→</div>
+        </div>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+      <div style="padding:0 20px">
+        <button class="btn-danger" onclick="deleteAll()">⚠️ すべてのデータを削除</button>
+      </div>
+      <div class="about-box">
+        <div class="about-box-title">👑 サブスク奉行 v1.0</div>
+        <div class="about-box-desc">完全買い切り・広告なし。<br>データはこのブラウザにのみ保存されます。バックアップは定期的にエクスポートしてください。</div>
+      </div>
+      <div style="height:8px"></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-screen="home" onclick="navigate('home')">
+    <div class="nav-btn-icon">🏠</div>
+    <div class="nav-btn-label">ホーム</div>
+  </button>
+  <button class="nav-btn" data-screen="list" onclick="navigate('list')">
+    <div class="nav-btn-icon">📋</div>
+    <div class="nav-btn-label">一覧</div>
+  </button>
+  <button class="nav-btn" data-screen="notifications" onclick="navigate('notifications')">
+    <div class="nav-btn-icon" id="notif-nav-icon">🔔</div>
+    <div class="nav-btn-label">スケジュール</div>
+  </button>
+  <button class="nav-btn" data-screen="settings" onclick="navigate('settings')">
+    <div class="nav-btn-icon">⚙️</div>
+    <div class="nav-btn-label">設定</div>
+  </button>
+</nav>
+
+<!-- ===== FAB ===== -->
+<button class="fab" onclick="openAddModal()" aria-label="サービスを追加">＋</button>
+
+<!-- ===== ADD/EDIT MODAL ===== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">サービスを追加</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-body">
+      <div class="form-group">
+        <div class="form-label">アイコン</div>
+        <div class="icon-picker" id="icon-picker"></div>
+        <input type="text" class="form-input" id="form-icon" placeholder="または絵文字を直接入力..." maxlength="2" style="margin-top:8px">
+      </div>
+      <div class="form-group">
+        <div class="form-label">サービス名 *</div>
+        <input type="text" class="form-input" id="form-name" placeholder="Netflix、Spotify など">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">金額（円）*</div>
+          <div class="form-amount-wrap">
+            <span class="form-amount-prefix">¥</span>
+            <input type="number" class="form-input has-prefix" id="form-amount" placeholder="1490" inputmode="numeric" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">支払い周期</div>
+          <select class="form-select" id="form-cycle">
+            <option value="monthly">毎月</option>
+            <option value="yearly">毎年</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" id="billing-day-group">
+        <div class="form-label">引き落とし日</div>
+        <input type="number" class="form-input" id="form-billing-day" placeholder="10" min="1" max="31" inputmode="numeric">
+        <div class="form-hint">毎月何日に引き落とされますか？（1〜31）</div>
+      </div>
+      <div class="form-group" id="billing-date-group" style="display:none">
+        <div class="form-label">更新日（毎年）</div>
+        <input type="date" class="form-input" id="form-billing-date">
+        <div class="form-hint">毎年この月日に更新されます</div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">カテゴリ</div>
+        <select class="form-select" id="form-category">
+          <option value="entertainment">🎭 エンタメ</option>
+          <option value="work">💼 仕事・生産性</option>
+          <option value="storage">💾 ストレージ</option>
+          <option value="other">🔖 その他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">メモ（任意）</div>
+        <textarea class="form-textarea" id="form-note" placeholder="プランや備考など..."></textarea>
+      </div>
+      <div class="form-error" id="form-error"></div>
+    </div>
+    <button class="btn-submit" onclick="saveSubscription()">保存する</button>
+  </div>
+</div>
+
+<!-- ===== DETAIL BOTTOM SHEET ===== -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-sheet">
+    <div class="modal-handle" style="margin-bottom:0"></div>
+    <div class="detail-header">
+      <div class="detail-icon-wrap" id="detail-icon">📦</div>
+      <div>
+        <div class="detail-name" id="detail-name"></div>
+        <div class="detail-cat" id="detail-cat"></div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-row">
+        <div class="detail-row-label">月額換算</div>
+        <div class="detail-row-value" id="detail-monthly"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-label">実際の請求額</div>
+        <div class="detail-row-value" id="detail-amount"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-label">支払い周期</div>
+        <div class="detail-row-value" id="detail-cycle"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row-label">次回更新まで</div>
+        <div class="detail-row-value" id="detail-renewal"></div>
+      </div>
+      <div class="detail-row" id="detail-note-row" style="display:none">
+        <div class="detail-row-label">メモ</div>
+        <div class="detail-row-value" id="detail-note" style="max-width:60%;text-align:right;white-space:pre-wrap;word-break:break-word"></div>
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn-detail-edit" onclick="editFromDetail()">✏️ 編集</button>
+      <button class="btn-detail-delete" onclick="deleteFromDetail()">🗑 削除</button>
+    </div>
+    <div style="height:4px"></div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ====== CONSTANTS ======
+const STORAGE_KEY   = 'subtrack_subs_v1';
+const SETTINGS_KEY  = 'subtrack_settings_v1';
+
+const CATEGORIES = {
+  entertainment: { label: 'エンタメ',    emoji: '🎭', color: '#e8855a', bg: '#fff0eb' },
+  work:          { label: '仕事・生産性', emoji: '💼', color: '#7bbfa5', bg: '#edf7f3' },
+  storage:       { label: 'ストレージ',  emoji: '💾', color: '#f5c842', bg: '#fffbe6' },
+  other:         { label: 'その他',      emoji: '🔖', color: '#b39ddb', bg: '#f3eeff' },
+};
+
+const PRESET_ICONS = [
+  '🎬','🎵','🎮','📺','🎙','📻','🎧',
+  '☁️','💾','🗂','📦','🔐','🌐','🖥',
+  '🤖','✏️','📐','💡','📊','🧰','📝',
+  '❤️','⭐','🌿','🍎','🎯','💎','🔔',
+];
+
+// ====== STATE ======
+let subs        = [];
+let settings    = { name: 'あなた', budget: 0, theme: 'auto' };
+let currentScreen  = 'home';
+let activeListTab  = 'all';
+let editingId      = null;
+let detailId       = null;
+let selectedIcon   = '';
+
+// ====== INIT ======
+function init() {
+  loadData();
+  applyTheme(settings.theme, false);
+  buildIconPicker();
+  setupEventListeners();
+  renderAll();
+}
+
+// ====== STORAGE ======
+function loadData() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) subs = JSON.parse(s);
+    const c = localStorage.getItem(SETTINGS_KEY);
+    if (c) settings = { ...settings, ...JSON.parse(c) };
+  } catch(e) {}
+}
+function saveData() {
+  localStorage.setItem(STORAGE_KEY,  JSON.stringify(subs));
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+// ====== CALCULATIONS ======
+function daysUntilRenewal(sub) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let next;
+  if (sub.cycle === 'monthly') {
+    const d = sub.billingDay || 1;
+    next = new Date(today.getFullYear(), today.getMonth(), d);
+    if (next <= today) next = new Date(today.getFullYear(), today.getMonth()+1, d);
+  } else {
+    const [m, d] = (sub.billingDate || '01-01').split('-').map(Number);
+    next = new Date(today.getFullYear(), m-1, d);
+    if (next <= today) next = new Date(today.getFullYear()+1, m-1, d);
+  }
+  return Math.round((next - today) / 86400000);
+}
+
+function nextRenewalDate(sub) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let next;
+  if (sub.cycle === 'monthly') {
+    const d = sub.billingDay || 1;
+    next = new Date(today.getFullYear(), today.getMonth(), d);
+    if (next <= today) next = new Date(today.getFullYear(), today.getMonth()+1, d);
+  } else {
+    const [m, d] = (sub.billingDate || '01-01').split('-').map(Number);
+    next = new Date(today.getFullYear(), m-1, d);
+    if (next <= today) next = new Date(today.getFullYear()+1, m-1, d);
+  }
+  return next;
+}
+
+function fmtDate(d) { return `${d.getMonth()+1}月${d.getDate()}日`; }
+
+function monthlyAmt(sub) {
+  return sub.cycle === 'monthly' ? sub.amount : Math.round(sub.amount / 12);
+}
+function totalMonthly() { return subs.reduce((s, x) => s + monthlyAmt(x), 0); }
+function totalYearly()  { return subs.reduce((s, x) => s + (x.cycle === 'monthly' ? x.amount*12 : x.amount), 0); }
+
+function statusClass(days) {
+  return days <= 3 ? 'urgent' : days <= 10 ? 'soon' : 'ok';
+}
+function renewalLabel(days) {
+  return days === 0 ? '今日' : days === 1 ? '明日' : `${days}日後`;
+}
+
+// ====== RENDER ALL ======
+function renderAll() {
+  renderHome();
+  renderList();
+  renderNotifications();
+  renderSettings();
+  renderNotifBadge();
+}
+
+// ====== HOME ======
+function renderHome() {
+  const total  = totalMonthly();
+  const yearly = totalYearly();
+  const budget = settings.budget || 0;
+  const pct    = budget > 0 ? Math.min(100, Math.round(total / budget * 100)) : 0;
+
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'おはようございます' : hr < 18 ? 'こんにちは' : 'こんばんは';
+  document.getElementById('greeting-name').innerHTML =
+    `${greet}、<span>${esc(settings.name)}さん</span> 👋`;
+
+  const now = new Date();
+  document.getElementById('greeting-sub').textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月 — ${subs.length}件のサブスクを管理中`;
+
+  // Urgent alert
+  const urgent = subs
+    .filter(s => daysUntilRenewal(s) <= 3)
+    .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+  const alertEl = document.getElementById('alert-section');
+  if (urgent.length > 0) {
+    const s = urgent[0];
+    const days = daysUntilRenewal(s);
+    const date = nextRenewalDate(s);
+    const when = days === 0 ? '今日' : days === 1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
+    alertEl.innerHTML = `
+      <div class="alert-card">
+        <div class="alert-emoji">⏰</div>
+        <div class="alert-body">
+          <div class="alert-title">${esc(s.name)}の更新日が近い！</div>
+          <div class="alert-desc">${when} ¥${s.amount.toLocaleString()} 引き落とし予定</div>
+        </div>
+        <button class="btn-alert" onclick="showDetail('${s.id}')">確認</button>
+      </div>`;
+  } else {
+    alertEl.innerHTML = '';
+  }
+
+  // Stats
+  document.getElementById('stat-total').innerHTML   = `<span class="unit">¥</span>${total.toLocaleString()}`;
+  document.getElementById('stat-yearly').innerHTML  = `<span class="unit">¥</span>${yearly.toLocaleString()}`;
+  const renewThis = subs.filter(s => daysUntilRenewal(s) <= 31).length;
+  document.getElementById('stat-renewals').innerHTML = `${renewThis}<span class="unit"> 件</span>`;
+
+  const rtEl = document.getElementById('renewal-trend');
+  if (urgent.length > 0) {
+    rtEl.className = 'stat-trend up';
+    rtEl.textContent = `${urgent.length}件が期限間近`;
+  } else {
+    rtEl.className = 'stat-trend ok';
+    rtEl.textContent = '期限間近なし';
+  }
+  const ttEl = document.getElementById('total-trend');
+  ttEl.className = 'stat-trend ok';
+  ttEl.textContent = subs.length === 0 ? 'サブスクなし' : `${subs.length}件`;
+
+  document.getElementById('budgetFill').style.width = pct + '%';
+  document.getElementById('budget-value').textContent = budget > 0
+    ? `¥${total.toLocaleString()} / ¥${budget.toLocaleString()} (${pct}%)`
+    : `¥${total.toLocaleString()} / 予算未設定`;
+
+  renderCategoryPills('home-category-scroll');
+  const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+  renderSubList('home-sub-list', sorted.slice(0, 6));
+  document.getElementById('home-empty').style.display = subs.length === 0 ? 'flex' : 'none';
+}
+
+// ====== CATEGORY PILLS ======
+function renderCategoryPills(id) {
+  const el = document.getElementById(id);
+  const catTotals = {};
+  subs.forEach(s => { catTotals[s.category] = (catTotals[s.category]||0) + monthlyAmt(s); });
+
+  let html = '';
+  if (id === 'list-category-scroll') {
+    html += pill('all', null, 'すべて', totalMonthly());
+  }
+  Object.entries(CATEGORIES).forEach(([key, cat]) => {
+    const t = catTotals[key] || 0;
+    if (id === 'home-category-scroll' && t === 0) return;
+    html += pill(key, cat.color, cat.label, t);
+  });
+  el.innerHTML = html;
+}
+function pill(key, color, label, total) {
+  const active = activeListTab === key ? 'active' : '';
+  const dot = color ? `<div class="pill-dot" style="background:${color}"></div>` : '';
+  return `<div class="category-pill ${active}" onclick="filterTab('${key}')">${dot}${label} <span class="pill-amount">¥${total.toLocaleString()}</span></div>`;
+}
+
+// ====== SUB LIST ======
+function renderSubList(id, items) {
+  const el = document.getElementById(id);
+  if (!items.length) { el.innerHTML = ''; return; }
+  el.innerHTML = items.map((s, i) => {
+    const days = daysUntilRenewal(s);
+    const cat  = CATEGORIES[s.category] || CATEGORIES.other;
+    const amt  = monthlyAmt(s);
+    return `
+      <div class="sub-item" onclick="showDetail('${s.id}')" style="animation-delay:${Math.min(i*0.05,0.3)}s">
+        <div class="sub-icon" style="background:${cat.bg}">${s.icon || '📦'}</div>
+        <div class="sub-info">
+          <div class="sub-name">${esc(s.name)}</div>
+          <div class="sub-cat">${cat.emoji} ${cat.label} · ${s.cycle === 'monthly' ? '毎月' : '毎年'}</div>
+        </div>
+        <div class="sub-right">
+          <div class="sub-amount">¥${amt.toLocaleString()}<span class="sub-unit">/月</span></div>
+          ${s.cycle === 'yearly' ? `<div class="sub-yearly">年¥${s.amount.toLocaleString()}</div>` : ''}
+          <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ====== LIST ======
+function renderList() {
+  renderCategoryPills('list-category-scroll');
+  const filtered = activeListTab === 'all' ? subs : subs.filter(s => s.category === activeListTab);
+  const sorted   = [...filtered].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+  renderSubList('list-sub-list', sorted);
+  document.getElementById('list-empty').style.display = subs.length === 0 ? 'flex' : 'none';
+}
+
+// ====== NOTIFICATIONS ======
+function renderNotifications() {
+  const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+  const el = document.getElementById('notif-list');
+  document.getElementById('notif-empty').style.display = subs.length === 0 ? 'flex' : 'none';
+  if (!sorted.length) { el.innerHTML = ''; return; }
+
+  // Group by urgency
+  const urgent = sorted.filter(s => daysUntilRenewal(s) <= 3);
+  const soon   = sorted.filter(s => { const d = daysUntilRenewal(s); return d > 3 && d <= 10; });
+  const later  = sorted.filter(s => daysUntilRenewal(s) > 10);
+
+  function section(label, items) {
+    if (!items.length) return '';
+    return `<div class="notif-date">${label}</div>
+      <div class="notif-list" style="padding:0 20px">
+        ${items.map(s => {
+          const days = daysUntilRenewal(s);
+          const date = nextRenewalDate(s);
+          const cat  = CATEGORIES[s.category] || CATEGORIES.other;
+          return `<div class="notif-item" onclick="showDetail('${s.id}')">
+            <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon || '📦'}</div>
+            <div class="sub-info">
+              <div class="sub-name">${esc(s.name)}</div>
+              <div class="sub-cat">${fmtDate(date)} · ¥${s.amount.toLocaleString()}</div>
+            </div>
+            <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  el.innerHTML =
+    section('⏰ 3日以内', urgent) +
+    section('🟡 10日以内', soon) +
+    section('📅 それ以降', later);
+}
+
+// ====== SETTINGS ======
+function renderSettings() {
+  document.getElementById('settings-name').value   = settings.name;
+  document.getElementById('settings-budget').value = settings.budget || '';
+  document.querySelectorAll('.theme-setting-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === settings.theme);
+  });
+}
+
+// ====== NOTIF BADGE ======
+function renderNotifBadge() {
+  const n = subs.filter(s => daysUntilRenewal(s) <= 3).length;
+  const icon = document.getElementById('notif-nav-icon');
+  icon.querySelector('.nav-badge')?.remove();
+  if (n > 0) {
+    const b = document.createElement('div');
+    b.className = 'nav-badge'; b.textContent = n;
+    icon.appendChild(b);
+  }
+}
+
+// ====== NAVIGATION ======
+function navigate(screen) {
+  currentScreen = screen;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${screen}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.screen === screen);
+  });
+  window.scrollTo(0, 0);
+  if (screen === 'home')          renderHome();
+  else if (screen === 'list')     renderList();
+  else if (screen === 'notifications') renderNotifications();
+  else if (screen === 'settings') renderSettings();
+}
+
+// ====== TAB FILTER ======
+function filterTab(tab) {
+  activeListTab = tab;
+  renderList();
+  renderCategoryPills('home-category-scroll');
+}
+
+// ====== ICON PICKER ======
+function buildIconPicker() {
+  document.getElementById('icon-picker').innerHTML =
+    PRESET_ICONS.map(ic =>
+      `<button class="icon-btn" type="button" data-icon="${ic}" onclick="selectIcon('${ic}')">${ic}</button>`
+    ).join('');
+}
+function selectIcon(icon) {
+  selectedIcon = icon;
+  document.getElementById('form-icon').value = icon;
+  document.querySelectorAll('.icon-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.icon === icon);
+  });
+}
+
+// ====== MODAL ======
+function openAddModal(id = null) {
+  editingId = id;
+  const today = new Date();
+  document.getElementById('modal-title').textContent = id ? 'サービスを編集' : 'サービスを追加';
+  document.getElementById('form-error').style.display = 'none';
+
+  if (id) {
+    const s = subs.find(s => s.id === id);
+    if (!s) return;
+    document.getElementById('form-name').value     = s.name;
+    document.getElementById('form-icon').value     = s.icon || '';
+    document.getElementById('form-amount').value   = s.amount;
+    document.getElementById('form-cycle').value    = s.cycle;
+    document.getElementById('form-category').value = s.category;
+    document.getElementById('form-note').value     = s.note || '';
+    selectedIcon = s.icon || '';
+    if (s.cycle === 'monthly') {
+      document.getElementById('form-billing-day').value = s.billingDay || today.getDate();
+      document.getElementById('billing-day-group').style.display  = '';
+      document.getElementById('billing-date-group').style.display = 'none';
+    } else {
+      const [mm, dd] = (s.billingDate || '01-01').split('-');
+      document.getElementById('form-billing-date').value =
+        `${today.getFullYear()}-${mm}-${dd}`;
+      document.getElementById('billing-day-group').style.display  = 'none';
+      document.getElementById('billing-date-group').style.display = '';
+    }
+  } else {
+    document.getElementById('form-name').value      = '';
+    document.getElementById('form-icon').value      = '';
+    document.getElementById('form-amount').value    = '';
+    document.getElementById('form-cycle').value     = 'monthly';
+    document.getElementById('form-category').value  = 'entertainment';
+    document.getElementById('form-note').value      = '';
+    document.getElementById('form-billing-day').value  = today.getDate();
+    document.getElementById('form-billing-date').value = '';
+    document.getElementById('billing-day-group').style.display  = '';
+    document.getElementById('billing-date-group').style.display = 'none';
+    selectedIcon = '';
+  }
+
+  document.querySelectorAll('.icon-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.icon === selectedIcon);
+  });
+  document.getElementById('modal-overlay').classList.add('active');
+  setTimeout(() => document.getElementById('form-name').focus(), 300);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  editingId = null;
+}
+
+function saveSubscription() {
+  const name     = document.getElementById('form-name').value.trim();
+  const iconVal  = document.getElementById('form-icon').value.trim();
+  const icon     = iconVal || selectedIcon || '📦';
+  const amount   = parseInt(document.getElementById('form-amount').value);
+  const cycle    = document.getElementById('form-cycle').value;
+  const category = document.getElementById('form-category').value;
+  const note     = document.getElementById('form-note').value.trim();
+  const errEl    = document.getElementById('form-error');
+
+  if (!name) {
+    errEl.textContent = 'サービス名を入力してください';
+    errEl.style.display = 'block';
+    document.getElementById('form-name').focus(); return;
+  }
+  if (isNaN(amount) || amount < 0) {
+    errEl.textContent = '金額を正しく入力してください';
+    errEl.style.display = 'block';
+    document.getElementById('form-amount').focus(); return;
+  }
+  errEl.style.display = 'none';
+
+  let billingDay, billingDate;
+  if (cycle === 'monthly') {
+    billingDay = Math.max(1, Math.min(31, parseInt(document.getElementById('form-billing-day').value) || new Date().getDate()));
+  } else {
+    const dv = document.getElementById('form-billing-date').value;
+    if (dv) {
+      const d = new Date(dv);
+      billingDate = `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    } else {
+      const n = new Date();
+      billingDate = `${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+    }
+  }
+
+  if (editingId) {
+    const idx = subs.findIndex(s => s.id === editingId);
+    if (idx !== -1) subs[idx] = { ...subs[idx], name, icon, amount, cycle, category, note, billingDay, billingDate };
+    showToast('更新しました！');
+  } else {
+    subs.push({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
+      name, icon, amount, cycle, category, note, billingDay, billingDate,
+      createdAt: new Date().toISOString()
+    });
+    showToast('追加しました！');
+  }
+  saveData();
+  closeModal();
+  renderAll();
+}
+
+// ====== DETAIL ======
+function showDetail(id) {
+  detailId = id;
+  const s = subs.find(s => s.id === id);
+  if (!s) return;
+  const days = daysUntilRenewal(s);
+  const date = nextRenewalDate(s);
+  const cat  = CATEGORIES[s.category] || CATEGORIES.other;
+
+  const iconEl = document.getElementById('detail-icon');
+  iconEl.textContent   = s.icon || '📦';
+  iconEl.style.background = cat.bg;
+  document.getElementById('detail-name').textContent    = s.name;
+  document.getElementById('detail-cat').textContent     = `${cat.emoji} ${cat.label}`;
+  document.getElementById('detail-amount').textContent  = `¥${s.amount.toLocaleString()}`;
+  document.getElementById('detail-cycle').textContent   = s.cycle === 'monthly' ? '毎月' : '毎年';
+  document.getElementById('detail-monthly').textContent = `¥${monthlyAmt(s).toLocaleString()}/月`;
+  document.getElementById('detail-renewal').textContent = `${renewalLabel(days)}（${fmtDate(date)}）`;
+
+  const noteRow = document.getElementById('detail-note-row');
+  if (s.note) {
+    document.getElementById('detail-note').textContent = s.note;
+    noteRow.style.display = '';
+  } else {
+    noteRow.style.display = 'none';
+  }
+  document.getElementById('detail-overlay').classList.add('active');
+}
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('active');
+  detailId = null;
+}
+function editFromDetail() {
+  const id = detailId;
+  closeDetail();
+  setTimeout(() => openAddModal(id), 200);
+}
+function deleteFromDetail() {
+  const s = subs.find(s => s.id === detailId);
+  if (!s || !confirm(`「${s.name}」を削除しますか？`)) return;
+  subs = subs.filter(sub => sub.id !== detailId);
+  saveData(); closeDetail(); renderAll();
+  showToast('削除しました');
+}
+
+// ====== THEME ======
+function applyTheme(theme, save = true) {
+  settings.theme = theme;
+  const dark = theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.body.classList.toggle('dark', dark);
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+  document.querySelectorAll('.theme-setting-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+  if (save) saveData();
+}
+function applyThemeAndSave(theme) { applyTheme(theme, true); }
+
+// ====== SETTINGS ACTIONS ======
+function saveSettings() {
+  settings.name   = document.getElementById('settings-name').value.trim() || 'あなた';
+  settings.budget = parseInt(document.getElementById('settings-budget').value) || 0;
+  saveData(); renderHome(); showToast('設定を保存しました！');
+}
+function exportData() {
+  const data = { version: 1, subs, settings, exportedAt: new Date().toISOString() };
+  const url  = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  const a    = Object.assign(document.createElement('a'), {
+    href: url, download: `subtrack-backup-${new Date().toISOString().slice(0,10)}.json`
+  });
+  a.click(); URL.revokeObjectURL(url);
+  showToast('エクスポートしました！');
+}
+function importData() { document.getElementById('import-file').click(); }
+function handleImport(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data.subs)) { showToast('ファイル形式が正しくありません'); return; }
+      subs = data.subs;
+      if (data.settings) settings = { ...settings, ...data.settings };
+      saveData(); renderAll(); applyTheme(settings.theme, false);
+      showToast(`${subs.length}件を復元しました！`);
+    } catch { showToast('インポートに失敗しました'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+function deleteAll() {
+  if (!confirm('すべてのサービスデータを削除しますか？\nこの操作は取り消せません。')) return;
+  subs = []; saveData(); renderAll(); showToast('データを削除しました');
+}
+
+// ====== UTILS ======
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('active');
+  setTimeout(() => el.classList.remove('active'), 2500);
+}
+
+// ====== EVENT LISTENERS ======
+function setupEventListeners() {
+  document.getElementById('form-cycle').addEventListener('change', function() {
+    document.getElementById('billing-day-group').style.display  = this.value === 'monthly' ? '' : 'none';
+    document.getElementById('billing-date-group').style.display = this.value === 'yearly'  ? '' : 'none';
+  });
+  document.getElementById('form-icon').addEventListener('input', function() {
+    selectedIcon = this.value;
+    document.querySelectorAll('.icon-btn').forEach(b => b.classList.toggle('selected', b.dataset.icon === selectedIcon));
+  });
+  document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.getElementById('detail-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeDetail(); });
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+  });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (settings.theme === 'auto') applyTheme('auto', false);
+  });
+}
+
+// ====== START ======
+init();
+</script>
+</body>
+</html>
