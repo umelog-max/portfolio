@@ -1,0 +1,117 @@
+"use client";
+
+import { useState } from "react";
+
+export default function ContactForm() {
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+
+    const form = e.currentTarget;
+    const data = {
+      name:    (form.elements.namedItem("name")    as HTMLInputElement).value,
+      email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
+      subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="glass-card p-8 fade-up fade-up-delay-3">
+      {status === "done" ? (
+        <div className="flex flex-col items-center py-8">
+          <div
+            className="w-16 h-16 border-[3px] border-slate-800 bg-orange-50 flex items-center justify-center mb-5"
+            style={{ boxShadow: "4px 4px 0px #1A1A1A" }}
+          >
+            <svg viewBox="0 0 24 24" className="w-9 h-9" fill="none" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
+              <polyline points="4,13 9,18 20,7" />
+            </svg>
+          </div>
+          <p className="font-black text-slate-800 text-xl mb-2">送信しました！</p>
+          <p className="text-sm text-slate-600 mb-1">自動返信メールをお送りしましたのでご確認ください。</p>
+          <p className="text-sm text-slate-600">内容を確認次第、ご返信いたします。</p>
+        </div>
+      ) : (
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+              お名前 <span className="text-red-400">*</span>
+            </label>
+            <input
+              id="name"
+              type="text"
+              required
+              placeholder="山田 太郎"
+              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+              メールアドレス <span className="text-red-400">*</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              placeholder="example@email.com"
+              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
+              件名 <span className="text-red-400">*</span>
+            </label>
+            <input
+              id="subject"
+              type="text"
+              required
+              placeholder="案件のご相談"
+              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
+              メッセージ <span className="text-red-400">*</span>
+            </label>
+            <textarea
+              id="message"
+              rows={6}
+              required
+              placeholder="お問い合わせ内容をご記入ください"
+              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all resize-none text-sm"
+            />
+          </div>
+
+          {status === "error" && (
+            <p className="text-sm text-red-500">送信に失敗しました。時間をおいて再度お試しください。</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className="btn-primary w-full justify-center disabled:opacity-60"
+          >
+            {status === "sending" ? "送信中..." : "送信する →"}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}

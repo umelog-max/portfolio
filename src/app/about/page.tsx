@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "このサイトについて・経験案件・資格一覧",
+  description: "気づいたらラーメン屋の前にいるエンジニア、Ume のプロフィールページ。",
 };
 
 const timeline = [
@@ -51,6 +51,20 @@ const certifications = [
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Umeda",
+            url: "https://www.umeblog.com/about",
+            sameAs: ["https://www.umeblog.com"],
+            jobTitle: "Engineer",
+            knowsAbout: ["Web Development", "AWS", "Microsoft Azure", "Linux"],
+          }),
+        }}
+      />
       <h1 className="mb-2 text-4xl font-black text-slate-900 tracking-tight fade-up">About</h1>
       <p className="mb-12 font-mono text-sm font-semibold tracking-widest text-white fade-up fade-up-delay-1">このサイトについて</p>
 

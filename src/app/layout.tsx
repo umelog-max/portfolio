@@ -35,11 +35,13 @@ export const metadata: Metadata = {
     siteName: "Ume.Blog",
     title: "Ume.Blog",
     description: siteDescription,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Ume.Blog" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ume.Blog",
     description: siteDescription,
+    images: ["/og.png"],
   },
 };
 
@@ -53,6 +55,18 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased min-h-screen flex flex-col`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Ume.Blog",
+              url: siteUrl,
+              description: siteDescription,
+            }),
+          }}
+        />
         <SteamBg />
         <Header />
         <main className="flex-1 pt-16">{children}</main>

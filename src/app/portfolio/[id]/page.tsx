@@ -21,6 +21,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: work.title,
         description: work.description,
         url: `https://www.umeblog.com/portfolio/${id}`,
+        images: [
+          work.thumbnail
+            ? { url: work.thumbnail.url, width: work.thumbnail.width, height: work.thumbnail.height, alt: work.title }
+            : { url: "/og.png", width: 1200, height: 630, alt: work.title },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: work.title,
+        description: work.description,
+        images: [work.thumbnail?.url ?? "/og.png"],
       },
     };
   } catch {
@@ -45,6 +56,20 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.umeblog.com" },
+              { "@type": "ListItem", position: 2, name: "Portfolio", item: "https://www.umeblog.com/portfolio" },
+              { "@type": "ListItem", position: 3, name: work.title, item: `https://www.umeblog.com/portfolio/${work.id}` },
+            ],
+          }),
+        }}
+      />
       <Link
         href="/portfolio"
         className="inline-flex items-center gap-2 text-sm text-white hover:text-orange-300 transition-colors mb-10"
@@ -62,6 +87,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
               width={work.thumbnail.width}
               height={work.thumbnail.height}
               className="w-full h-auto"
+              priority
             />
           </div>
         )}
