@@ -831,7 +831,7 @@ function renderHome() {
           <div class="alert-title">${esc(s.name)}の更新日が近い！</div>
           <div class="alert-desc">${when} ¥${s.amount.toLocaleString()} 引き落とし予定</div>
         </div>
-        <button class="btn-alert" onclick="showDetail('${s.id}')">確認</button>
+        <button class="btn-alert" onclick="confirmAlert()">確認</button>
       </div>`;
   } else { alertEl.innerHTML = ''; }
 
@@ -1009,11 +1009,29 @@ function renderSettings() {
 }
 
 // ====== NOTIF BADGE ======
+function confirmAlert() {
+  // バナーを閉じる
+  document.getElementById('alert-section').innerHTML = '';
+  // 今日確認済みとして記録
+  localStorage.setItem('alertConfirmedDate', todayStr());
+  // バッジも消す
+  document.getElementById('notif-nav-icon').querySelector('.nav-badge')?.remove();
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
 function renderNotifBadge() {
   const n = subs.filter(s => daysUntilRenewal(s) <= 3).length;
   const icon = document.getElementById('notif-nav-icon');
   icon.querySelector('.nav-badge')?.remove();
-  if (n > 0) { const b=document.createElement('div'); b.className='nav-badge'; b.textContent=n; icon.appendChild(b); }
+  // 今日すでに確認済みならバッジを出さない
+  const confirmed = localStorage.getItem('alertConfirmedDate') === todayStr();
+  if (n > 0 && !confirmed) {
+    const b = document.createElement('div'); b.className='nav-badge'; b.textContent=n; icon.appendChild(b);
+  }
 }
 
 // ====== NAVIGATION ======
