@@ -23,11 +23,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         type: "article",
         publishedTime: post.publishedAt,
         url: `https://www.umeblog.com/blog/${slug}`,
+        images: [{ url: "/og.png", width: 1200, height: 630, alt: post.title }],
       },
       twitter: {
         card: "summary_large_image",
         title: post.title,
         description: post.excerpt,
+        images: ["/og.png"],
       },
     };
   } catch {
@@ -82,6 +84,46 @@ export default async function BlogPostPage({ params }: Props) {
           ))}
         </div>
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.umeblog.com" },
+              { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.umeblog.com/blog" },
+              { "@type": "ListItem", position: 3, name: post.title, item: `https://www.umeblog.com/blog/${post.id}` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt,
+            datePublished: post.publishedAt,
+            dateModified: post.updatedAt,
+            author: {
+              "@type": "Person",
+              name: "Umeda",
+              url: "https://www.umeblog.com/about",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "Ume.Blog",
+              url: "https://www.umeblog.com",
+            },
+            url: `https://www.umeblog.com/blog/${post.id}`,
+            image: "https://www.umeblog.com/og.png",
+          }),
+        }}
+      />
 
       {/* Content */}
       <div
