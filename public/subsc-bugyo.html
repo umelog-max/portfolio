@@ -679,6 +679,7 @@ input[type=number] { -moz-appearance: textfield; }
           <option value="food">🍽 食事</option>
           <option value="rent">🏠 家賃</option>
           <option value="mobile">📱 携帯代金</option>
+          <option value="sports">⚽ スポーツ</option>
           <option value="other">📦 その他</option>
         </select>
       </div>
@@ -759,11 +760,12 @@ const CATEGORIES = {
   food:          { label: '食事',       emoji: '🍽', color: '#f5a623', bg: '#fff8f0' },
   rent:          { label: '家賃',       emoji: '🏠', color: '#5b8dd9', bg: '#eef4ff' },
   mobile:        { label: '携帯代金',   emoji: '📱', color: '#9b59b6', bg: '#f8f0ff' },
+  sports:        { label: 'スポーツ',   emoji: '⚽', color: '#3cb371', bg: '#edf7f1' },
   other:         { label: 'その他',     emoji: '📦', color: '#b39ddb', bg: '#f3eeff' },
 };
 
 const PRESET_ICONS = [
-  '🎬','🎵','🛍','🤖','💳','🍽','📲','🏠','📱','📚','📖','📦',
+  '🎬','🎵','🛍','🤖','💳','🍽','📲','🏠','📱','📚','📖','⚽','📦',
 ];
 
 let subs        = [];
