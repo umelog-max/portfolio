@@ -2,12 +2,36 @@
 
 import { useState } from "react";
 
+type FieldErrors = {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+};
+
+function validate(data: { name: string; email: string; subject: string; message: string }): FieldErrors {
+  const errors: FieldErrors = {};
+  if (!data.name.trim()) errors.name = "お名前を入力してください";
+  if (!data.email.trim()) {
+    errors.email = "メールアドレスを入力してください";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.email = "正しいメールアドレスの形式で入力してください";
+  }
+  if (!data.subject.trim()) errors.subject = "件名を入力してください";
+  if (!data.message.trim()) {
+    errors.message = "メッセージを入力してください";
+  } else if (data.message.trim().length < 10) {
+    errors.message = "メッセージは10文字以上入力してください";
+  }
+  return errors;
+}
+
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStatus("sending");
 
     const form = e.currentTarget;
     const data = {
@@ -16,6 +40,15 @@ export default function ContactForm() {
       subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
       message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
     };
+
+    const errors = validate(data);
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
+    setFieldErrors({});
+    setStatus("sending");
 
     try {
       const res = await fetch("/api/contact", {
@@ -28,6 +61,13 @@ export default function ContactForm() {
       setStatus("error");
     }
   }
+
+  const inputClass = (hasError: boolean) =>
+    `w-full rounded-xl border px-4 py-3 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-2 transition-all text-sm bg-white/80 ${
+      hasError
+        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+        : "border-slate-200 focus:border-orange-400 focus:ring-orange-100"
+    }`;
 
   return (
     <div className="glass-card p-8 fade-up fade-up-delay-3">
@@ -46,7 +86,7 @@ export default function ContactForm() {
           <p className="text-sm text-slate-600">内容を確認次第、ご返信いたします。</p>
         </div>
       ) : (
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
           <div>
             <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
               お名前 <span className="text-red-400">*</span>
@@ -54,10 +94,10 @@ export default function ContactForm() {
             <input
               id="name"
               type="text"
-              required
               placeholder="山田 太郎"
-              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm"
+              className={inputClass(!!fieldErrors.name)}
             />
+            {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
           </div>
 
           <div>
@@ -67,10 +107,10 @@ export default function ContactForm() {
             <input
               id="email"
               type="email"
-              required
               placeholder="example@email.com"
-              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm"
+              className={inputClass(!!fieldErrors.email)}
             />
+            {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
           </div>
 
           <div>
@@ -80,10 +120,10 @@ export default function ContactForm() {
             <input
               id="subject"
               type="text"
-              required
               placeholder="案件のご相談"
-              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-sm"
+              className={inputClass(!!fieldErrors.subject)}
             />
+            {fieldErrors.subject && <p className="text-xs text-red-500 mt-1">{fieldErrors.subject}</p>}
           </div>
 
           <div>
@@ -93,10 +133,10 @@ export default function ContactForm() {
             <textarea
               id="message"
               rows={6}
-              required
               placeholder="お問い合わせ内容をご記入ください"
-              className="w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-slate-800 placeholder-slate-300 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all resize-none text-sm"
+              className={inputClass(!!fieldErrors.message) + " resize-none"}
             />
+            {fieldErrors.message && <p className="text-xs text-red-500 mt-1">{fieldErrors.message}</p>}
           </div>
 
           {status === "error" && (
