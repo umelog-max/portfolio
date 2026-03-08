@@ -6,8 +6,8 @@
 <title>サブスク奉行</title>
 <meta name="description" content="サブスクを完全管理。買い切り・広告なし。">
 <meta name="theme-color" content="#e8855a">
-<link rel="manifest" href="data:application/json,{}">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
   --bg: #faf8f5;
@@ -42,12 +42,9 @@ body.dark {
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html { background: var(--bg); }
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  min-height: 100vh;
-  transition: background 0.3s, color 0.3s;
-  overscroll-behavior: none;
+  background: var(--bg); color: var(--text);
+  font-family: 'Nunito', sans-serif; min-height: 100vh;
+  transition: background 0.3s, color 0.3s; overscroll-behavior: none;
 }
 
 /* ===== LAYOUT ===== */
@@ -56,12 +53,11 @@ body {
 .screen.active { display: block; }
 @keyframes screenIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-/* ===== HEADER ===== */
+/* ===== HEADERS ===== */
 .top-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: max(20px, env(safe-area-inset-top)) 20px 0;
+  padding: max(20px, env(safe-area-inset-top)) 20px 12px;
   position: sticky; top: 0; background: var(--bg); z-index: 10;
-  padding-bottom: 12px;
 }
 .logo-wrap { display: flex; align-items: center; gap: 8px; }
 .logo-icon {
@@ -72,13 +68,6 @@ body {
 }
 .logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
 .logo-text span { color: var(--accent); }
-.theme-toggle { display: flex; background: var(--surface2); border-radius: 50px; padding: 3px; gap: 2px; }
-.theme-btn {
-  width: 30px; height: 30px; border-radius: 50px; border: none;
-  background: none; cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-}
-.theme-btn.active { background: var(--surface); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 .screen-header {
   padding: max(20px, env(safe-area-inset-top)) 20px 16px;
   position: sticky; top: 0; background: var(--bg); z-index: 10;
@@ -93,8 +82,7 @@ body {
 
 /* ===== ALERT ===== */
 .alert-card {
-  margin: 16px 20px 0;
-  background: var(--red-light);
+  margin: 16px 20px 0; background: var(--red-light);
   border: 1.5px solid rgba(232,112,106,0.2);
   border-radius: var(--r); padding: 14px 16px;
   display: flex; align-items: center; gap: 12px;
@@ -116,8 +104,7 @@ body {
 .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 20px 0; }
 .stat-card {
   background: var(--surface); border-radius: var(--r);
-  padding: 16px; box-shadow: var(--shadow);
-  animation: fadeUp 0.4s ease both;
+  padding: 16px; box-shadow: var(--shadow); animation: fadeUp 0.4s ease both;
 }
 .stat-card.wide { grid-column: 1 / -1; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -136,25 +123,42 @@ body {
 .budget-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--accent2), var(--accent)); width: 0%; transition: width 1s ease; }
 .budget-value { font-size: 10px; color: var(--text-dim); font-weight: 600; margin-top: 4px; }
 
+/* ===== CHART CARD ===== */
+.chart-card {
+  margin: 16px 20px 0; background: var(--surface);
+  border-radius: var(--r); padding: 20px; box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease both; animation-delay: 0.2s;
+}
+.chart-card-title { font-size: 13px; font-weight: 800; color: var(--text-dim); margin-bottom: 16px; }
+.chart-wrap { display: flex; align-items: center; gap: 20px; }
+.chart-canvas-wrap { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+.chart-canvas-wrap canvas { width: 130px !important; height: 130px !important; }
+.chart-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.chart-center-value { font-size: 15px; font-weight: 800; letter-spacing: -0.03em; }
+.chart-center-label { font-size: 10px; color: var(--text-dim); font-weight: 700; }
+.chart-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { font-size: 12px; font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.legend-right { text-align: right; flex-shrink: 0; }
+.legend-amount { font-size: 12px; font-weight: 800; }
+.legend-pct { font-size: 10px; font-weight: 700; color: var(--text-dim); }
+
 /* ===== SECTION TITLE ===== */
 .section-title { font-size: 14px; font-weight: 800; padding: 20px 20px 12px; }
 
-/* ===== CATEGORY PILLS ===== */
-.category-scroll { display:flex; gap:8px; padding:0 20px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
-.category-scroll::-webkit-scrollbar { display: none; }
-.category-pill {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--surface); border-radius: 50px;
-  padding: 9px 14px; box-shadow: var(--shadow);
-  font-size: 12px; font-weight: 700;
-  white-space: nowrap; flex-shrink: 0;
-  cursor: pointer; transition: all 0.2s;
-  border: 1.5px solid transparent;
+/* ===== CATEGORY GROUP ===== */
+.cat-group { margin: 0 20px 16px; display: flex; flex-direction: column; gap: 8px; }
+.cat-group-header {
+  display: flex; align-items: center; gap: 8px;
 }
-.category-pill.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
-.category-pill:active { transform: scale(0.96); }
-.pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.pill-amount { color: var(--text-mid); font-weight: 600; font-size: 11px; }
+.cat-group-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cat-group-label { font-size: 13px; font-weight: 800; }
+.cat-group-total { font-size: 12px; font-weight: 700; color: var(--text-dim); margin-left: auto; }
 
 /* ===== SUBSCRIPTION ITEMS ===== */
 .sub-list { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; }
@@ -195,15 +199,15 @@ body {
 }
 .btn-empty:active { transform: scale(0.97); }
 
-/* ===== NOTIFICATION LIST ===== */
-.notif-list { display:flex; flex-direction:column; gap:10px; padding:0 20px; }
+/* ===== SCHEDULE ===== */
+.notif-section-label { font-size: 11px; font-weight: 800; color: var(--text-dim); padding: 16px 20px 8px; letter-spacing: 0.04em; }
+.notif-list-inner { display:flex; flex-direction:column; gap:10px; padding:0 20px; }
 .notif-item {
   background: var(--surface); border-radius: var(--r);
   padding: 14px 16px; display: flex; align-items: center; gap: 12px;
   box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s;
 }
 .notif-item:active { transform: scale(0.98); }
-.notif-date { font-size: 11px; color: var(--text-dim); font-weight: 700; padding: 20px 20px 8px; }
 
 /* ===== SETTINGS ===== */
 .settings-group { margin: 0 20px; background: var(--surface); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
@@ -224,10 +228,10 @@ body {
 .settings-field { display:flex; flex-direction:column; width:100%; }
 .theme-setting-row { display: flex; gap: 8px; width: 100%; }
 .theme-setting-btn {
-  flex: 1; padding: 10px 0;
+  flex: 1; padding: 12px 0;
   background: var(--surface2); border: 1.5px solid var(--border);
   border-radius: 10px; font-family: 'Nunito', sans-serif;
-  font-size: 12px; font-weight: 700; color: var(--text-dim);
+  font-size: 13px; font-weight: 700; color: var(--text-dim);
   cursor: pointer; transition: all 0.2s;
   display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
@@ -237,8 +241,7 @@ body {
   background: linear-gradient(135deg, var(--accent), #f0a882);
   color: white; border: none; border-radius: var(--r);
   font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
-  cursor: pointer; box-shadow: 0 4px 16px rgba(232,133,90,0.3);
-  transition: transform 0.15s;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(232,133,90,0.3); transition: transform 0.15s;
 }
 .btn-primary:active { transform: scale(0.98); }
 .btn-danger {
@@ -249,7 +252,6 @@ body {
   cursor: pointer; transition: all 0.2s;
 }
 .btn-danger:active { background: var(--red-light); }
-.settings-spacer { height: 16px; }
 
 /* ===== BOTTOM NAV ===== */
 .bottom-nav {
@@ -264,7 +266,7 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   flex: 1; cursor: pointer; padding: 4px 0;
   transition: transform 0.15s; border: none; background: none;
-  font-family: 'Nunito', sans-serif; position: relative;
+  font-family: 'Nunito', sans-serif;
 }
 .nav-btn:active { transform: scale(0.9); }
 .nav-btn-icon {
@@ -297,7 +299,7 @@ body {
 }
 .fab:active { transform: scale(0.92); }
 
-/* ===== MODAL (Add/Edit) ===== */
+/* ===== MODAL ===== */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5);
   display: flex; align-items: flex-end; justify-content: center;
@@ -333,6 +335,10 @@ body {
   -webkit-appearance: none;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+/* スピナー非表示 */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
 .form-textarea { resize: none; height: 72px; }
 .form-row { display: flex; gap: 12px; }
 .form-row .form-group { flex: 1; }
@@ -343,17 +349,14 @@ body {
   font-size: 15px; font-weight: 800; color: var(--text-mid); pointer-events: none;
 }
 .form-input.has-prefix { padding-left: 28px; }
-/* Icon picker */
 .icon-picker { display: flex; gap: 8px; flex-wrap: wrap; }
 .icon-btn {
   width: 40px; height: 40px; border-radius: 10px;
   background: var(--surface); border: 1.5px solid var(--border);
   font-size: 20px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
 }
 .icon-btn.selected { border-color: var(--accent); background: var(--accent-light); }
-/* Error */
 .form-error { color: var(--red); font-size: 13px; font-weight: 700; display: none; padding: 4px 0; }
 .btn-submit {
   margin: 20px 20px;
@@ -365,7 +368,7 @@ body {
 }
 .btn-submit:active { transform: scale(0.98); }
 
-/* ===== DETAIL BOTTOM SHEET ===== */
+/* ===== DETAIL SHEET ===== */
 .detail-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5);
   display: flex; align-items: flex-end; justify-content: center;
@@ -425,17 +428,12 @@ body {
 <body>
 <div class="app">
 
-  <!-- ===== HOME SCREEN ===== -->
+  <!-- ===== HOME ===== -->
   <div id="screen-home" class="screen active">
     <div class="top-header">
       <div class="logo-wrap">
         <div class="logo-icon">👑</div>
         <div class="logo-text">サブスク<span>奉行</span></div>
-      </div>
-      <div class="theme-toggle">
-        <button class="theme-btn" data-theme="light">☀️</button>
-        <button class="theme-btn" data-theme="dark">🌙</button>
-        <button class="theme-btn" data-theme="auto">💻</button>
       </div>
     </div>
     <div class="greeting-section">
@@ -466,15 +464,30 @@ body {
           <div class="budget-bar-wrap">
             <div class="budget-label">月予算の使用率</div>
             <div class="budget-bar"><div class="budget-fill" id="budgetFill"></div></div>
-            <div class="budget-value" id="budget-value">¥0 / 未設定</div>
+            <div class="budget-value" id="budget-value">¥0 / 予算未設定</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="section-title">🗂 カテゴリ別</div>
-    <div class="category-scroll" id="home-category-scroll"></div>
-    <div class="section-title">📋 更新が近い順</div>
-    <div class="sub-list" id="home-sub-list"></div>
+
+    <!-- Donut Chart -->
+    <div class="chart-card" id="chart-card" style="display:none">
+      <div class="chart-card-title">📊 カテゴリ別支出</div>
+      <div class="chart-wrap">
+        <div class="chart-canvas-wrap">
+          <canvas id="donutChart"></canvas>
+          <div class="chart-center">
+            <div class="chart-center-value" id="chart-center-value">¥0</div>
+            <div class="chart-center-label">月額合計</div>
+          </div>
+        </div>
+        <div class="chart-legend" id="chart-legend"></div>
+      </div>
+    </div>
+
+    <!-- Category grouped list -->
+    <div id="home-cat-list"></div>
+
     <div class="empty-state" id="home-empty" style="display:none">
       <div class="empty-emoji">📦</div>
       <div class="empty-title">まだサービスがありません</div>
@@ -484,13 +497,10 @@ body {
     <div style="height:8px"></div>
   </div>
 
-  <!-- ===== LIST SCREEN ===== -->
+  <!-- ===== LIST（更新日順） ===== -->
   <div id="screen-list" class="screen">
     <div class="screen-header">
-      <div class="screen-header-title">📋 サービス一覧</div>
-    </div>
-    <div style="padding:0 20px 12px">
-      <div class="category-scroll" id="list-category-scroll" style="padding:0"></div>
+      <div class="screen-header-title">📋 更新日が近い順</div>
     </div>
     <div class="sub-list" id="list-sub-list"></div>
     <div class="empty-state" id="list-empty" style="display:none">
@@ -500,12 +510,12 @@ body {
     </div>
   </div>
 
-  <!-- ===== NOTIFICATIONS SCREEN ===== -->
+  <!-- ===== SCHEDULE ===== -->
   <div id="screen-notifications" class="screen">
     <div class="screen-header">
       <div class="screen-header-title">🔔 更新スケジュール</div>
     </div>
-    <div id="notif-list"></div>
+    <div id="notif-body"></div>
     <div class="empty-state" id="notif-empty" style="display:none">
       <div class="empty-emoji">🎉</div>
       <div class="empty-title">登録済みのサービスなし</div>
@@ -513,7 +523,7 @@ body {
     </div>
   </div>
 
-  <!-- ===== SETTINGS SCREEN ===== -->
+  <!-- ===== SETTINGS ===== -->
   <div id="screen-settings" class="screen">
     <div class="screen-header">
       <div class="screen-header-title">⚙️ 設定</div>
@@ -530,7 +540,7 @@ body {
         <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:6px">
           <div class="settings-field">
             <div class="settings-input-label">月の予算（円）</div>
-            <input type="number" id="settings-budget" class="settings-input" placeholder="20000" inputmode="numeric">
+            <input type="text" id="settings-budget" class="settings-input" placeholder="20,000" inputmode="numeric">
           </div>
         </div>
       </div>
@@ -540,7 +550,6 @@ body {
           <div class="theme-setting-row">
             <button class="theme-setting-btn" data-theme="light" onclick="applyThemeAndSave('light')">☀️<span>ライト</span></button>
             <button class="theme-setting-btn" data-theme="dark" onclick="applyThemeAndSave('dark')">🌙<span>ダーク</span></button>
-            <button class="theme-setting-btn" data-theme="auto" onclick="applyThemeAndSave('auto')">💻<span>自動</span></button>
           </div>
         </div>
       </div>
@@ -566,7 +575,7 @@ body {
       </div>
       <div class="about-box">
         <div class="about-box-title">👑 サブスク奉行 v1.0</div>
-        <div class="about-box-desc">完全買い切り・広告なし。<br>データはこのブラウザにのみ保存されます。バックアップは定期的にエクスポートしてください。</div>
+        <div class="about-box-desc">完全買い切り・広告なし。<br>データはこのブラウザにのみ保存されます。定期的にバックアップをエクスポートしてください。</div>
       </div>
       <div style="height:8px"></div>
     </div>
@@ -574,7 +583,6 @@ body {
 
 </div><!-- /app -->
 
-<!-- ===== BOTTOM NAV ===== -->
 <nav class="bottom-nav">
   <button class="nav-btn active" data-screen="home" onclick="navigate('home')">
     <div class="nav-btn-icon">🏠</div>
@@ -594,10 +602,9 @@ body {
   </button>
 </nav>
 
-<!-- ===== FAB ===== -->
 <button class="fab" onclick="openAddModal()" aria-label="サービスを追加">＋</button>
 
-<!-- ===== ADD/EDIT MODAL ===== -->
+<!-- ADD/EDIT MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -620,7 +627,7 @@ body {
           <div class="form-label">金額（円）*</div>
           <div class="form-amount-wrap">
             <span class="form-amount-prefix">¥</span>
-            <input type="number" class="form-input has-prefix" id="form-amount" placeholder="1490" inputmode="numeric" min="0">
+            <input type="text" class="form-input has-prefix" id="form-amount" placeholder="1,490" inputmode="numeric">
           </div>
         </div>
         <div class="form-group">
@@ -660,7 +667,7 @@ body {
   </div>
 </div>
 
-<!-- ===== DETAIL BOTTOM SHEET ===== -->
+<!-- DETAIL SHEET -->
 <div class="detail-overlay" id="detail-overlay">
   <div class="detail-sheet">
     <div class="modal-handle" style="margin-bottom:0"></div>
@@ -701,13 +708,11 @@ body {
   </div>
 </div>
 
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ====== CONSTANTS ======
-const STORAGE_KEY   = 'subtrack_subs_v1';
-const SETTINGS_KEY  = 'subtrack_settings_v1';
+const STORAGE_KEY  = 'subtrack_subs_v1';
+const SETTINGS_KEY = 'subtrack_settings_v1';
 
 const CATEGORIES = {
   entertainment: { label: 'エンタメ',    emoji: '🎭', color: '#e8855a', bg: '#fff0eb' },
@@ -723,14 +728,12 @@ const PRESET_ICONS = [
   '❤️','⭐','🌿','🍎','🎯','💎','🔔',
 ];
 
-// ====== STATE ======
 let subs        = [];
-let settings    = { name: 'あなた', budget: 0, theme: 'auto' };
-let currentScreen  = 'home';
-let activeListTab  = 'all';
-let editingId      = null;
-let detailId       = null;
-let selectedIcon   = '';
+let settings    = { name: 'あなた', budget: 0, theme: 'light' };
+let editingId   = null;
+let detailId    = null;
+let selectedIcon = '';
+let donutChart  = null;
 
 // ====== INIT ======
 function init() {
@@ -770,7 +773,6 @@ function daysUntilRenewal(sub) {
   }
   return Math.round((next - today) / 86400000);
 }
-
 function nextRenewalDate(sub) {
   const today = new Date(); today.setHours(0,0,0,0);
   let next;
@@ -785,21 +787,19 @@ function nextRenewalDate(sub) {
   }
   return next;
 }
-
 function fmtDate(d) { return `${d.getMonth()+1}月${d.getDate()}日`; }
+function monthlyAmt(sub) { return sub.cycle === 'monthly' ? sub.amount : Math.round(sub.amount / 12); }
+function totalMonthly() { return subs.reduce((s,x) => s + monthlyAmt(x), 0); }
+function totalYearly()  { return subs.reduce((s,x) => s + (x.cycle==='monthly' ? x.amount*12 : x.amount), 0); }
+function statusClass(days) { return days <= 3 ? 'urgent' : days <= 10 ? 'soon' : 'ok'; }
+function renewalLabel(days) { return days===0 ? '今日' : days===1 ? '明日' : `${days}日後`; }
 
-function monthlyAmt(sub) {
-  return sub.cycle === 'monthly' ? sub.amount : Math.round(sub.amount / 12);
+// ====== AMOUNT FORMATTING ======
+function fmtAmt(val) {
+  const n = parseInt(String(val).replace(/,/g, ''));
+  return isNaN(n) ? '' : n.toLocaleString('ja-JP');
 }
-function totalMonthly() { return subs.reduce((s, x) => s + monthlyAmt(x), 0); }
-function totalYearly()  { return subs.reduce((s, x) => s + (x.cycle === 'monthly' ? x.amount*12 : x.amount), 0); }
-
-function statusClass(days) {
-  return days <= 3 ? 'urgent' : days <= 10 ? 'soon' : 'ok';
-}
-function renewalLabel(days) {
-  return days === 0 ? '今日' : days === 1 ? '明日' : `${days}日後`;
-}
+function parseAmt(val) { return parseInt(String(val).replace(/,/g, '')) || 0; }
 
 // ====== RENDER ALL ======
 function renderAll() {
@@ -821,21 +821,19 @@ function renderHome() {
   const greet = hr < 12 ? 'おはようございます' : hr < 18 ? 'こんにちは' : 'こんばんは';
   document.getElementById('greeting-name').innerHTML =
     `${greet}、<span>${esc(settings.name)}さん</span> 👋`;
-
   const now = new Date();
   document.getElementById('greeting-sub').textContent =
     `${now.getFullYear()}年${now.getMonth()+1}月 — ${subs.length}件のサブスクを管理中`;
 
-  // Urgent alert
-  const urgent = subs
-    .filter(s => daysUntilRenewal(s) <= 3)
+  // Alert
+  const urgent = subs.filter(s => daysUntilRenewal(s) <= 3)
     .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
   const alertEl = document.getElementById('alert-section');
   if (urgent.length > 0) {
     const s = urgent[0];
     const days = daysUntilRenewal(s);
     const date = nextRenewalDate(s);
-    const when = days === 0 ? '今日' : days === 1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
+    const when = days===0 ? '今日' : days===1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
     alertEl.innerHTML = `
       <div class="alert-card">
         <div class="alert-emoji">⏰</div>
@@ -845,117 +843,146 @@ function renderHome() {
         </div>
         <button class="btn-alert" onclick="showDetail('${s.id}')">確認</button>
       </div>`;
-  } else {
-    alertEl.innerHTML = '';
-  }
+  } else { alertEl.innerHTML = ''; }
 
   // Stats
   document.getElementById('stat-total').innerHTML   = `<span class="unit">¥</span>${total.toLocaleString()}`;
   document.getElementById('stat-yearly').innerHTML  = `<span class="unit">¥</span>${yearly.toLocaleString()}`;
   const renewThis = subs.filter(s => daysUntilRenewal(s) <= 31).length;
   document.getElementById('stat-renewals').innerHTML = `${renewThis}<span class="unit"> 件</span>`;
-
   const rtEl = document.getElementById('renewal-trend');
-  if (urgent.length > 0) {
-    rtEl.className = 'stat-trend up';
-    rtEl.textContent = `${urgent.length}件が期限間近`;
-  } else {
-    rtEl.className = 'stat-trend ok';
-    rtEl.textContent = '期限間近なし';
-  }
+  if (urgent.length > 0) { rtEl.className='stat-trend up'; rtEl.textContent=`${urgent.length}件が期限間近`; }
+  else { rtEl.className='stat-trend ok'; rtEl.textContent='期限間近なし'; }
   const ttEl = document.getElementById('total-trend');
-  ttEl.className = 'stat-trend ok';
-  ttEl.textContent = subs.length === 0 ? 'サブスクなし' : `${subs.length}件`;
-
+  ttEl.className='stat-trend ok';
+  ttEl.textContent = subs.length===0 ? 'サブスクなし' : `${subs.length}件`;
   document.getElementById('budgetFill').style.width = pct + '%';
   document.getElementById('budget-value').textContent = budget > 0
     ? `¥${total.toLocaleString()} / ¥${budget.toLocaleString()} (${pct}%)`
     : `¥${total.toLocaleString()} / 予算未設定`;
 
-  renderCategoryPills('home-category-scroll');
-  const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
-  renderSubList('home-sub-list', sorted.slice(0, 6));
-  document.getElementById('home-empty').style.display = subs.length === 0 ? 'flex' : 'none';
+  renderDonutChart(total);
+  renderHomeCatList();
+  document.getElementById('home-empty').style.display = subs.length===0 ? 'flex' : 'none';
 }
 
-// ====== CATEGORY PILLS ======
-function renderCategoryPills(id) {
-  const el = document.getElementById(id);
+// ====== DONUT CHART ======
+function renderDonutChart(total) {
+  const card = document.getElementById('chart-card');
+  if (subs.length === 0) { card.style.display='none'; return; }
+  card.style.display = '';
+
   const catTotals = {};
   subs.forEach(s => { catTotals[s.category] = (catTotals[s.category]||0) + monthlyAmt(s); });
 
-  let html = '';
-  if (id === 'list-category-scroll') {
-    html += pill('all', null, 'すべて', totalMonthly());
-  }
+  const labels=[], data=[], colors=[];
   Object.entries(CATEGORIES).forEach(([key, cat]) => {
-    const t = catTotals[key] || 0;
-    if (id === 'home-category-scroll' && t === 0) return;
-    html += pill(key, cat.color, cat.label, t);
+    if (catTotals[key]) { labels.push(cat.label); data.push(catTotals[key]); colors.push(cat.color); }
   });
-  el.innerHTML = html;
-}
-function pill(key, color, label, total) {
-  const active = activeListTab === key ? 'active' : '';
-  const dot = color ? `<div class="pill-dot" style="background:${color}"></div>` : '';
-  return `<div class="category-pill ${active}" onclick="filterTab('${key}')">${dot}${label} <span class="pill-amount">¥${total.toLocaleString()}</span></div>`;
+
+  document.getElementById('chart-center-value').textContent = `¥${total.toLocaleString()}`;
+
+  // Legend
+  document.getElementById('chart-legend').innerHTML = labels.map((lbl, i) => {
+    const pct = total > 0 ? Math.round(data[i]/total*100) : 0;
+    return `<div class="legend-item">
+      <div class="legend-dot" style="background:${colors[i]}"></div>
+      <div class="legend-label">${lbl}</div>
+      <div class="legend-right">
+        <div class="legend-amount">¥${data[i].toLocaleString()}</div>
+        <div class="legend-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  if (donutChart) donutChart.destroy();
+  donutChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+    options: {
+      cutout: '72%', responsive: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ¥${ctx.raw.toLocaleString()}` } }
+      },
+      animation: { duration: 600, easing: 'easeInOutQuart' }
+    }
+  });
 }
 
-// ====== SUB LIST ======
-function renderSubList(id, items) {
-  const el = document.getElementById(id);
-  if (!items.length) { el.innerHTML = ''; return; }
-  el.innerHTML = items.map((s, i) => {
-    const days = daysUntilRenewal(s);
-    const cat  = CATEGORIES[s.category] || CATEGORIES.other;
-    const amt  = monthlyAmt(s);
-    return `
-      <div class="sub-item" onclick="showDetail('${s.id}')" style="animation-delay:${Math.min(i*0.05,0.3)}s">
-        <div class="sub-icon" style="background:${cat.bg}">${s.icon || '📦'}</div>
-        <div class="sub-info">
-          <div class="sub-name">${esc(s.name)}</div>
-          <div class="sub-cat">${cat.emoji} ${cat.label} · ${s.cycle === 'monthly' ? '毎月' : '毎年'}</div>
-        </div>
-        <div class="sub-right">
-          <div class="sub-amount">¥${amt.toLocaleString()}<span class="sub-unit">/月</span></div>
-          ${s.cycle === 'yearly' ? `<div class="sub-yearly">年¥${s.amount.toLocaleString()}</div>` : ''}
-          <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
-        </div>
-      </div>`;
-  }).join('');
+// ====== HOME CATEGORY LIST ======
+function renderHomeCatList() {
+  const el = document.getElementById('home-cat-list');
+  if (subs.length === 0) { el.innerHTML=''; return; }
+
+  let html = '<div class="section-title">🗂 カテゴリ別</div>';
+  let hasAny = false;
+  Object.entries(CATEGORIES).forEach(([key, cat]) => {
+    const items = subs.filter(s => s.category===key)
+      .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+    if (!items.length) return;
+    hasAny = true;
+    const catTotal = items.reduce((s,x) => s + monthlyAmt(x), 0);
+    html += `<div class="cat-group">
+      <div class="cat-group-header">
+        <div class="cat-group-dot" style="background:${cat.color}"></div>
+        <div class="cat-group-label">${cat.emoji} ${cat.label}</div>
+        <div class="cat-group-total">¥${catTotal.toLocaleString()}/月</div>
+      </div>
+      ${items.map((s,i) => subItemHTML(s,i)).join('')}
+    </div>`;
+  });
+  el.innerHTML = hasAny ? html : '';
+}
+
+// ====== SUB ITEM ======
+function subItemHTML(s, i) {
+  const days = daysUntilRenewal(s);
+  const cat  = CATEGORIES[s.category] || CATEGORIES.other;
+  const amt  = monthlyAmt(s);
+  return `
+    <div class="sub-item" onclick="showDetail('${s.id}')" style="animation-delay:${Math.min(i*0.04,0.3)}s">
+      <div class="sub-icon" style="background:${cat.bg}">${s.icon||'📦'}</div>
+      <div class="sub-info">
+        <div class="sub-name">${esc(s.name)}</div>
+        <div class="sub-cat">${s.cycle==='monthly'?'毎月':'毎年'}</div>
+      </div>
+      <div class="sub-right">
+        <div class="sub-amount">¥${amt.toLocaleString()}<span class="sub-unit">/月</span></div>
+        ${s.cycle==='yearly' ? `<div class="sub-yearly">年¥${s.amount.toLocaleString()}</div>` : ''}
+        <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
+      </div>
+    </div>`;
 }
 
 // ====== LIST ======
 function renderList() {
-  renderCategoryPills('list-category-scroll');
-  const filtered = activeListTab === 'all' ? subs : subs.filter(s => s.category === activeListTab);
-  const sorted   = [...filtered].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
-  renderSubList('list-sub-list', sorted);
-  document.getElementById('list-empty').style.display = subs.length === 0 ? 'flex' : 'none';
+  const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+  document.getElementById('list-sub-list').innerHTML = sorted.map((s,i) => subItemHTML(s,i)).join('');
+  document.getElementById('list-empty').style.display = subs.length===0 ? 'flex' : 'none';
 }
 
-// ====== NOTIFICATIONS ======
+// ====== SCHEDULE ======
 function renderNotifications() {
   const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
-  const el = document.getElementById('notif-list');
-  document.getElementById('notif-empty').style.display = subs.length === 0 ? 'flex' : 'none';
-  if (!sorted.length) { el.innerHTML = ''; return; }
+  const el = document.getElementById('notif-body');
+  document.getElementById('notif-empty').style.display = subs.length===0 ? 'flex' : 'none';
+  if (!sorted.length) { el.innerHTML=''; return; }
 
-  // Group by urgency
   const urgent = sorted.filter(s => daysUntilRenewal(s) <= 3);
-  const soon   = sorted.filter(s => { const d = daysUntilRenewal(s); return d > 3 && d <= 10; });
+  const soon   = sorted.filter(s => { const d=daysUntilRenewal(s); return d>3&&d<=10; });
   const later  = sorted.filter(s => daysUntilRenewal(s) > 10);
 
   function section(label, items) {
     if (!items.length) return '';
-    return `<div class="notif-date">${label}</div>
-      <div class="notif-list" style="padding:0 20px">
+    return `<div class="notif-section-label">${label}</div>
+      <div class="notif-list-inner">
         ${items.map(s => {
-          const days = daysUntilRenewal(s);
-          const date = nextRenewalDate(s);
-          const cat  = CATEGORIES[s.category] || CATEGORIES.other;
+          const days=daysUntilRenewal(s), date=nextRenewalDate(s);
+          const cat=CATEGORIES[s.category]||CATEGORIES.other;
           return `<div class="notif-item" onclick="showDetail('${s.id}')">
-            <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon || '📦'}</div>
+            <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon||'📦'}</div>
             <div class="sub-info">
               <div class="sub-name">${esc(s.name)}</div>
               <div class="sub-cat">${fmtDate(date)} · ¥${s.amount.toLocaleString()}</div>
@@ -965,17 +992,13 @@ function renderNotifications() {
         }).join('')}
       </div>`;
   }
-
-  el.innerHTML =
-    section('⏰ 3日以内', urgent) +
-    section('🟡 10日以内', soon) +
-    section('📅 それ以降', later);
+  el.innerHTML = section('⏰ 3日以内',urgent) + section('🟡 10日以内',soon) + section('📅 それ以降',later);
 }
 
 // ====== SETTINGS ======
 function renderSettings() {
   document.getElementById('settings-name').value   = settings.name;
-  document.getElementById('settings-budget').value = settings.budget || '';
+  document.getElementById('settings-budget').value = settings.budget ? fmtAmt(settings.budget) : '';
   document.querySelectorAll('.theme-setting-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.theme === settings.theme);
   });
@@ -986,282 +1009,220 @@ function renderNotifBadge() {
   const n = subs.filter(s => daysUntilRenewal(s) <= 3).length;
   const icon = document.getElementById('notif-nav-icon');
   icon.querySelector('.nav-badge')?.remove();
-  if (n > 0) {
-    const b = document.createElement('div');
-    b.className = 'nav-badge'; b.textContent = n;
-    icon.appendChild(b);
-  }
+  if (n > 0) { const b=document.createElement('div'); b.className='nav-badge'; b.textContent=n; icon.appendChild(b); }
 }
 
 // ====== NAVIGATION ======
 function navigate(screen) {
-  currentScreen = screen;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${screen}`).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.screen === screen);
-  });
-  window.scrollTo(0, 0);
-  if (screen === 'home')          renderHome();
-  else if (screen === 'list')     renderList();
-  else if (screen === 'notifications') renderNotifications();
-  else if (screen === 'settings') renderSettings();
-}
-
-// ====== TAB FILTER ======
-function filterTab(tab) {
-  activeListTab = tab;
-  renderList();
-  renderCategoryPills('home-category-scroll');
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.screen===screen));
+  window.scrollTo(0,0);
+  if (screen==='home') renderHome();
+  else if (screen==='list') renderList();
+  else if (screen==='notifications') renderNotifications();
+  else if (screen==='settings') renderSettings();
 }
 
 // ====== ICON PICKER ======
 function buildIconPicker() {
   document.getElementById('icon-picker').innerHTML =
-    PRESET_ICONS.map(ic =>
-      `<button class="icon-btn" type="button" data-icon="${ic}" onclick="selectIcon('${ic}')">${ic}</button>`
-    ).join('');
+    PRESET_ICONS.map(ic => `<button class="icon-btn" type="button" data-icon="${ic}" onclick="selectIcon('${ic}')">${ic}</button>`).join('');
 }
 function selectIcon(icon) {
   selectedIcon = icon;
   document.getElementById('form-icon').value = icon;
-  document.querySelectorAll('.icon-btn').forEach(b => {
-    b.classList.toggle('selected', b.dataset.icon === icon);
-  });
+  document.querySelectorAll('.icon-btn').forEach(b => b.classList.toggle('selected', b.dataset.icon===icon));
 }
 
 // ====== MODAL ======
-function openAddModal(id = null) {
+function openAddModal(id=null) {
   editingId = id;
   const today = new Date();
   document.getElementById('modal-title').textContent = id ? 'サービスを編集' : 'サービスを追加';
   document.getElementById('form-error').style.display = 'none';
 
   if (id) {
-    const s = subs.find(s => s.id === id);
-    if (!s) return;
+    const s = subs.find(s => s.id===id); if (!s) return;
     document.getElementById('form-name').value     = s.name;
-    document.getElementById('form-icon').value     = s.icon || '';
-    document.getElementById('form-amount').value   = s.amount;
+    document.getElementById('form-icon').value     = s.icon||'';
+    document.getElementById('form-amount').value   = fmtAmt(s.amount);
     document.getElementById('form-cycle').value    = s.cycle;
     document.getElementById('form-category').value = s.category;
-    document.getElementById('form-note').value     = s.note || '';
-    selectedIcon = s.icon || '';
-    if (s.cycle === 'monthly') {
-      document.getElementById('form-billing-day').value = s.billingDay || today.getDate();
+    document.getElementById('form-note').value     = s.note||'';
+    selectedIcon = s.icon||'';
+    if (s.cycle==='monthly') {
+      document.getElementById('form-billing-day').value  = s.billingDay||today.getDate();
       document.getElementById('billing-day-group').style.display  = '';
       document.getElementById('billing-date-group').style.display = 'none';
     } else {
-      const [mm, dd] = (s.billingDate || '01-01').split('-');
-      document.getElementById('form-billing-date').value =
-        `${today.getFullYear()}-${mm}-${dd}`;
+      const [mm,dd]=(s.billingDate||'01-01').split('-');
+      document.getElementById('form-billing-date').value = `${today.getFullYear()}-${mm}-${dd}`;
       document.getElementById('billing-day-group').style.display  = 'none';
       document.getElementById('billing-date-group').style.display = '';
     }
   } else {
-    document.getElementById('form-name').value      = '';
-    document.getElementById('form-icon').value      = '';
-    document.getElementById('form-amount').value    = '';
-    document.getElementById('form-cycle').value     = 'monthly';
-    document.getElementById('form-category').value  = 'entertainment';
-    document.getElementById('form-note').value      = '';
+    ['form-name','form-icon','form-note'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('form-amount').value   = '';
+    document.getElementById('form-cycle').value    = 'monthly';
+    document.getElementById('form-category').value = 'entertainment';
     document.getElementById('form-billing-day').value  = today.getDate();
     document.getElementById('form-billing-date').value = '';
     document.getElementById('billing-day-group').style.display  = '';
     document.getElementById('billing-date-group').style.display = 'none';
     selectedIcon = '';
   }
-
-  document.querySelectorAll('.icon-btn').forEach(b => {
-    b.classList.toggle('selected', b.dataset.icon === selectedIcon);
-  });
+  document.querySelectorAll('.icon-btn').forEach(b => b.classList.toggle('selected', b.dataset.icon===selectedIcon));
   document.getElementById('modal-overlay').classList.add('active');
   setTimeout(() => document.getElementById('form-name').focus(), 300);
 }
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('active');
-  editingId = null;
-}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); editingId=null; }
 
 function saveSubscription() {
   const name     = document.getElementById('form-name').value.trim();
   const iconVal  = document.getElementById('form-icon').value.trim();
-  const icon     = iconVal || selectedIcon || '📦';
-  const amount   = parseInt(document.getElementById('form-amount').value);
+  const icon     = iconVal||selectedIcon||'📦';
+  const amountRaw= document.getElementById('form-amount').value;
+  const amount   = parseAmt(amountRaw);
   const cycle    = document.getElementById('form-cycle').value;
   const category = document.getElementById('form-category').value;
   const note     = document.getElementById('form-note').value.trim();
   const errEl    = document.getElementById('form-error');
 
   if (!name) {
-    errEl.textContent = 'サービス名を入力してください';
-    errEl.style.display = 'block';
+    errEl.textContent='サービス名を入力してください'; errEl.style.display='block';
     document.getElementById('form-name').focus(); return;
   }
-  if (isNaN(amount) || amount < 0) {
-    errEl.textContent = '金額を正しく入力してください';
-    errEl.style.display = 'block';
+  if (!amountRaw || amount <= 0) {
+    errEl.textContent='金額を正しく入力してください'; errEl.style.display='block';
     document.getElementById('form-amount').focus(); return;
   }
   errEl.style.display = 'none';
 
   let billingDay, billingDate;
-  if (cycle === 'monthly') {
-    billingDay = Math.max(1, Math.min(31, parseInt(document.getElementById('form-billing-day').value) || new Date().getDate()));
+  if (cycle==='monthly') {
+    billingDay = Math.max(1, Math.min(31, parseInt(document.getElementById('form-billing-day').value)||new Date().getDate()));
   } else {
-    const dv = document.getElementById('form-billing-date').value;
-    if (dv) {
-      const d = new Date(dv);
-      billingDate = `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    } else {
-      const n = new Date();
-      billingDate = `${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
-    }
+    const dv=document.getElementById('form-billing-date').value;
+    if (dv) { const d=new Date(dv); billingDate=`${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+    else { const n=new Date(); billingDate=`${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`; }
   }
 
   if (editingId) {
-    const idx = subs.findIndex(s => s.id === editingId);
-    if (idx !== -1) subs[idx] = { ...subs[idx], name, icon, amount, cycle, category, note, billingDay, billingDate };
+    const idx=subs.findIndex(s=>s.id===editingId);
+    if (idx!==-1) subs[idx]={...subs[idx],name,icon,amount,cycle,category,note,billingDay,billingDate};
     showToast('更新しました！');
   } else {
-    subs.push({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
-      name, icon, amount, cycle, category, note, billingDay, billingDate,
-      createdAt: new Date().toISOString()
-    });
+    subs.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name,icon,amount,cycle,category,note,billingDay,billingDate,createdAt:new Date().toISOString()});
     showToast('追加しました！');
   }
-  saveData();
-  closeModal();
-  renderAll();
+  saveData(); closeModal(); renderAll();
 }
 
 // ====== DETAIL ======
 function showDetail(id) {
-  detailId = id;
-  const s = subs.find(s => s.id === id);
-  if (!s) return;
-  const days = daysUntilRenewal(s);
-  const date = nextRenewalDate(s);
-  const cat  = CATEGORIES[s.category] || CATEGORIES.other;
-
-  const iconEl = document.getElementById('detail-icon');
-  iconEl.textContent   = s.icon || '📦';
-  iconEl.style.background = cat.bg;
+  detailId=id;
+  const s=subs.find(s=>s.id===id); if (!s) return;
+  const days=daysUntilRenewal(s), date=nextRenewalDate(s);
+  const cat=CATEGORIES[s.category]||CATEGORIES.other;
+  const iconEl=document.getElementById('detail-icon');
+  iconEl.textContent=s.icon||'📦'; iconEl.style.background=cat.bg;
   document.getElementById('detail-name').textContent    = s.name;
   document.getElementById('detail-cat').textContent     = `${cat.emoji} ${cat.label}`;
   document.getElementById('detail-amount').textContent  = `¥${s.amount.toLocaleString()}`;
-  document.getElementById('detail-cycle').textContent   = s.cycle === 'monthly' ? '毎月' : '毎年';
+  document.getElementById('detail-cycle').textContent   = s.cycle==='monthly'?'毎月':'毎年';
   document.getElementById('detail-monthly').textContent = `¥${monthlyAmt(s).toLocaleString()}/月`;
   document.getElementById('detail-renewal').textContent = `${renewalLabel(days)}（${fmtDate(date)}）`;
-
-  const noteRow = document.getElementById('detail-note-row');
-  if (s.note) {
-    document.getElementById('detail-note').textContent = s.note;
-    noteRow.style.display = '';
-  } else {
-    noteRow.style.display = 'none';
-  }
+  const noteRow=document.getElementById('detail-note-row');
+  if (s.note) { document.getElementById('detail-note').textContent=s.note; noteRow.style.display=''; }
+  else { noteRow.style.display='none'; }
   document.getElementById('detail-overlay').classList.add('active');
 }
-function closeDetail() {
-  document.getElementById('detail-overlay').classList.remove('active');
-  detailId = null;
-}
-function editFromDetail() {
-  const id = detailId;
-  closeDetail();
-  setTimeout(() => openAddModal(id), 200);
-}
+function closeDetail() { document.getElementById('detail-overlay').classList.remove('active'); detailId=null; }
+function editFromDetail() { const id=detailId; closeDetail(); setTimeout(()=>openAddModal(id),200); }
 function deleteFromDetail() {
-  const s = subs.find(s => s.id === detailId);
-  if (!s || !confirm(`「${s.name}」を削除しますか？`)) return;
-  subs = subs.filter(sub => sub.id !== detailId);
-  saveData(); closeDetail(); renderAll();
+  const s=subs.find(s=>s.id===detailId);
+  if (!s||!confirm(`「${s.name}」を削除しますか？`)) return;
+  subs=subs.filter(sub=>sub.id!==detailId); saveData(); closeDetail(); renderAll();
   showToast('削除しました');
 }
 
 // ====== THEME ======
-function applyTheme(theme, save = true) {
-  settings.theme = theme;
-  const dark = theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  document.body.classList.toggle('dark', dark);
-  document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
-  document.querySelectorAll('.theme-setting-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+function applyTheme(theme, save=true) {
+  settings.theme=theme;
+  document.body.classList.toggle('dark', theme==='dark');
+  document.querySelectorAll('.theme-setting-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===theme));
+  if (donutChart) renderDonutChart(totalMonthly());
   if (save) saveData();
 }
-function applyThemeAndSave(theme) { applyTheme(theme, true); }
+function applyThemeAndSave(theme) { applyTheme(theme,true); }
 
 // ====== SETTINGS ACTIONS ======
 function saveSettings() {
-  settings.name   = document.getElementById('settings-name').value.trim() || 'あなた';
-  settings.budget = parseInt(document.getElementById('settings-budget').value) || 0;
+  settings.name   = document.getElementById('settings-name').value.trim()||'あなた';
+  settings.budget = parseAmt(document.getElementById('settings-budget').value);
   saveData(); renderHome(); showToast('設定を保存しました！');
 }
 function exportData() {
-  const data = { version: 1, subs, settings, exportedAt: new Date().toISOString() };
-  const url  = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-  const a    = Object.assign(document.createElement('a'), {
-    href: url, download: `subtrack-backup-${new Date().toISOString().slice(0,10)}.json`
-  });
-  a.click(); URL.revokeObjectURL(url);
-  showToast('エクスポートしました！');
+  const data={version:1,subs,settings,exportedAt:new Date().toISOString()};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  const a=Object.assign(document.createElement('a'),{href:url,download:`subtrack-backup-${new Date().toISOString().slice(0,10)}.json`});
+  a.click(); URL.revokeObjectURL(url); showToast('エクスポートしました！');
 }
 function importData() { document.getElementById('import-file').click(); }
 function handleImport(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
+  const file=e.target.files[0]; if (!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
     try {
-      const data = JSON.parse(ev.target.result);
+      const data=JSON.parse(ev.target.result);
       if (!Array.isArray(data.subs)) { showToast('ファイル形式が正しくありません'); return; }
-      subs = data.subs;
-      if (data.settings) settings = { ...settings, ...data.settings };
-      saveData(); renderAll(); applyTheme(settings.theme, false);
+      subs=data.subs;
+      if (data.settings) settings={...settings,...data.settings};
+      saveData(); renderAll(); applyTheme(settings.theme,false);
       showToast(`${subs.length}件を復元しました！`);
     } catch { showToast('インポートに失敗しました'); }
   };
-  reader.readAsText(file);
-  e.target.value = '';
+  reader.readAsText(file); e.target.value='';
 }
 function deleteAll() {
   if (!confirm('すべてのサービスデータを削除しますか？\nこの操作は取り消せません。')) return;
-  subs = []; saveData(); renderAll(); showToast('データを削除しました');
+  subs=[]; saveData(); renderAll(); showToast('データを削除しました');
 }
 
 // ====== UTILS ======
 function esc(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('active');
-  setTimeout(() => el.classList.remove('active'), 2500);
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('active');
+  setTimeout(()=>el.classList.remove('active'),2500);
 }
 
 // ====== EVENT LISTENERS ======
 function setupEventListeners() {
   document.getElementById('form-cycle').addEventListener('change', function() {
-    document.getElementById('billing-day-group').style.display  = this.value === 'monthly' ? '' : 'none';
-    document.getElementById('billing-date-group').style.display = this.value === 'yearly'  ? '' : 'none';
+    document.getElementById('billing-day-group').style.display  = this.value==='monthly'?'':'none';
+    document.getElementById('billing-date-group').style.display = this.value==='yearly'?'':'none';
   });
   document.getElementById('form-icon').addEventListener('input', function() {
-    selectedIcon = this.value;
-    document.querySelectorAll('.icon-btn').forEach(b => b.classList.toggle('selected', b.dataset.icon === selectedIcon));
+    selectedIcon=this.value;
+    document.querySelectorAll('.icon-btn').forEach(b=>b.classList.toggle('selected',b.dataset.icon===selectedIcon));
   });
-  document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-  document.getElementById('detail-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeDetail(); });
-  document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
-  });
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (settings.theme === 'auto') applyTheme('auto', false);
-  });
+  // 金額カンマフォーマット
+  const amtInput=document.getElementById('form-amount');
+  amtInput.addEventListener('blur',  function() { if(this.value) this.value=fmtAmt(parseAmt(this.value)); });
+  amtInput.addEventListener('focus', function() { if(this.value) this.value=String(parseAmt(this.value)); });
+  // 予算カンマフォーマット
+  const budgetInput=document.getElementById('settings-budget');
+  budgetInput.addEventListener('blur',  function() { if(this.value) this.value=fmtAmt(parseAmt(this.value)); });
+  budgetInput.addEventListener('focus', function() { if(this.value) this.value=String(parseAmt(this.value)); });
+
+  document.getElementById('modal-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+  document.getElementById('detail-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeDetail(); });
 }
 
-// ====== START ======
 init();
 </script>
 </body>
