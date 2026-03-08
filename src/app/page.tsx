@@ -33,12 +33,28 @@ function TiltCard({
     card.style.transition = "transform 0.4s ease-out";
   };
 
+  const handleTouchStart = () => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.transform = "perspective(600px) rotateY(5deg) rotateX(-5deg) translateY(-6px)";
+    card.style.transition = "transform 0.15s ease-out";
+  };
+
+  const handleTouchEnd = () => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.transform = "";
+    card.style.transition = "transform 0.4s ease-out";
+  };
+
   return (
     <Link
       ref={cardRef}
       href={href}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       className="p-8 flex flex-col items-center text-center h-full w-full rounded-xl group"
       style={{
         backgroundColor: bgColor,
