@@ -118,6 +118,12 @@ body {
 .stat-trend.up{background:var(--red-light);color:var(--red)} .stat-trend.ok{background:var(--surface2);color:var(--text-dim)}
 .stat-wide-inner { display: flex; justify-content: space-between; align-items: flex-start; }
 .budget-bar-wrap { flex: 1; margin-left: 16px; margin-top: 6px; }
+.yearly-breakdown { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+.yearly-row { display: flex; align-items: center; gap: 8px; }
+.yearly-row-icon { font-size: 15px; flex-shrink: 0; }
+.yearly-row-name { font-size: 12px; font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yearly-row-amount { font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.yearly-row-unit { font-size: 10px; font-weight: 600; color: var(--text-dim); }
 .budget-label { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
 .budget-bar { height: 6px; background: var(--surface2); border-radius: 50px; overflow: hidden; }
 .budget-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--accent2), var(--accent)); width: 0%; transition: width 1s ease; }
@@ -467,6 +473,7 @@ input[type=number] { -moz-appearance: textfield; }
             <div class="budget-value" id="budget-value">¥0 / 予算未設定</div>
           </div>
         </div>
+        <div class="yearly-breakdown" id="yearly-breakdown"></div>
       </div>
     </div>
 
@@ -862,6 +869,7 @@ function renderHome() {
     : `¥${total.toLocaleString()} / 予算未設定`;
 
   renderDonutChart(total);
+  renderYearlyBreakdown();
   renderHomeCatList();
   document.getElementById('home-empty').style.display = subs.length===0 ? 'flex' : 'none';
 }
@@ -909,6 +917,25 @@ function renderDonutChart(total) {
       animation: { duration: 600, easing: 'easeInOutQuart' }
     }
   });
+}
+
+// ====== YEARLY BREAKDOWN ======
+function renderYearlyBreakdown() {
+  const el = document.getElementById('yearly-breakdown');
+  if (subs.length === 0) { el.innerHTML = ''; return; }
+  const sorted = [...subs].sort((a,b) => {
+    const ya = a.cycle==='monthly' ? a.amount*12 : a.amount;
+    const yb = b.cycle==='monthly' ? b.amount*12 : b.amount;
+    return yb - ya;
+  });
+  el.innerHTML = sorted.map(s => {
+    const yearlyAmt = s.cycle==='monthly' ? s.amount*12 : s.amount;
+    return `<div class="yearly-row">
+      <div class="yearly-row-icon">${s.icon||'📦'}</div>
+      <div class="yearly-row-name">${esc(s.name)}</div>
+      <div class="yearly-row-amount">¥${yearlyAmt.toLocaleString()}<span class="yearly-row-unit">/年</span></div>
+    </div>`;
+  }).join('');
 }
 
 // ====== HOME CATEGORY LIST ======
