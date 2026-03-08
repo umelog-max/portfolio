@@ -1110,9 +1110,9 @@ function subItemHTML(s, i) {
   const cat  = CATEGORIES[s.category] || CATEGORIES.other;
   const amt  = monthlyAmt(s);
 
-  // 解約タイミングシミュレーター（7日以内）
+  // 解約タイミングシミュレーター（解約申請が有効なサービスのみ・7日以内）
   let cancelSim = '';
-  if (days <= 7) {
+  if (s.cancellationRequired && days <= 7) {
     const renewDate = nextRenewalDate(s);
     if (days <= 1) {
       cancelSim = `<div class="cancel-sim urgent">
