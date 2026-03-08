@@ -34,6 +34,7 @@ export default function WeatherTicker() {
   const [data, setData] = useState<CityWeather[]>([]);
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     Promise.all(
@@ -52,7 +53,7 @@ export default function WeatherTicker() {
           }))
         );
       })
-      .catch(() => {});
+      .catch(() => setError(true));
   }, []);
 
   useEffect(() => {
@@ -67,10 +68,18 @@ export default function WeatherTicker() {
     return () => clearInterval(interval);
   }, [data]);
 
+  if (error) {
+    return (
+      <div className="hidden sm:flex items-center min-w-[120px]">
+        <span className="text-xs text-slate-400 font-mono">🌐 取得失敗</span>
+      </div>
+    );
+  }
+
   if (data.length === 0) {
     return (
       <div className="hidden sm:flex items-center min-w-[120px]">
-        <span className="text-xs text-slate-400 font-mono">--</span>
+        <span className="text-xs text-slate-400 font-mono">🌤️ 取得中...</span>
       </div>
     );
   }
