@@ -145,12 +145,6 @@ body {
 .stat-trend.up{background:var(--red-light);color:var(--red)} .stat-trend.ok{background:var(--surface2);color:var(--text-dim)}
 .stat-wide-inner { display: flex; justify-content: space-between; align-items: flex-start; }
 .budget-bar-wrap { flex: 1; margin-left: 16px; margin-top: 6px; }
-.yearly-breakdown { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 7px; }
-.yearly-row { display: flex; align-items: center; gap: 8px; }
-.yearly-row-icon { font-size: 15px; flex-shrink: 0; }
-.yearly-row-name { font-size: 12px; font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.yearly-row-amount { font-size: 12px; font-weight: 800; flex-shrink: 0; }
-.yearly-row-unit { font-size: 10px; font-weight: 600; color: var(--text-dim); }
 .budget-label { font-size: 11px; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
 .budget-bar { height: 6px; background: var(--surface2); border-radius: 50px; overflow: hidden; }
 .budget-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--accent2), var(--accent)); width: 0%; transition: width 1s ease; }
@@ -206,12 +200,9 @@ body {
 .sub-item:active { transform: scale(0.98); }
 
 .cancel-deadline-info {
-  padding: 10px 16px; background: var(--surface2);
-  border-top: 1px solid var(--border);
-  font-size: 11px; font-weight: 700; color: var(--text-mid);
-  display: flex; flex-direction: column; gap: 2px;
+  padding: 6px 16px 10px;
+  font-size: 11px; font-weight: 700;
 }
-.cancel-deadline-title { font-weight: 800; color: var(--text); }
 
 /* ===== DETAIL TOGGLE ===== */
 .detail-toggle {
@@ -515,6 +506,35 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
 }
 .toast.active { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ===== CONFIRM MODAL ===== */
+.confirm-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 24px;
+}
+.confirm-overlay.active { opacity: 1; pointer-events: all; }
+.confirm-box {
+  width: 100%; max-width: 320px; background: var(--bg);
+  border-radius: 20px; padding: 24px 20px 20px; text-align: center;
+  transform: scale(0.94); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+}
+.confirm-overlay.active .confirm-box { transform: scale(1); }
+.confirm-emoji { font-size: 36px; margin-bottom: 12px; }
+.confirm-title { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+.confirm-desc { font-size: 13px; color: var(--text-mid); font-weight: 600; line-height: 1.6; margin-bottom: 20px; }
+.confirm-btns { display: flex; gap: 10px; }
+.btn-confirm-cancel {
+  flex: 1; padding: 13px; border-radius: 12px;
+  background: var(--surface2); border: none; color: var(--text-dim);
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer;
+}
+.btn-confirm-delete {
+  flex: 1; padding: 13px; border-radius: 12px;
+  background: var(--red); border: none; color: white;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer;
+}
+
 /* ===== ABOUT BOX ===== */
 .about-box {
   margin: 0 20px; background: var(--accent-light);
@@ -566,7 +586,6 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
             <div class="budget-value" id="budget-value">¥0 / 予算未設定</div>
           </div>
         </div>
-        <div class="yearly-breakdown" id="yearly-breakdown"></div>
       </div>
     </div>
 
@@ -672,7 +691,7 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
       </div>
       <div class="about-box">
         <div class="about-box-title">👑 サブスク奉行 v1.0</div>
-        <div class="about-box-desc">完全買い切り・広告なし。<br>データはこのブラウザにのみ保存されます。定期的にバックアップをエクスポートしてください。</div>
+        <div class="about-box-desc">完全買い切り・広告なし。<br>設定からいつでもデータをバックアップできます。</div>
       </div>
       <div style="height:8px"></div>
     </div>
@@ -844,6 +863,19 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
       <button class="btn-detail-delete" onclick="deleteFromDetail()">🗑 削除</button>
     </div>
     <div style="height:4px"></div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-emoji">⚠️</div>
+    <div class="confirm-title">データを削除しますか？</div>
+    <div class="confirm-desc">登録済みのサービスと設定が<br>すべて削除されます。<br>この操作は取り消せません。</div>
+    <div class="confirm-btns">
+      <button class="btn-confirm-cancel" onclick="closeConfirm()">キャンセル</button>
+      <button class="btn-confirm-delete" onclick="confirmDelete()">削除する</button>
+    </div>
   </div>
 </div>
 
@@ -1021,7 +1053,6 @@ function renderHome() {
     : `¥${total.toLocaleString()} / 予算未設定`;
 
   renderDonutChart(total);
-  renderYearlyBreakdown();
   renderHomeCatList();
   document.getElementById('home-empty').style.display = subs.length===0 ? 'flex' : 'none';
 }
@@ -1071,24 +1102,6 @@ function renderDonutChart(total) {
   });
 }
 
-// ====== YEARLY BREAKDOWN ======
-function renderYearlyBreakdown() {
-  const el = document.getElementById('yearly-breakdown');
-  if (subs.length === 0) { el.innerHTML = ''; return; }
-  const sorted = [...subs].sort((a,b) => {
-    const ya = a.cycle==='monthly' ? a.amount*12 : a.amount;
-    const yb = b.cycle==='monthly' ? b.amount*12 : b.amount;
-    return yb - ya;
-  });
-  el.innerHTML = sorted.map(s => {
-    const yearlyAmt = s.cycle==='monthly' ? s.amount*12 : s.amount;
-    return `<div class="yearly-row">
-      <div class="yearly-row-icon">${s.icon||'📦'}</div>
-      <div class="yearly-row-name">${esc(s.name)}</div>
-      <div class="yearly-row-amount">¥${yearlyAmt.toLocaleString()}<span class="yearly-row-unit">/年</span></div>
-    </div>`;
-  }).join('');
-}
 
 // ====== HOME CATEGORY LIST ======
 function renderHomeCatList() {
@@ -1130,11 +1143,8 @@ function subItemHTML(s, i) {
       const typeLabel = s.cancellationDeadlineType === 'date'
         ? `毎月${s.cancellationDeadlineValue}日`
         : `更新日の${s.cancellationDeadlineValue}日前`;
-      const urgentStyle = dLeft <= 3 ? 'style="color:var(--red)"' : '';
-      cancelDeadline = `<div class="cancel-deadline-info">
-        <div class="cancel-deadline-title">📋 解約申請締め日：${typeLabel}</div>
-        <div ${urgentStyle}>次回期限：${fmtDate(deadline)}（残り${dLeft}日）</div>
-      </div>`;
+      const cancelColor = dLeft <= 3 ? 'var(--red)' : dLeft <= 7 ? 'var(--accent)' : 'var(--text-dim)';
+      cancelDeadline = `<div class="cancel-deadline-info" style="color:${cancelColor}">📋 解約申請：${fmtDate(deadline)}まで（残り${dLeft}日）</div>`;
     }
   }
 
@@ -1148,7 +1158,7 @@ function subItemHTML(s, i) {
         </div>
         <div class="sub-right">
           <div class="sub-amount">¥${amt.toLocaleString()}<span class="sub-unit">/月</span></div>
-          ${s.cycle==='yearly' ? `<div class="sub-yearly">年¥${s.amount.toLocaleString()}</div>` : ''}
+          <div class="sub-yearly">年¥${(s.cycle==='monthly' ? s.amount*12 : s.amount).toLocaleString()}</div>
           <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
         </div>
       </div>
@@ -1591,7 +1601,7 @@ function applyTheme(theme, save=true) {
   if (donutChart) renderDonutChart(totalMonthly());
   if (save) saveData();
 }
-function applyThemeAndSave(theme) { applyTheme(theme,true); }
+function applyThemeAndSave(theme) { applyTheme(theme,true); showToast(theme==='dark'?'ダークモードに変更しました':'ライトモードに変更しました'); }
 
 // ====== SETTINGS ACTIONS ======
 function saveSettings() {
@@ -1622,8 +1632,14 @@ function handleImport(e) {
   reader.readAsText(file); e.target.value='';
 }
 function deleteAll() {
-  if (!confirm('すべてのサービスデータを削除しますか？\nこの操作は取り消せません。')) return;
-  subs=[]; saveData(); renderAll(); showToast('データを削除しました');
+  document.getElementById('confirm-overlay').classList.add('active');
+}
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('active');
+}
+function confirmDelete() {
+  subs=[]; saveData(); renderAll();
+  closeConfirm(); showToast('データを削除しました');
 }
 
 // ====== UTILS ======
@@ -1658,6 +1674,7 @@ function setupEventListeners() {
   document.getElementById('modal-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
   document.getElementById('detail-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeDetail(); });
   document.getElementById('notif-popup-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeNotifPopup(); });
+  document.getElementById('confirm-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeConfirm(); });
 }
 
 init();
