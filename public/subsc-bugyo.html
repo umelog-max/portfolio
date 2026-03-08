@@ -80,25 +80,52 @@ body {
 .greeting span { color: var(--accent); }
 .greeting-sub { font-size: 13px; color: var(--text-dim); margin-top: 4px; font-weight: 600; }
 
-/* ===== ALERT ===== */
-.alert-card {
-  margin: 16px 20px 0; background: var(--red-light);
-  border: 1.5px solid rgba(232,112,106,0.2);
-  border-radius: var(--r); padding: 14px 16px;
-  display: flex; align-items: center; gap: 12px;
-  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
+/* ===== NOTIFICATION POPUP ===== */
 @keyframes popIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
-.alert-emoji { font-size: 22px; flex-shrink: 0; }
-.alert-body { flex: 1; min-width: 0; }
-.alert-title { font-size: 12px; font-weight: 800; color: var(--red); }
-.alert-desc { font-size: 11px; color: var(--text-mid); margin-top: 2px; }
-.btn-alert {
-  background: var(--red); color: white; border: none;
-  padding: 7px 13px; border-radius: 50px;
-  font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800;
-  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+.notif-popup-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 250; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  padding: 20px;
 }
+.notif-popup-overlay.active { opacity: 1; pointer-events: all; }
+.notif-popup {
+  width: 100%; max-width: 360px; background: var(--bg);
+  border-radius: 20px; overflow: hidden;
+  transform: scale(0.94) translateY(8px);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+}
+.notif-popup-overlay.active .notif-popup { transform: scale(1) translateY(0); }
+.notif-popup-header { padding: 20px 20px 14px; border-bottom: 1px solid var(--border); }
+.notif-popup-title { font-size: 16px; font-weight: 800; }
+.notif-popup-sub { font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.notif-popup-list { display: flex; flex-direction: column; }
+.notif-popup-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  animation: popIn 0.3s ease;
+}
+.notif-popup-item:last-child { border-bottom: none; }
+.notif-popup-info { flex: 1; min-width: 0; }
+.notif-popup-name { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notif-popup-desc { font-size: 12px; color: var(--text-mid); font-weight: 600; margin-top: 2px; }
+.btn-notif-confirm {
+  background: var(--accent-light); color: var(--accent);
+  border: none; padding: 8px 14px; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+  cursor: pointer; flex-shrink: 0; transition: transform 0.15s;
+}
+.btn-notif-confirm:active { transform: scale(0.93); }
+.notif-popup-footer { padding: 14px 20px; }
+.btn-notif-close {
+  display: block; width: 100%; padding: 12px;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 12px; font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 800; color: var(--text-dim);
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-notif-close:active { background: var(--border); }
 
 /* ===== STATS ===== */
 .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 20px 0; }
@@ -452,7 +479,6 @@ input[type=number] { -moz-appearance: textfield; }
       <div class="greeting" id="greeting-name">こんにちは 👋</div>
       <div class="greeting-sub" id="greeting-sub"></div>
     </div>
-    <div id="alert-section"></div>
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-icon orange">💰</div>
@@ -707,6 +733,20 @@ input[type=number] { -moz-appearance: textfield; }
   </div>
 </div>
 
+<!-- NOTIFICATION POPUP -->
+<div class="notif-popup-overlay" id="notif-popup-overlay">
+  <div class="notif-popup">
+    <div class="notif-popup-header">
+      <div class="notif-popup-title">⏰ 更新が近いサービス</div>
+      <div class="notif-popup-sub">確認ボタンを押すと通知が消えます</div>
+    </div>
+    <div class="notif-popup-list" id="notif-popup-list"></div>
+    <div class="notif-popup-footer">
+      <button class="btn-notif-close" onclick="closeNotifPopup()">あとで確認する</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -740,6 +780,7 @@ function init() {
   buildIconPicker();
   setupEventListeners();
   renderAll();
+  setTimeout(openNotifPopup, 600);
 }
 
 // ====== STORAGE ======
@@ -822,25 +863,8 @@ function renderHome() {
   document.getElementById('greeting-sub').textContent =
     `${now.getFullYear()}年${now.getMonth()+1}月 — ${subs.length}件のサブスクを管理中`;
 
-  // Alert
-  const urgent = subs.filter(s => daysUntilRenewal(s) <= 3)
-    .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
-  const alertEl = document.getElementById('alert-section');
-  if (urgent.length > 0) {
-    alertEl.innerHTML = urgent.map((s, i) => {
-      const days = daysUntilRenewal(s);
-      const date = nextRenewalDate(s);
-      const when = days===0 ? '今日' : days===1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
-      return `<div class="alert-card" style="margin-top:${i===0?16:8}px">
-        <div class="alert-emoji">⏰</div>
-        <div class="alert-body">
-          <div class="alert-title">${esc(s.name)}の更新日が近い！</div>
-          <div class="alert-desc">${when} ¥${s.amount.toLocaleString()} 引き落とし予定</div>
-        </div>
-        ${i===0 ? `<button class="btn-alert" onclick="confirmAlert()">確認</button>` : ''}
-      </div>`;
-    }).join('');
-  } else { alertEl.innerHTML = ''; }
+  // urgent count for badge/trend
+  const urgent = subs.filter(s => daysUntilRenewal(s) <= 3);
 
   // Stats
   document.getElementById('stat-total').innerHTML   = `<span class="unit">¥</span>${total.toLocaleString()}`;
@@ -1015,28 +1039,70 @@ function renderSettings() {
   });
 }
 
-// ====== NOTIF BADGE ======
-function confirmAlert() {
-  // バナーを閉じる
-  document.getElementById('alert-section').innerHTML = '';
-  // 今日確認済みとして記録
-  localStorage.setItem('alertConfirmedDate', todayStr());
-  // バッジも消す
-  document.getElementById('notif-nav-icon').querySelector('.nav-badge')?.remove();
-}
-
+// ====== NOTIF POPUP ======
 function todayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 }
 
+function getConfirmedIds() {
+  try {
+    const d = JSON.parse(localStorage.getItem('alertConfirmed_v2') || '{}');
+    if (d.date === todayStr()) return d.ids || [];
+  } catch {}
+  return [];
+}
+
+function saveConfirmedIds(ids) {
+  localStorage.setItem('alertConfirmed_v2', JSON.stringify({ date: todayStr(), ids }));
+}
+
+function openNotifPopup() {
+  const confirmed = getConfirmedIds();
+  const urgent = subs.filter(s => daysUntilRenewal(s) <= 3 && !confirmed.includes(s.id))
+    .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+  if (!urgent.length) return;
+
+  document.getElementById('notif-popup-list').innerHTML = urgent.map(s => {
+    const days = daysUntilRenewal(s);
+    const date = nextRenewalDate(s);
+    const when = days===0 ? '今日' : days===1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
+    const cat = CATEGORIES[s.category] || CATEGORIES.other;
+    return `<div class="notif-popup-item" data-id="${s.id}">
+      <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon||'📦'}</div>
+      <div class="notif-popup-info">
+        <div class="notif-popup-name">${esc(s.name)}</div>
+        <div class="notif-popup-desc">${when} · ¥${s.amount.toLocaleString()}</div>
+      </div>
+      <button class="btn-notif-confirm" onclick="confirmAlertItem('${s.id}')">確認</button>
+    </div>`;
+  }).join('');
+
+  document.getElementById('notif-popup-overlay').classList.add('active');
+}
+
+function confirmAlertItem(id) {
+  const confirmed = getConfirmedIds();
+  if (!confirmed.includes(id)) confirmed.push(id);
+  saveConfirmedIds(confirmed);
+
+  const el = document.querySelector(`.notif-popup-item[data-id="${id}"]`);
+  if (el) el.remove();
+
+  if (!document.querySelector('.notif-popup-item')) closeNotifPopup();
+  renderNotifBadge();
+}
+
+function closeNotifPopup() {
+  document.getElementById('notif-popup-overlay').classList.remove('active');
+}
+
 function renderNotifBadge() {
-  const n = subs.filter(s => daysUntilRenewal(s) <= 3).length;
+  const confirmed = getConfirmedIds();
+  const n = subs.filter(s => daysUntilRenewal(s) <= 3 && !confirmed.includes(s.id)).length;
   const icon = document.getElementById('notif-nav-icon');
   icon.querySelector('.nav-badge')?.remove();
-  // 今日すでに確認済みならバッジを出さない
-  const confirmed = localStorage.getItem('alertConfirmedDate') === todayStr();
-  if (n > 0 && !confirmed) {
+  if (n > 0) {
     const b = document.createElement('div'); b.className='nav-badge'; b.textContent=n; icon.appendChild(b);
   }
 }
@@ -1047,7 +1113,7 @@ function navigate(screen) {
   document.getElementById(`screen-${screen}`).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.screen===screen));
   window.scrollTo(0,0);
-  if (screen==='home') renderHome();
+  if (screen==='home') { renderHome(); setTimeout(openNotifPopup, 300); }
   else if (screen==='notifications') renderNotifications();
   else if (screen==='settings') renderSettings();
 }
@@ -1261,6 +1327,7 @@ function setupEventListeners() {
 
   document.getElementById('modal-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
   document.getElementById('detail-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeDetail(); });
+  document.getElementById('notif-popup-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeNotifPopup(); });
 }
 
 init();
