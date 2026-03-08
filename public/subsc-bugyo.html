@@ -341,6 +341,15 @@ body {
   -webkit-appearance: none;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+/* ダークモードで背景・文字色を明示 */
+body.dark .form-input, body.dark .form-select, body.dark .form-textarea {
+  background: var(--surface); color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+body.dark .form-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset;
+  -webkit-text-fill-color: var(--text);
+}
 /* スピナー非表示 */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -821,19 +830,19 @@ function renderHome() {
     .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
   const alertEl = document.getElementById('alert-section');
   if (urgent.length > 0) {
-    const s = urgent[0];
-    const days = daysUntilRenewal(s);
-    const date = nextRenewalDate(s);
-    const when = days===0 ? '今日' : days===1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
-    alertEl.innerHTML = `
-      <div class="alert-card">
+    alertEl.innerHTML = urgent.map((s, i) => {
+      const days = daysUntilRenewal(s);
+      const date = nextRenewalDate(s);
+      const when = days===0 ? '今日' : days===1 ? `明日（${fmtDate(date)}）` : `${days}日後（${fmtDate(date)}）`;
+      return `<div class="alert-card" style="margin-top:${i===0?16:8}px">
         <div class="alert-emoji">⏰</div>
         <div class="alert-body">
           <div class="alert-title">${esc(s.name)}の更新日が近い！</div>
           <div class="alert-desc">${when} ¥${s.amount.toLocaleString()} 引き落とし予定</div>
         </div>
-        <button class="btn-alert" onclick="confirmAlert()">確認</button>
+        ${i===0 ? `<button class="btn-alert" onclick="confirmAlert()">確認</button>` : ''}
       </div>`;
+    }).join('');
   } else { alertEl.innerHTML = ''; }
 
   // Stats
@@ -990,7 +999,7 @@ function renderNotifications() {
             <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon||'📦'}</div>
             <div class="sub-info">
               <div class="sub-name">${esc(s.name)}</div>
-              <div class="sub-cat">${fmtDate(date)} · ¥${s.amount.toLocaleString()}</div>
+              <div class="sub-cat" style="font-size:13px;font-weight:700;color:var(--text-mid)">${fmtDate(date)} · <span style="font-weight:800;color:var(--text)">¥${s.amount.toLocaleString()}</span></div>
             </div>
             <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
           </div>`;
@@ -1070,7 +1079,7 @@ function openAddModal(id=null) {
     document.getElementById('form-icon').value     = s.icon||'';
     document.getElementById('form-amount').value   = fmtAmt(s.amount);
     document.getElementById('form-cycle').value    = s.cycle;
-    document.getElementById('form-category').value = s.category;
+    document.getElementById('form-category').value = CATEGORIES[s.category] ? s.category : 'other';
     document.getElementById('form-note').value     = s.note||'';
     selectedIcon = s.icon||'';
     if (s.cycle==='monthly') {
@@ -1118,6 +1127,18 @@ function saveSubscription() {
   if (!amountRaw || amount <= 0) {
     errEl.textContent='金額を正しく入力してください'; errEl.style.display='block';
     document.getElementById('form-amount').focus(); return;
+  }
+  if (!category) {
+    errEl.textContent='カテゴリを選択してください'; errEl.style.display='block';
+    document.getElementById('form-category').focus(); return;
+  }
+  if (cycle==='monthly' && !document.getElementById('form-billing-day').value) {
+    errEl.textContent='引き落とし日を入力してください'; errEl.style.display='block';
+    document.getElementById('form-billing-day').focus(); return;
+  }
+  if (cycle==='yearly' && !document.getElementById('form-billing-date').value) {
+    errEl.textContent='更新日を選択してください'; errEl.style.display='block';
+    document.getElementById('form-billing-date').focus(); return;
   }
   errEl.style.display = 'none';
 
