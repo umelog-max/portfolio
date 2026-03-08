@@ -1110,20 +1110,25 @@ function subItemHTML(s, i) {
   const cat  = CATEGORIES[s.category] || CATEGORIES.other;
   const amt  = monthlyAmt(s);
 
-  // 解約タイミングシミュレーター（解約申請が有効なサービスのみ・7日以内）
+  // 解約タイミングシミュレーター（解約申請が有効 かつ 申請期限7日以内）
   let cancelSim = '';
-  if (s.cancellationRequired && days <= 7) {
-    const renewDate = nextRenewalDate(s);
-    if (days <= 1) {
-      cancelSim = `<div class="cancel-sim urgent">
-        <div class="cancel-sim-title">⚠️ ${days===0?'今日':'明日'}が解約期限！</div>
-        <div class="cancel-sim-desc">今すぐ解約しないと¥${s.amount.toLocaleString()}が追加請求されます</div>
-      </div>`;
-    } else {
-      cancelSim = `<div class="cancel-sim warn">
-        <div class="cancel-sim-title">💡 解約するなら${fmtDate(renewDate)}までに！</div>
-        <div class="cancel-sim-desc">今なら残り${days}日分で終了できます</div>
-      </div>`;
+  if (s.cancellationRequired) {
+    const deadline = cancellationDeadline(s);
+    if (deadline) {
+      const dLeft = daysUntilCancellationDeadline(s);
+      if (dLeft >= 0 && dLeft <= 7) {
+        if (dLeft <= 1) {
+          cancelSim = `<div class="cancel-sim urgent">
+            <div class="cancel-sim-title">⚠️ 解約申請は${dLeft===0?'今日':'明日'}まで！</div>
+            <div class="cancel-sim-desc">期限（${fmtDate(deadline)}）を過ぎると次回更新¥${s.amount.toLocaleString()}が請求されます</div>
+          </div>`;
+        } else {
+          cancelSim = `<div class="cancel-sim warn">
+            <div class="cancel-sim-title">💡 解約申請は${fmtDate(deadline)}まで（残り${dLeft}日）</div>
+            <div class="cancel-sim-desc">期限を過ぎると次回更新¥${s.amount.toLocaleString()}が請求されます</div>
+          </div>`;
+        }
+      }
     }
   }
 
