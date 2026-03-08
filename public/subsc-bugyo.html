@@ -35,7 +35,7 @@ body.dark {
   --surface2: #252525;
   --border: #303030;
   --text: #f0ede8;
-  --text-dim: #555;
+  --text-dim: #888;
   --text-mid: #888;
   --shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
@@ -178,7 +178,7 @@ body {
 .sub-icon { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
 .sub-info { flex: 1; min-width: 0; }
 .sub-name { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sub-cat { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.sub-cat { font-size: 12px; color: var(--text-mid); font-weight: 700; margin-top: 2px; }
 .sub-right { text-align: right; flex-shrink: 0; }
 .sub-amount { font-size: 15px; font-weight: 800; }
 .sub-unit { font-size: 11px; font-weight: 600; color: var(--text-mid); }
@@ -341,13 +341,10 @@ body {
   -webkit-appearance: none;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
-/* ダークモードで背景・文字色を明示 */
-body.dark .form-input, body.dark .form-select, body.dark .form-textarea {
-  background: var(--surface); color: var(--text);
-  -webkit-text-fill-color: var(--text);
-}
-body.dark .form-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset;
+/* ダークモード：アイコン入力欄のみ明示指定（他inputはCSS変数で対応済み） */
+body.dark #form-icon {
+  background-color: var(--surface2);
+  color: var(--text);
   -webkit-text-fill-color: var(--text);
 }
 /* スピナー非表示 */
