@@ -14,9 +14,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
     const post = await getPost(slug);
+    const keywords = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
     return {
       title: post.title,
       description: post.excerpt,
+      keywords,
       openGraph: {
         title: post.title,
         description: post.excerpt,
