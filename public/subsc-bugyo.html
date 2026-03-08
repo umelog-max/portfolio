@@ -282,6 +282,16 @@ body {
 }
 .btn-empty:active { transform: scale(0.97); }
 
+/* ===== SCHEDULE TABS ===== */
+.sched-tabs { display: flex; gap: 8px; padding: 0 20px 16px; }
+.sched-tab {
+  flex: 1; padding: 10px 0; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--surface2);
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s;
+}
+.sched-tab.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+
 /* ===== SCHEDULE ===== */
 .notif-section-label { font-size: 11px; font-weight: 800; color: var(--text-dim); padding: 16px 20px 8px; letter-spacing: 0.04em; }
 .notif-list-inner { display:flex; flex-direction:column; gap:10px; padding:0 20px; }
@@ -590,13 +600,22 @@ input[type=number] { -moz-appearance: textfield; }
   <!-- ===== SCHEDULE ===== -->
   <div id="screen-notifications" class="screen">
     <div class="screen-header">
-      <div class="screen-header-title">🔔 更新スケジュール</div>
+      <div class="screen-header-title">🔔 スケジュール</div>
+    </div>
+    <div class="sched-tabs">
+      <button class="sched-tab active" id="tab-billing" onclick="switchSchedTab('billing')">💳 引き落とし日</button>
+      <button class="sched-tab" id="tab-cancel" onclick="switchSchedTab('cancel')">📋 解約申請期限</button>
     </div>
     <div id="notif-body"></div>
     <div class="empty-state" id="notif-empty" style="display:none">
       <div class="empty-emoji">🎉</div>
       <div class="empty-title">登録済みのサービスなし</div>
-      <div class="empty-desc">サービスを追加すると<br>更新日を一覧で確認できます</div>
+      <div class="empty-desc">サービスを追加すると<br>スケジュールを確認できます</div>
+    </div>
+    <div class="empty-state" id="cancel-empty" style="display:none">
+      <div class="empty-emoji">📋</div>
+      <div class="empty-title">解約申請期限の設定なし</div>
+      <div class="empty-desc">サービス編集の詳細設定から<br>解約申請期限を設定できます</div>
     </div>
   </div>
 
@@ -1138,35 +1157,88 @@ function subItemHTML(s, i) {
 
 
 // ====== SCHEDULE ======
+let schedTab = 'billing';
+
+function switchSchedTab(tab) {
+  schedTab = tab;
+  document.getElementById('tab-billing').classList.toggle('active', tab === 'billing');
+  document.getElementById('tab-cancel').classList.toggle('active', tab === 'cancel');
+  renderNotifications();
+}
+
 function renderNotifications() {
-  const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
   const el = document.getElementById('notif-body');
-  document.getElementById('notif-empty').style.display = subs.length===0 ? 'flex' : 'none';
-  if (!sorted.length) { el.innerHTML=''; return; }
+  const emptyEl = document.getElementById('notif-empty');
+  const cancelEmptyEl = document.getElementById('cancel-empty');
+  emptyEl.style.display = 'none';
+  cancelEmptyEl.style.display = 'none';
 
-  const urgent = sorted.filter(s => daysUntilRenewal(s) <= 3);
-  const soon   = sorted.filter(s => { const d=daysUntilRenewal(s); return d>3&&d<=10; });
-  const later  = sorted.filter(s => daysUntilRenewal(s) > 10);
+  if (schedTab === 'billing') {
+    // 引き落とし日タブ
+    if (!subs.length) { el.innerHTML=''; emptyEl.style.display='flex'; return; }
+    const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+    const urgent = sorted.filter(s => daysUntilRenewal(s) <= 3);
+    const soon   = sorted.filter(s => { const d=daysUntilRenewal(s); return d>3&&d<=10; });
+    const later  = sorted.filter(s => daysUntilRenewal(s) > 10);
 
-  function section(label, items) {
-    if (!items.length) return '';
-    return `<div class="notif-section-label">${label}</div>
-      <div class="notif-list-inner">
-        ${items.map(s => {
-          const days=daysUntilRenewal(s), date=nextRenewalDate(s);
-          const cat=CATEGORIES[s.category]||CATEGORIES.other;
-          return `<div class="notif-item" onclick="showDetail('${s.id}')">
-            <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon||'📦'}</div>
-            <div class="sub-info">
-              <div class="sub-name">${esc(s.name)}</div>
-              <div class="sub-cat" style="font-size:13px;font-weight:700;color:var(--text-mid)">${fmtDate(date)} · <span style="font-weight:800;color:var(--text)">¥${s.amount.toLocaleString()}</span></div>
-            </div>
-            <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
-          </div>`;
-        }).join('')}
-      </div>`;
+    function billingSection(label, items) {
+      if (!items.length) return '';
+      return `<div class="notif-section-label">${label}</div>
+        <div class="notif-list-inner">
+          ${items.map(s => {
+            const days=daysUntilRenewal(s), date=nextRenewalDate(s);
+            const cat=CATEGORIES[s.category]||CATEGORIES.other;
+            return `<div class="notif-item" onclick="showDetail('${s.id}')">
+              <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon||'📦'}</div>
+              <div class="sub-info">
+                <div class="sub-name">${esc(s.name)}</div>
+                <div class="sub-cat" style="font-size:13px;font-weight:700;color:var(--text-mid)">${fmtDate(date)} · <span style="font-weight:800;color:var(--text)">¥${s.amount.toLocaleString()}</span></div>
+              </div>
+              <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
+            </div>`;
+          }).join('')}
+        </div>`;
+    }
+    el.innerHTML = billingSection('⏰ 3日以内',urgent) + billingSection('🟡 10日以内',soon) + billingSection('📅 それ以降',later);
+
+  } else {
+    // 解約申請期限タブ
+    const withDeadline = subs
+      .filter(s => s.cancellationRequired && cancellationDeadline(s))
+      .sort((a,b) => daysUntilCancellationDeadline(a) - daysUntilCancellationDeadline(b));
+
+    if (!withDeadline.length) { el.innerHTML=''; cancelEmptyEl.style.display='flex'; return; }
+
+    const urgent = withDeadline.filter(s => daysUntilCancellationDeadline(s) <= 3);
+    const soon   = withDeadline.filter(s => { const d=daysUntilCancellationDeadline(s); return d>3&&d<=7; });
+    const later  = withDeadline.filter(s => daysUntilCancellationDeadline(s) > 7);
+
+    function cancelSection(label, items) {
+      if (!items.length) return '';
+      return `<div class="notif-section-label">${label}</div>
+        <div class="notif-list-inner">
+          ${items.map(s => {
+            const deadline=cancellationDeadline(s), dLeft=daysUntilCancellationDeadline(s);
+            const cat=CATEGORIES[s.category]||CATEGORIES.other;
+            const typeLabel = s.cancellationDeadlineType==='date'
+              ? `毎月${s.cancellationDeadlineValue}日締め`
+              : `更新日の${s.cancellationDeadlineValue}日前`;
+            const dLeftLabel = dLeft===0?'今日':dLeft===1?'明日':`${dLeft}日後`;
+            const cls = dLeft<=3?'urgent':dLeft<=7?'soon':'ok';
+            return `<div class="notif-item" onclick="showDetail('${s.id}')">
+              <div class="sub-icon" style="background:${cat.bg};width:40px;height:40px;font-size:20px;border-radius:12px;flex-shrink:0">${s.icon||'📦'}</div>
+              <div class="sub-info">
+                <div class="sub-name">${esc(s.name)}</div>
+                <div class="sub-cat" style="font-size:12px;font-weight:700;color:var(--text-dim)">${typeLabel}</div>
+                <div class="sub-cat" style="font-size:13px;font-weight:700;color:var(--text-mid)">${fmtDate(deadline)}</div>
+              </div>
+              <div class="sub-renewal ${cls}"><span class="renewal-dot"></span>${dLeftLabel}</div>
+            </div>`;
+          }).join('')}
+        </div>`;
+    }
+    el.innerHTML = cancelSection('⏰ 3日以内',urgent) + cancelSection('🟡 7日以内',soon) + cancelSection('📅 それ以降',later);
   }
-  el.innerHTML = section('⏰ 3日以内',urgent) + section('🟡 10日以内',soon) + section('📅 それ以降',later);
 }
 
 // ====== SETTINGS ======
