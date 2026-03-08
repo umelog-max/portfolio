@@ -504,18 +504,6 @@ input[type=number] { -moz-appearance: textfield; }
     <div style="height:8px"></div>
   </div>
 
-  <!-- ===== LIST（更新日順） ===== -->
-  <div id="screen-list" class="screen">
-    <div class="screen-header">
-      <div class="screen-header-title">📋 更新日が近い順</div>
-    </div>
-    <div class="sub-list" id="list-sub-list"></div>
-    <div class="empty-state" id="list-empty" style="display:none">
-      <div class="empty-emoji">📦</div>
-      <div class="empty-title">まだサービスがありません</div>
-      <div class="empty-desc">右下の ＋ ボタンから追加しよう</div>
-    </div>
-  </div>
 
   <!-- ===== SCHEDULE ===== -->
   <div id="screen-notifications" class="screen">
@@ -594,10 +582,6 @@ input[type=number] { -moz-appearance: textfield; }
   <button class="nav-btn active" data-screen="home" onclick="navigate('home')">
     <div class="nav-btn-icon">🏠</div>
     <div class="nav-btn-label">ホーム</div>
-  </button>
-  <button class="nav-btn" data-screen="list" onclick="navigate('list')">
-    <div class="nav-btn-icon">📋</div>
-    <div class="nav-btn-label">一覧</div>
   </button>
   <button class="nav-btn" data-screen="notifications" onclick="navigate('notifications')">
     <div class="nav-btn-icon" id="notif-nav-icon">🔔</div>
@@ -811,7 +795,6 @@ function parseAmt(val) { return parseInt(String(val).replace(/,/g, '')) || 0; }
 // ====== RENDER ALL ======
 function renderAll() {
   renderHome();
-  renderList();
   renderNotifications();
   renderSettings();
   renderNotifBadge();
@@ -983,12 +966,6 @@ function subItemHTML(s, i) {
     </div>`;
 }
 
-// ====== LIST ======
-function renderList() {
-  const sorted = [...subs].sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
-  document.getElementById('list-sub-list').innerHTML = sorted.map((s,i) => subItemHTML(s,i)).join('');
-  document.getElementById('list-empty').style.display = subs.length===0 ? 'flex' : 'none';
-}
 
 // ====== SCHEDULE ======
 function renderNotifications() {
@@ -1046,7 +1023,6 @@ function navigate(screen) {
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.screen===screen));
   window.scrollTo(0,0);
   if (screen==='home') renderHome();
-  else if (screen==='list') renderList();
   else if (screen==='notifications') renderNotifications();
   else if (screen==='settings') renderSettings();
 }
