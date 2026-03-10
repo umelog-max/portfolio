@@ -26,7 +26,7 @@ export default async function BlogPage() {
       ) : (
         <div className="glass-card divide-y divide-slate-100 fade-up fade-up-delay-2">
           {posts.map((post) => {
-            const cat = categoryStyles[post.category];
+            const cat = categoryStyles[post.category] ?? categoryStyles["TECH"];
             const tags = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
             return (
               <Link

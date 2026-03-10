@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const cat = categoryStyles[post.category];
+  const cat = categoryStyles[post.category] ?? categoryStyles["TECH"];
   const tags = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
 
   return (
