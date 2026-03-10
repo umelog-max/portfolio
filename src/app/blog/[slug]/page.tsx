@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
+import { cookies } from "next/headers";
 import { getPost, getPosts } from "@/lib/microcms";
 import { categoryStyles } from "@/lib/mock-data";
 
@@ -47,9 +49,17 @@ export async function generateStaticParams() {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
 
+  // Draft Mode が有効な場合はクッキーから draftKey を取得してプレビュー取得
+  const { isEnabled } = await draftMode();
+  let draftKey: string | undefined;
+  if (isEnabled) {
+    const cookieStore = await cookies();
+    draftKey = cookieStore.get("previewDraftKey")?.value;
+  }
+
   let post;
   try {
-    post = await getPost(slug);
+    post = await getPost(slug, draftKey);
   } catch {
     notFound();
   }
