@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { draftMode } from "next/headers";
-import { cookies } from "next/headers";
 import { getPost, getPosts } from "@/lib/microcms";
 import { getCategoryStyle } from "@/lib/mock-data";
 
@@ -10,6 +8,7 @@ export const revalidate = 60;
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ draftKey?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -46,16 +45,9 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.id }));
 }
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage({ params, searchParams }: Props) {
   const { slug } = await params;
-
-  // Draft Mode が有効な場合はクッキーから draftKey を取得してプレビュー取得
-  const { isEnabled } = await draftMode();
-  let draftKey: string | undefined;
-  if (isEnabled) {
-    const cookieStore = await cookies();
-    draftKey = cookieStore.get("previewDraftKey")?.value;
-  }
+  const { draftKey } = await searchParams;
 
   let post;
   try {
