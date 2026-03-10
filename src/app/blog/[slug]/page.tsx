@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
       {/* Header */}
       <div className="glass-card p-8 mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <span className="font-mono text-xs text-slate-400">{post.publishedAt.slice(0, 10)}</span>
+          <span className="font-mono text-xs text-slate-400">{post.publishedAt?.slice(0, 10) ?? "下書き"}</span>
           <span className="font-mono text-xs text-slate-400">{post.readTime} min read</span>
         </div>
         <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug mb-4">
