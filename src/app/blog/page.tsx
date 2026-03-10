@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPosts } from "@/lib/microcms";
-import { categoryStyles } from "@/lib/mock-data";
+import { getCategoryStyle } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -26,7 +26,7 @@ export default async function BlogPage() {
       ) : (
         <div className="glass-card divide-y divide-slate-100 fade-up fade-up-delay-2">
           {posts.map((post) => {
-            const cat = categoryStyles[post.category] ?? categoryStyles["TECH"];
+            const cat = getCategoryStyle(post.category);
             const tags = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
             return (
               <Link
