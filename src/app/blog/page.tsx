@@ -32,31 +32,35 @@ export default async function BlogPage() {
               <Link
                 key={post.id}
                 href={`/blog/${post.id}`}
-                className="glass-card flex items-start gap-4 px-5 py-5 hover:bg-orange-50/50 transition-colors group"
+                className="glass-card flex flex-col gap-2 px-5 py-5 hover:bg-orange-50/50 transition-colors group"
               >
-                <span
-                  className={`shrink-0 font-mono text-xs font-semibold px-2 py-0.5 rounded border mt-0.5 ${cat.bg} ${cat.text} ${cat.border}`}
-                >
-                  {cat.label}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="font-mono text-xs text-slate-400">{post.publishedAt?.slice(0, 10) ?? "下書き"}</span>
-                    <span className="font-mono text-xs text-slate-400">{post.readTime} min</span>
-                  </div>
-                  <p className="font-semibold text-slate-800 group-hover:text-orange-500 transition-colors mb-1">
-                    {post.title}
-                  </p>
-                  <p className="text-sm text-slate-500 line-clamp-1">{post.excerpt}</p>
-                  <div className="flex flex-wrap gap-1 mt-2">
+                {/* 1行目: カテゴリバッジ・日付・読了時間 */}
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`font-mono text-xs font-semibold px-2 py-0.5 rounded border ${cat.bg} ${cat.text} ${cat.border}`}
+                  >
+                    {cat.label}
+                  </span>
+                  <span className="font-mono text-xs text-slate-400">{post.publishedAt?.slice(0, 10) ?? "下書き"}</span>
+                  <span className="font-mono text-xs text-slate-400">{post.readTime} min</span>
+                </div>
+                {/* 2行目: タイトル */}
+                <p className="font-semibold text-slate-800 group-hover:text-orange-500 transition-colors">
+                  {post.title}
+                </p>
+                {/* 3行目: 概要 */}
+                <p className="text-sm text-slate-600 line-clamp-2">{post.excerpt}</p>
+                {/* 4行目: タグ + 矢印 */}
+                <div className="flex items-end justify-between gap-2 mt-1">
+                  <div className="flex flex-wrap gap-1">
                     {tags.map((tag) => (
-                      <span key={tag} className="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                      <span key={tag} className="text-xs text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
                         {tag}
                       </span>
                     ))}
                   </div>
+                  <span className="text-orange-400 group-hover:text-orange-600 transition-colors text-lg shrink-0">→</span>
                 </div>
-                <span className="text-orange-300 group-hover:text-orange-500 transition-colors text-sm shrink-0 mt-1">→</span>
               </Link>
             );
           })}
