@@ -24,5 +24,14 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return NextResponse.redirect(new URL(slug, request.nextUrl.origin));
+  // Amplify Lambda では request.nextUrl.origin が localhost になるため
+  // x-forwarded-host / host ヘッダーから正しいオリジンを組み立てる
+  const host =
+    request.headers.get("x-forwarded-host") ??
+    request.headers.get("host") ??
+    "www.umeblog.com";
+  const proto = request.headers.get("x-forwarded-proto") ?? "https";
+  const origin = `${proto}://${host}`;
+
+  return NextResponse.redirect(new URL(slug, origin));
 }
