@@ -1,5 +1,4 @@
 import { draftMode } from "next/headers";
-import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
@@ -25,5 +24,5 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  redirect(slug);
+  return NextResponse.redirect(new URL(slug, request.nextUrl.origin));
 }
