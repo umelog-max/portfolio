@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import { cookies } from "next/headers";
 import { getPost, getPosts } from "@/lib/microcms";
-import { categoryStyles } from "@/lib/mock-data";
+import { getCategoryStyle } from "@/lib/mock-data";
 
 export const revalidate = 60;
 
@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const cat = categoryStyles[post.category] ?? categoryStyles["TECH"];
+  const cat = getCategoryStyle(post.category);
   const tags = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
 
   return (

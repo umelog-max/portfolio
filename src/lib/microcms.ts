@@ -1,5 +1,4 @@
 import { createClient } from "microcms-js-sdk";
-import type { PostCategory } from "./mock-data";
 
 export const client = createClient({
   serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
@@ -12,7 +11,7 @@ export type MicroCMSPost = {
   updatedAt: string;
   publishedAt: string;
   title: string;
-  category: PostCategory;
+  category: string | { id: string; name: string; [key: string]: unknown };
   tags: string;
   excerpt: string;
   content: string;

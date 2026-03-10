@@ -1,11 +1,9 @@
-export type PostCategory = "TECH" | "LIFE" | "DEV";
-
 export type Post = {
   slug: string;
   title: string;
   excerpt: string;
   date: string;
-  category: PostCategory;
+  category: string;
   tags: string[];
   readTime: number;
 };
@@ -20,26 +18,33 @@ export type Work = {
   period: string;
 };
 
-export const categoryStyles: Record<PostCategory, { label: string; bg: string; text: string; border: string }> = {
-  TECH: {
-    label: "TECH",
-    bg: "bg-sky-50",
-    text: "text-sky-700",
-    border: "border-sky-200",
-  },
-  LIFE: {
-    label: "LIFE",
-    bg: "bg-orange-50",
-    text: "text-orange-600",
-    border: "border-orange-200",
-  },
-  DEV: {
-    label: "DEV",
-    bg: "bg-violet-50",
-    text: "text-violet-700",
-    border: "border-violet-200",
-  },
-};
+type CategoryStyle = { label: string; bg: string; text: string; border: string };
+
+const CATEGORY_PALETTE: CategoryStyle[] = [
+  { label: "", bg: "bg-sky-50",    text: "text-sky-700",    border: "border-sky-200"    },
+  { label: "", bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-200" },
+  { label: "", bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-200" },
+  { label: "", bg: "bg-emerald-50",text: "text-emerald-700",border: "border-emerald-200"},
+  { label: "", bg: "bg-rose-50",   text: "text-rose-600",   border: "border-rose-200"   },
+  { label: "", bg: "bg-amber-50",  text: "text-amber-600",  border: "border-amber-200"  },
+];
+
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+export function getCategoryStyle(category: unknown): CategoryStyle {
+  const name =
+    typeof category === "string"
+      ? category
+      : category !== null && typeof category === "object" && "name" in category
+      ? String((category as { name: unknown }).name)
+      : String(category ?? "");
+  const base = CATEGORY_PALETTE[hashStr(name) % CATEGORY_PALETTE.length];
+  return { ...base, label: name };
+}
 
 export const posts: Post[] = [
   {
