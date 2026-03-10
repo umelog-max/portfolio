@@ -47,16 +47,16 @@ export default async function BlogPage() {
                   <p className="font-semibold text-slate-800 group-hover:text-orange-500 transition-colors mb-1">
                     {post.title}
                   </p>
-                  <p className="text-sm text-slate-400 line-clamp-1">{post.excerpt}</p>
-                  <div className="flex gap-1 mt-2">
+                  <p className="text-sm text-slate-500 line-clamp-1">{post.excerpt}</p>
+                  <div className="flex flex-wrap gap-1 mt-2">
                     {tags.map((tag) => (
-                      <span key={tag} className="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                      <span key={tag} className="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
-                <span className="text-slate-300 group-hover:text-orange-400 transition-colors text-sm shrink-0 mt-1">→</span>
+                <span className="text-orange-300 group-hover:text-orange-500 transition-colors text-sm shrink-0 mt-1">→</span>
               </Link>
             );
           })}
