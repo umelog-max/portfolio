@@ -24,7 +24,7 @@ export default async function BlogPage() {
           まだ記事がありません
         </div>
       ) : (
-        <div className="glass-card divide-y divide-slate-100 fade-up fade-up-delay-2">
+        <div className="flex flex-col gap-4 fade-up fade-up-delay-2">
           {posts.map((post) => {
             const cat = getCategoryStyle(post.category);
             const tags = post.tags ? post.tags.split(",").map((t) => t.trim()) : [];
@@ -32,7 +32,7 @@ export default async function BlogPage() {
               <Link
                 key={post.id}
                 href={`/blog/${post.id}`}
-                className="flex items-start gap-4 px-5 py-5 hover:bg-orange-50/50 transition-colors group"
+                className="glass-card flex items-start gap-4 px-5 py-5 hover:bg-orange-50/50 transition-colors group"
               >
                 <span
                   className={`shrink-0 font-mono text-xs font-semibold px-2 py-0.5 rounded border mt-0.5 ${cat.bg} ${cat.text} ${cat.border}`}
