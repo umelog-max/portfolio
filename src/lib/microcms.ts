@@ -31,11 +31,12 @@ export async function getPosts() {
   return data.contents;
 }
 
-// 記事1件を取得
-export async function getPost(contentId: string) {
+// 記事1件を取得（draftKey があればプレビュー取得）
+export async function getPost(contentId: string, draftKey?: string) {
   const data = await client.getListDetail<MicroCMSPost>({
     endpoint: "blog",
     contentId,
+    queries: draftKey ? { draftKey } : undefined,
   });
   return data;
 }
