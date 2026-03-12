@@ -116,3 +116,10 @@ html {
   color: var(--accent-orange);
   background: #fff7ed;
 }
+
+/* ブログ記事コンテンツ: リストバレット・テーブル枠線を濃く */
+.prose {
+  --tw-prose-bullets: #64748b;     /* slate-500 (デフォルト slate-300 から2段階濃く) */
+  --tw-prose-th-borders: #64748b;  /* slate-500 */
+  --tw-prose-td-borders: #94a3b8;  /* slate-400 (デフォルト slate-200 から2段階濃く) */
+}
