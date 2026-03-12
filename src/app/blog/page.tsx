@@ -42,7 +42,6 @@ export default async function BlogPage() {
                     {cat.label}
                   </span>
                   <span className="font-mono text-xs text-slate-400">{post.publishedAt?.slice(0, 10) ?? "下書き"}</span>
-                  <span className="font-mono text-xs text-slate-400">{post.readTime} min</span>
                 </div>
                 {/* 2行目: タイトル */}
                 <p className="font-semibold text-slate-800 group-hover:text-orange-500 transition-colors">
