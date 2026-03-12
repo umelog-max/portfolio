@@ -5,7 +5,6 @@ export type Post = {
   date: string;
   category: string;
   tags: string[];
-  readTime: number;
 };
 
 export type Work = {
@@ -54,7 +53,6 @@ export const posts: Post[] = [
     date: "2026-02-10",
     category: "TECH",
     tags: ["AWS", "ECS", "Docker"],
-    readTime: 8,
   },
   {
     slug: "go-rest-api",
@@ -63,7 +61,6 @@ export const posts: Post[] = [
     date: "2026-01-28",
     category: "TECH",
     tags: ["Go", "API", "バックエンド"],
-    readTime: 6,
   },
   {
     slug: "terraform-aws-basic",
@@ -72,7 +69,6 @@ export const posts: Post[] = [
     date: "2026-01-15",
     category: "TECH",
     tags: ["Terraform", "AWS", "IaC"],
-    readTime: 10,
   },
   {
     slug: "sauna-engineer-reset",
@@ -81,7 +77,6 @@ export const posts: Post[] = [
     date: "2026-02-05",
     category: "LIFE",
     tags: ["サウナ", "ライフスタイル"],
-    readTime: 4,
   },
   {
     slug: "hobby-road-bike",
@@ -90,7 +85,6 @@ export const posts: Post[] = [
     date: "2026-01-20",
     category: "LIFE",
     tags: ["ロードバイク", "趣味"],
-    readTime: 5,
   },
   {
     slug: "portfolio-dev-log-1",
@@ -99,7 +93,6 @@ export const posts: Post[] = [
     date: "2026-02-15",
     category: "DEV",
     tags: ["Next.js", "個人開発"],
-    readTime: 5,
   },
 ];
 

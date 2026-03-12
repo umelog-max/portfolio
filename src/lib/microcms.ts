@@ -15,7 +15,6 @@ export type MicroCMSPost = {
   tags: string;
   excerpt: string;
   content: string;
-  readTime: number;
 };
 
 // 記事一覧を取得
