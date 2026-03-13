@@ -4,7 +4,12 @@ import { getPosts } from "@/lib/microcms";
 const siteUrl = "https://www.umeblog.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await getPosts();
+  let posts: Awaited<ReturnType<typeof getPosts>> = [];
+  try {
+    posts = await getPosts();
+  } catch {
+    // microCMS が取得できなくてもサイトマップ自体は返す
+  }
 
   const blogUrls = posts.map((post) => ({
     url: `${siteUrl}/blog/${post.id}`,
