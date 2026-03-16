@@ -472,6 +472,7 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
   padding-bottom: max(24px, env(safe-area-inset-bottom));
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  max-height: 92vh; overflow-y: auto;
 }
 .detail-overlay.active .detail-sheet { transform: translateY(0); }
 .detail-header {
@@ -494,6 +495,70 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
 }
 .btn-detail-edit { background: var(--accent-light); color: var(--accent); }
 .btn-detail-delete { background: var(--red-light); color: var(--red); }
+
+/* ===== SCORE BADGE ===== */
+.score-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; padding: 2px 7px;
+  border-radius: 20px; margin-top: 3px; letter-spacing: 0.02em;
+}
+
+/* ===== CALENDAR ===== */
+.cal-section {
+  padding: 0 20px 8px; border-top: 1px solid var(--border); margin-top: 4px;
+}
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 0 10px;
+}
+.cal-month-label { font-size: 14px; font-weight: 800; }
+.cal-month-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: var(--surface2);
+  color: var(--text); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', sans-serif; transition: background 0.15s;
+  line-height: 1;
+}
+.cal-month-btn:active { background: var(--border); }
+.cal-month-btn:disabled { opacity: 0.3; cursor: default; }
+.cal-day-headers {
+  display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px;
+}
+.cal-day-hd {
+  text-align: center; font-size: 10px; font-weight: 800;
+  color: var(--text-dim); padding: 4px 0;
+}
+.cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-day {
+  aspect-ratio: 1; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: background 0.15s; position: relative;
+  user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.cal-day:not(.cal-day-future):not(.cal-day-empty):active { background: var(--surface2); }
+.cal-day-empty { cursor: default; }
+.cal-day-future { opacity: 0.3; cursor: default; }
+.cal-day-today { font-weight: 900; color: var(--accent); }
+.cal-day-today::after {
+  content: ''; position: absolute; bottom: 2px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--accent);
+}
+.cal-day-used {
+  background: rgba(60,179,113,0.18) !important;
+  color: #2a9d5c !important; font-weight: 900;
+}
+.cal-day-used.cal-day-today { color: #2a9d5c !important; }
+.cal-stats {
+  text-align: center; padding: 10px 0 4px;
+  font-size: 12px; font-weight: 600; color: var(--text-mid);
+}
+.cal-stats strong { font-weight: 800; color: var(--text); }
+.cal-usage-label {
+  font-size: 11px; font-weight: 800; color: var(--text-dim);
+  text-align: center; padding-bottom: 10px;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
 
 /* ===== TOAST ===== */
 .toast {
@@ -858,6 +923,17 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
         <div class="detail-row-value" id="detail-note" style="max-width:60%;text-align:right;white-space:pre-wrap;word-break:break-word"></div>
       </div>
     </div>
+    <!-- カレンダー -->
+    <div class="cal-section">
+      <div class="cal-usage-label">📅 使用記録</div>
+      <div class="cal-header">
+        <button class="cal-month-btn" onclick="shiftCalMonth(-1)">‹</button>
+        <div class="cal-month-label" id="cal-month-label"></div>
+        <button class="cal-month-btn" id="cal-next-btn" onclick="shiftCalMonth(1)">›</button>
+      </div>
+      <div id="cal-grid"></div>
+      <div id="cal-stats" class="cal-stats"></div>
+    </div>
     <div class="detail-actions">
       <button class="btn-detail-edit" onclick="editFromDetail()">✏️ 編集</button>
       <button class="btn-detail-delete" onclick="deleteFromDetail()">🗑 削除</button>
@@ -1010,6 +1086,122 @@ function fmtAmt(val) {
 }
 function parseAmt(val) { return parseInt(String(val).replace(/,/g, '')) || 0; }
 
+// ====== COST SCORE ======
+function monthKey(year, month) {
+  return `${year}-${String(month+1).padStart(2,'0')}`;
+}
+function currentMonthKey() {
+  const now = new Date();
+  return monthKey(now.getFullYear(), now.getMonth());
+}
+function calcCostScore(sub) {
+  const key = currentMonthKey();
+  const logs = (sub.usageLogs || {})[key];
+  if (!logs || logs.length === 0) return null;
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  const usageRate = logs.length / daysInMonth;
+  const monthly = monthlyAmt(sub);
+  if (monthly === 0) return null;
+  return usageRate * 100 / (monthly / 1000);
+}
+function scoreRank(score) {
+  if (score === null) return null;
+  if (score >= 80) return { rank:'S', color:'#3cb371', bg:'rgba(60,179,113,0.12)' };
+  if (score >= 50) return { rank:'A', color:'#5b8dd9', bg:'rgba(91,141,217,0.12)' };
+  if (score >= 25) return { rank:'B', color:'#a07800', bg:'rgba(245,200,66,0.18)' };
+  if (score >= 10) return { rank:'C', color:'#e8855a', bg:'rgba(232,133,90,0.12)' };
+  return             { rank:'D', color:'#e8706a', bg:'rgba(232,112,106,0.12)' };
+}
+
+// ====== CALENDAR ======
+let calViewYear  = new Date().getFullYear();
+let calViewMonth = new Date().getMonth(); // 0-indexed
+
+function shiftCalMonth(delta) {
+  calViewMonth += delta;
+  if (calViewMonth < 0)  { calViewMonth = 11; calViewYear--; }
+  if (calViewMonth > 11) { calViewMonth = 0;  calViewYear++; }
+  // 未来月には進めない
+  const now = new Date();
+  if (calViewYear > now.getFullYear() ||
+     (calViewYear === now.getFullYear() && calViewMonth > now.getMonth())) {
+    calViewYear  = now.getFullYear();
+    calViewMonth = now.getMonth();
+  }
+  renderCalendar();
+}
+
+function toggleDay(day) {
+  const sub = subs.find(s => s.id === detailId);
+  if (!sub) return;
+  const key = monthKey(calViewYear, calViewMonth);
+  if (!sub.usageLogs) sub.usageLogs = {};
+  if (!sub.usageLogs[key]) sub.usageLogs[key] = [];
+  const idx = sub.usageLogs[key].indexOf(day);
+  if (idx === -1) {
+    sub.usageLogs[key].push(day);
+    sub.usageLogs[key].sort((a,b) => a-b);
+  } else {
+    sub.usageLogs[key].splice(idx, 1);
+  }
+  saveData();
+  renderCalendar();
+  renderHomeCatList(); // バッジ更新
+}
+
+function renderCalendar() {
+  const sub = subs.find(s => s.id === detailId);
+  if (!sub) return;
+
+  const year  = calViewYear;
+  const month = calViewMonth;
+  const key   = monthKey(year, month);
+  const used  = (sub.usageLogs || {})[key] || [];
+
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const firstDay    = new Date(year, month, 1).getDay(); // 0=日
+
+  // 月ラベル
+  document.getElementById('cal-month-label').textContent = `${year}年${month+1}月`;
+
+  // 次月ボタンは今月なら無効
+  const now = new Date();
+  const isNow = (year === now.getFullYear() && month === now.getMonth());
+  document.getElementById('cal-next-btn').disabled = isNow;
+
+  // ヘッダー
+  const dayLabels = ['日','月','火','水','木','金','土'];
+  let html = `<div class="cal-day-headers">${dayLabels.map(d=>`<div class="cal-day-hd">${d}</div>`).join('')}</div>`;
+  html += '<div class="cal-days">';
+
+  // 空白セル
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day cal-day-empty"></div>';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cellDate = new Date(year, month, d);
+    const isFuture = cellDate > today;
+    const isToday  = cellDate.getTime() === today.getTime();
+    const isUsed   = used.includes(d);
+
+    let cls = 'cal-day';
+    if (isUsed)   cls += ' cal-day-used';
+    if (isFuture) cls += ' cal-day-future';
+    if (isToday)  cls += ' cal-day-today';
+
+    const fn = !isFuture ? `onclick="toggleDay(${d})"` : '';
+    html += `<div class="${cls}" ${fn}>${d}</div>`;
+  }
+  html += '</div>';
+  document.getElementById('cal-grid').innerHTML = html;
+
+  // 使用率
+  const pct = daysInMonth > 0 ? Math.round(used.length / daysInMonth * 100) : 0;
+  document.getElementById('cal-stats').innerHTML =
+    `使用日数 <strong>${used.length}</strong> / ${daysInMonth}日（<strong>${pct}%</strong>）`;
+}
+
 // ====== RENDER ALL ======
 function renderAll() {
   renderHome();
@@ -1148,6 +1340,12 @@ function subItemHTML(s, i) {
     }
   }
 
+  const score = calcCostScore(s);
+  const rank  = scoreRank(score);
+  const scoreBadge = rank
+    ? `<div class="score-badge" style="color:${rank.color};background:${rank.bg}">${rank.rank}</div>`
+    : '';
+
   return `
     <div class="sub-card" style="animation-delay:${Math.min(i*0.04,0.3)}s">
       <div class="sub-item" onclick="showDetail('${s.id}')">
@@ -1160,6 +1358,7 @@ function subItemHTML(s, i) {
           <div class="sub-amount">¥${amt.toLocaleString()}<span class="sub-unit">/月</span></div>
           <div class="sub-yearly">年¥${(s.cycle==='monthly' ? s.amount*12 : s.amount).toLocaleString()}</div>
           <div class="sub-renewal ${statusClass(days)}"><span class="renewal-dot"></span>${renewalLabel(days)}</div>
+          ${scoreBadge}
         </div>
       </div>
       ${cancelDeadline}
@@ -1582,7 +1781,11 @@ function showDetail(id) {
   const noteRow=document.getElementById('detail-note-row');
   if (s.note) { document.getElementById('detail-note').textContent=s.note; noteRow.style.display=''; }
   else { noteRow.style.display='none'; }
+  // カレンダーを当月にリセット
+  calViewYear  = new Date().getFullYear();
+  calViewMonth = new Date().getMonth();
   document.getElementById('detail-overlay').classList.add('active');
+  renderCalendar();
 }
 function closeDetail() { document.getElementById('detail-overlay').classList.remove('active'); detailId=null; }
 function editFromDetail() { const id=detailId; closeDetail(); setTimeout(()=>openAddModal(id),200); }
