@@ -21,15 +21,39 @@
 
   .container { width: 100%; max-width: 520px; }
 
-  h1 {
+  /* Header */
+  .header-row {
+    position: relative;
     text-align: center;
+    margin-bottom: 8px;
+  }
+
+  h1 {
     font-size: 2.6rem;
     font-weight: 900;
     color: #fff;
     text-shadow: 0 0 20px #ff6bcb, 0 0 40px #ff6bcb;
-    margin-bottom: 8px;
     letter-spacing: 0.05em;
   }
+
+  .mute-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .mute-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); }
+  .mute-btn.muted { background: rgba(255,80,80,0.2); border-color: rgba(255,80,80,0.4); }
 
   .subtitle {
     text-align: center;
@@ -52,60 +76,46 @@
   }
 
   .card-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffdf70;
-    margin-bottom: 16px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-size: 1rem; font-weight: 700;
+    color: #ffdf70; margin-bottom: 16px;
+    letter-spacing: 0.05em; text-transform: uppercase;
   }
 
   .choices-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-
-  .choice-row { display: flex; align-items: center; gap: 10px; }
+  .choice-row   { display: flex; align-items: center; gap: 10px; }
 
   .choice-num {
-    width: 28px; height: 28px;
-    border-radius: 50%;
+    width: 28px; height: 28px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; font-weight: 900;
-    flex-shrink: 0; color: #fff;
+    font-size: 0.85rem; font-weight: 900; flex-shrink: 0; color: #fff;
   }
 
   .choice-input {
     flex: 1;
     background: rgba(255,255,255,0.1);
     border: 1.5px solid rgba(255,255,255,0.2);
-    border-radius: 10px;
-    color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem; font-weight: 700;
-    padding: 9px 14px;
-    outline: none;
+    border-radius: 10px; color: #fff;
+    font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700;
+    padding: 9px 14px; outline: none;
     transition: border-color 0.2s, background 0.2s;
   }
   .choice-input::placeholder { color: rgba(255,255,255,0.3); font-weight: 700; }
   .choice-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); }
 
   .remove-btn {
-    width: 30px; height: 30px;
-    border-radius: 50%; border: none;
+    width: 30px; height: 30px; border-radius: 50%; border: none;
     background: rgba(255,80,80,0.25); color: #ff8888;
-    font-size: 1.1rem; font-weight: 900;
-    cursor: pointer;
+    font-size: 1.1rem; font-weight: 900; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: background 0.2s; flex-shrink: 0; line-height: 1;
   }
   .remove-btn:hover { background: rgba(255,80,80,0.5); }
 
   .add-btn {
-    width: 100%; padding: 9px;
-    border-radius: 10px;
+    width: 100%; padding: 9px; border-radius: 10px;
     border: 1.5px dashed rgba(255,255,255,0.3);
-    background: transparent;
-    color: rgba(255,255,255,0.5);
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem; font-weight: 700;
+    background: transparent; color: rgba(255,255,255,0.5);
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
     cursor: pointer; transition: all 0.2s;
   }
   .add-btn:hover { border-color: rgba(255,255,255,0.6); color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.05); }
@@ -114,11 +124,9 @@
     width: 100%; margin-top: 24px; padding: 18px;
     border-radius: 16px; border: none;
     background: linear-gradient(135deg, #ff6bcb, #ff8c42);
-    color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1.4rem; font-weight: 900;
-    cursor: pointer; letter-spacing: 0.05em;
-    box-shadow: 0 4px 30px rgba(255,107,203,0.5);
+    color: #fff; font-family: 'Nunito', sans-serif;
+    font-size: 1.4rem; font-weight: 900; cursor: pointer;
+    letter-spacing: 0.05em; box-shadow: 0 4px 30px rgba(255,107,203,0.5);
     transition: transform 0.15s, box-shadow 0.15s;
   }
   .start-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 40px rgba(255,107,203,0.7); }
@@ -126,7 +134,6 @@
 
   /* Spin Screen */
   .spin-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-
   .wheel-container { display: flex; flex-direction: column; align-items: center; }
 
   .wheel-pointer {
@@ -135,50 +142,36 @@
     border-right: 14px solid transparent;
     border-top: 24px solid #ffdf70;
     filter: drop-shadow(0 0 8px rgba(255,220,80,0.9));
-    margin-bottom: 2px;
-    flex-shrink: 0;
+    margin-bottom: 2px; flex-shrink: 0;
   }
 
   #wheel-canvas {
-    display: block;
-    border-radius: 50%;
+    display: block; border-radius: 50%;
     box-shadow: 0 0 40px rgba(255,107,203,0.3), 0 0 80px rgba(123,97,255,0.2);
   }
 
   .spin-label {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.9rem; font-weight: 700;
+    color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 700;
     letter-spacing: 0.1em; text-transform: uppercase;
   }
 
   /* Result Screen */
   .result-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
 
-  .result-label {
-    font-size: 1rem; font-weight: 700;
-    color: #aad4ff; letter-spacing: 0.15em; text-transform: uppercase;
-  }
+  .result-label { font-size: 1rem; font-weight: 700; color: #aad4ff; letter-spacing: 0.15em; text-transform: uppercase; }
 
   .result-answer {
-    font-size: 2.8rem; font-weight: 900;
-    color: #fff; text-shadow: 0 0 30px currentColor;
-    line-height: 1.2; word-break: break-all;
+    font-size: 2.8rem; font-weight: 900; color: #fff;
+    text-shadow: 0 0 30px currentColor; line-height: 1.2; word-break: break-all;
   }
 
-  .result-decided {
-    font-size: 1.5rem; font-weight: 900;
-    color: #ffdf70; text-shadow: 0 0 20px #ffdf70;
-  }
+  .result-decided { font-size: 1.5rem; font-weight: 900; color: #ffdf70; text-shadow: 0 0 20px #ffdf70; }
 
-  .result-buttons {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    justify-content: center; margin-top: 8px;
-  }
+  .result-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
 
   .btn-again {
     padding: 13px 28px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, #7b61ff, #a855f7);
-    color: #fff;
+    background: linear-gradient(135deg, #7b61ff, #a855f7); color: #fff;
     font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900;
     cursor: pointer; box-shadow: 0 4px 20px rgba(123,97,255,0.5);
     transition: transform 0.15s, box-shadow 0.15s;
@@ -188,31 +181,18 @@
   .btn-reset {
     padding: 13px 28px; border-radius: 12px;
     border: 1.5px solid rgba(255,255,255,0.25);
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8);
     font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900;
     cursor: pointer; transition: all 0.15s;
   }
   .btn-reset:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); color: #fff; }
 
   /* Confetti */
-  #confetti-canvas {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; z-index: 100;
-  }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
 
-  /* Flash overlay */
-  #flash-overlay {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; z-index: 150;
-    opacity: 0;
-  }
-  @keyframes flash-anim {
-    0% { opacity: 0.9; }
-    100% { opacity: 0; }
-  }
+  /* Flash */
+  #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 150; opacity: 0; }
+  @keyframes flash-anim { 0% { opacity: 0.9; } 100% { opacity: 0; } }
   #flash-overlay.active { animation: flash-anim 0.7s ease-out forwards; }
 
   /* Result animations */
@@ -227,9 +207,9 @@
     100% { transform: translateY(0);    opacity: 1; }
   }
   @keyframes card-bounce {
-    0%,100% { transform: translateY(0)   scale(1); }
+    0%,100% { transform: translateY(0)    scale(1);    }
     30%      { transform: translateY(-14px) scale(1.02); }
-    65%      { transform: translateY(5px)  scale(0.98); }
+    65%      { transform: translateY(5px)   scale(0.98); }
   }
 
   .result-answer.animate  { animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
@@ -237,26 +217,22 @@
   .card-bounce-anim       { animation: card-bounce 0.65s 0.1s ease both; }
 
   /* Palette */
-  .palette-0 { background:#ff6bcb; } .palette-1 { background:#ff8c42; }
-  .palette-2 { background:#ffd600; } .palette-3 { background:#4cde80; }
-  .palette-4 { background:#00c9ff; } .palette-5 { background:#7b61ff; }
-  .palette-6 { background:#ff4d6d; } .palette-7 { background:#00e5c3; }
-  .palette-8 { background:#ffb347; } .palette-9 { background:#b76eff; }
+  .palette-0{background:#ff6bcb} .palette-1{background:#ff8c42}
+  .palette-2{background:#ffd600} .palette-3{background:#4cde80}
+  .palette-4{background:#00c9ff} .palette-5{background:#7b61ff}
+  .palette-6{background:#ff4d6d} .palette-7{background:#00e5c3}
+  .palette-8{background:#ffb347} .palette-9{background:#b76eff}
 
-  .color-0 { color:#ff6bcb; text-shadow:0 0 30px #ff6bcb; }
-  .color-1 { color:#ff8c42; text-shadow:0 0 30px #ff8c42; }
-  .color-2 { color:#ffd600; text-shadow:0 0 30px #ffd600; }
-  .color-3 { color:#4cde80; text-shadow:0 0 30px #4cde80; }
-  .color-4 { color:#00c9ff; text-shadow:0 0 30px #00c9ff; }
-  .color-5 { color:#7b61ff; text-shadow:0 0 30px #7b61ff; }
-  .color-6 { color:#ff4d6d; text-shadow:0 0 30px #ff4d6d; }
-  .color-7 { color:#00e5c3; text-shadow:0 0 30px #00e5c3; }
-  .color-8 { color:#ffb347; text-shadow:0 0 30px #ffb347; }
-  .color-9 { color:#b76eff; text-shadow:0 0 30px #b76eff; }
+  .color-0{color:#ff6bcb;text-shadow:0 0 30px #ff6bcb} .color-1{color:#ff8c42;text-shadow:0 0 30px #ff8c42}
+  .color-2{color:#ffd600;text-shadow:0 0 30px #ffd600} .color-3{color:#4cde80;text-shadow:0 0 30px #4cde80}
+  .color-4{color:#00c9ff;text-shadow:0 0 30px #00c9ff} .color-5{color:#7b61ff;text-shadow:0 0 30px #7b61ff}
+  .color-6{color:#ff4d6d;text-shadow:0 0 30px #ff4d6d} .color-7{color:#00e5c3;text-shadow:0 0 30px #00e5c3}
+  .color-8{color:#ffb347;text-shadow:0 0 30px #ffb347} .color-9{color:#b76eff;text-shadow:0 0 30px #b76eff}
 
   @media (max-width: 420px) {
     h1 { font-size: 2rem; }
     .result-answer { font-size: 2.2rem; }
+    .mute-btn { width: 36px; height: 36px; font-size: 1rem; }
   }
 </style>
 </head>
@@ -266,7 +242,10 @@
 <div id="flash-overlay"></div>
 
 <div class="container">
-  <h1>くじびき</h1>
+  <div class="header-row">
+    <h1>くじびき</h1>
+    <button class="mute-btn" id="mute-btn" title="ミュート切り替え">🔊</button>
+  </div>
   <p class="subtitle">運命にすべてを委ねよう</p>
 
   <!-- Setup Screen -->
@@ -297,7 +276,7 @@
     <div class="card" id="result-card">
       <div class="result-wrapper">
         <div class="result-label">決まった！</div>
-        <div class="result-answer" id="result-answer"></div>
+        <div class="result-answer"  id="result-answer"></div>
         <div class="result-decided" id="result-decided">これに決まり！</div>
         <div class="result-buttons">
           <button class="btn-again" id="btn-again">もう一度ひく</button>
@@ -320,6 +299,7 @@ const MAX_CHOICES = 10;
 // ---- State ----
 let choices = ['', ''];
 let wheelStoppedAngle = 0;
+let muted = false;
 
 // ---- Elements ----
 const setupScreen  = document.getElementById('setup-screen');
@@ -336,6 +316,14 @@ const btnAgain     = document.getElementById('btn-again');
 const btnReset     = document.getElementById('btn-reset');
 const flashOverlay = document.getElementById('flash-overlay');
 const wheelCanvas  = document.getElementById('wheel-canvas');
+const muteBtn      = document.getElementById('mute-btn');
+
+// ---- Mute ----
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.classList.toggle('muted', muted);
+});
 
 // ---- Audio ----
 let audioCtx = null;
@@ -347,12 +335,12 @@ function getAudioCtx() {
 }
 
 function playTick(normalizedSpeed) {
+  if (muted) return;
   try {
-    const ctx = getAudioCtx();
+    const ctx  = getAudioCtx();
     const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(ctx.destination);
     osc.type = 'triangle';
     osc.frequency.value = 280 + normalizedSpeed * 500;
     const vol   = 0.04 + normalizedSpeed * 0.12;
@@ -365,23 +353,22 @@ function playTick(normalizedSpeed) {
 }
 
 function playWinSound() {
+  if (muted) return;
   try {
-    const ctx = getAudioCtx();
+    const ctx   = getAudioCtx();
     const notes = [523.25, 659.25, 783.99, 1046.50];
     let t = ctx.currentTime + 0.05;
     notes.forEach((freq, i) => {
       const osc  = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.value = freq;
+      osc.type = 'sine'; osc.frequency.value = freq;
       const dur = i === notes.length - 1 ? 0.6 : 0.15;
       gain.gain.setValueAtTime(0.25, t);
       gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
       osc.start(t); osc.stop(t + dur + 0.01);
       if (i < notes.length - 1) t += 0.12;
     });
-    // Final chord
     const ct = t + 0.08;
     [523.25, 659.25, 783.99].forEach(freq => {
       const osc  = ctx.createOscillator();
@@ -411,12 +398,13 @@ function darkenColor(hex, f) {
   return `rgb(${Math.round(r*f)},${Math.round(g*f)},${Math.round(b*f)})`;
 }
 
-function drawWheel(angle) {
+// highlightIdx: スライスを明るく縁取りする（-1 = なし）
+function drawWheel(angle, highlightIdx = -1) {
   const ctx = wheelCanvas.getContext('2d');
-  const S = wheelCanvas.width;
-  const cx = S / 2, cy = S / 2;
-  const R = S / 2 - 6;
-  const n = choices.length;
+  const S   = wheelCanvas.width;
+  const cx  = S / 2, cy = S / 2;
+  const R   = S / 2 - 6;
+  const n   = choices.length;
   const sliceAngle = (2 * Math.PI) / n;
 
   ctx.clearRect(0, 0, S, S);
@@ -426,18 +414,28 @@ function drawWheel(angle) {
     const end   = start + sliceAngle;
     const mid   = start + sliceAngle / 2;
 
+    // スライス塗り
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.arc(cx, cy, R, start, end);
     ctx.closePath();
+
     const base = PALETTE_COLORS[i % PALETTE_COLORS.length];
     ctx.fillStyle = i % 2 === 0 ? base : darkenColor(base, 0.78);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-    ctx.lineWidth = 1.5;
+
+    // ハイライトオーバーレイ
+    if (i === highlightIdx) {
+      ctx.fillStyle = 'rgba(255,255,255,0.30)';
+      ctx.fill();
+    }
+
+    // 境界線
+    ctx.strokeStyle = i === highlightIdx ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.3)';
+    ctx.lineWidth   = i === highlightIdx ? 2.5 : 1.5;
     ctx.stroke();
 
-    // Text
+    // テキスト
     const textR = R * 0.60;
     const tx = cx + Math.cos(mid) * textR;
     const ty = cy + Math.sin(mid) * textR;
@@ -446,10 +444,8 @@ function drawWheel(angle) {
     ctx.rotate(mid + Math.PI / 2);
     const fs = n <= 4 ? 14 : n <= 6 ? 12 : 10;
     ctx.font = `900 ${fs}px Nunito, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(0,0,0,0.7)';
-    ctx.shadowBlur = 4;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 4;
     ctx.fillStyle = '#fff';
     const maxChars = n <= 4 ? 10 : n <= 6 ? 7 : 5;
     const label = choices[i].length > maxChars ? choices[i].slice(0, maxChars) + '…' : choices[i];
@@ -457,30 +453,26 @@ function drawWheel(angle) {
     ctx.restore();
   }
 
-  // Outer ring
+  // 外周リング
   ctx.beginPath();
   ctx.arc(cx, cy, R, 0, Math.PI * 2);
   ctx.strokeStyle = 'rgba(255,255,255,0.35)';
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // Center hub
-  const hubR = Math.max(16, S * 0.075);
+  // 中心ハブ
+  const hubR    = Math.max(16, S * 0.075);
   const hubGrad = ctx.createRadialGradient(cx - hubR*0.3, cy - hubR*0.3, 1, cx, cy, hubR);
   hubGrad.addColorStop(0, '#3d1060');
   hubGrad.addColorStop(1, '#150326');
   ctx.beginPath();
   ctx.arc(cx, cy, hubR, 0, Math.PI * 2);
-  ctx.fillStyle = hubGrad;
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  ctx.fillStyle = hubGrad; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 2; ctx.stroke();
 
   ctx.beginPath();
   ctx.arc(cx, cy, 4, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fill();
 }
 
 function initWheel() {
@@ -490,11 +482,25 @@ function initWheel() {
   drawWheel(wheelStoppedAngle);
 }
 
-// ---- Slice at pointer (top = -π/2 = 3π/2) ----
+// ---- Slice at pointer (top = 3π/2) ----
 function getSliceAtPointer(angle, n) {
   const sliceAngle = 2 * Math.PI / n;
   const coord = ((-Math.PI / 2 - angle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
   return Math.floor(coord / sliceAngle) % n;
+}
+
+// ---- Easing: 素早く加速 → ゆっくり減速 ----
+function spinEase(t) {
+  const p = 0.15; // 加速フェーズの割合
+  if (t < p) {
+    // ease-in cubic: 0 → p
+    const s = t / p;
+    return s * s * s * p;
+  } else {
+    // ease-out quartic: p → 1
+    const s = (t - p) / (1 - p);
+    return p + (1 - p) * (1 - Math.pow(1 - s, 4));
+  }
 }
 
 // ---- Setup Screen ----
@@ -509,11 +515,8 @@ function renderSetup() {
     num.textContent = i + 1;
 
     const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'choice-input';
-    input.placeholder = `選択肢 ${i + 1}`;
-    input.maxLength = 20;
-    input.value = val;
+    input.type = 'text'; input.className = 'choice-input';
+    input.placeholder = `選択肢 ${i + 1}`; input.maxLength = 20; input.value = val;
     input.addEventListener('input', e => { choices[i] = e.target.value; });
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
@@ -533,13 +536,10 @@ function renderSetup() {
 
     if (choices.length > MIN_CHOICES) {
       const rm = document.createElement('button');
-      rm.className = 'remove-btn';
-      rm.innerHTML = '&times;';
-      rm.title = '削除';
+      rm.className = 'remove-btn'; rm.innerHTML = '&times;'; rm.title = '削除';
       rm.addEventListener('click', () => { choices.splice(i, 1); renderSetup(); });
       row.appendChild(rm);
     }
-
     choicesList.appendChild(row);
   });
   addBtn.style.display = choices.length >= MAX_CHOICES ? 'none' : '';
@@ -560,8 +560,7 @@ addBtn.addEventListener('click', () => {
 startBtn.addEventListener('click', () => {
   const filled = choices.filter(c => c.trim() !== '');
   if (filled.length < 2) { alert('選択肢を2つ以上入力してください！'); return; }
-  choices = filled;
-  renderSetup();
+  choices = filled; renderSetup();
   wheelStoppedAngle = 0;
   startSpin();
 });
@@ -579,8 +578,7 @@ function startSpin() {
   const n = choices.length;
   const sliceAngle = 2 * Math.PI / n;
 
-  // Winner center at top (-π/2 = 3π/2):
-  // finalAngle + (winner + 0.5) * sliceAngle ≡ -π/2 (mod 2π)
+  // winner の中心をポインター(top = -π/2)に合わせる
   let targetAngle = -Math.PI / 2 - (winner + 0.5) * sliceAngle;
   const REPS = 6;
   while (targetAngle < wheelStoppedAngle + 2 * Math.PI * REPS) {
@@ -593,19 +591,21 @@ function startSpin() {
   const startTime   = performance.now();
   let lastTickSlice = getSliceAtPointer(startAngle, n);
 
-  function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
-
   function tick(now) {
     const elapsed = now - startTime;
     const t = Math.min(elapsed / DURATION, 1);
-    const currentAngle = startAngle + totalDelta * easeOut(t);
+    const currentAngle = startAngle + totalDelta * spinEase(t);
+    const currentSlice = getSliceAtPointer(currentAngle, n);
 
-    drawWheel(currentAngle);
+    // ポインター下のスライスをハイライトしながら描画
+    drawWheel(currentAngle, currentSlice);
 
-    const slice = getSliceAtPointer(currentAngle, n);
-    if (slice !== lastTickSlice) {
-      lastTickSlice = slice;
-      const speed = Math.min(4 * Math.pow(1 - t, 3), 1);
+    // スライスが切り替わったらティック音
+    if (currentSlice !== lastTickSlice) {
+      lastTickSlice = currentSlice;
+      // spinEase の速度 ≈ 加速フェーズ後は quartic ease-out の微分 4(1-s)^3
+      const s = Math.max(0, (t - 0.15) / 0.85);
+      const speed = Math.min(4 * Math.pow(1 - s, 3), 1);
       playTick(speed);
     }
 
@@ -613,6 +613,7 @@ function startSpin() {
       requestAnimationFrame(tick);
     } else {
       wheelStoppedAngle = targetAngle;
+      drawWheel(targetAngle, winner); // 当選スライスをハイライトしたまま停止
       spinLabel.textContent = '決定！';
       setTimeout(() => showResult(winner), 400);
     }
@@ -652,13 +653,12 @@ btnReset.addEventListener('click', () => {
 
 // ---- Confetti ----
 const confCanvas = document.getElementById('confetti-canvas');
-const confCtx = confCanvas.getContext('2d');
+const confCtx    = confCanvas.getContext('2d');
 let confParticles = [];
-let confAnimId = null;
+let confAnimId    = null;
 
 function launchConfetti() {
-  confCanvas.width  = window.innerWidth;
-  confCanvas.height = window.innerHeight;
+  confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight;
   confParticles = [];
   for (let i = 0; i < 130; i++) {
     confParticles.push({
@@ -681,20 +681,16 @@ function launchConfetti() {
 function animateConfetti() {
   confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
   confParticles.forEach(p => {
-    p.x += p.vx; p.y += p.vy; p.vy += 0.08;
-    p.rotation += p.rotSpeed;
+    p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.rotation += p.rotSpeed;
     if (p.y > confCanvas.height * 0.7) p.alpha -= 0.02;
     confCtx.save();
     confCtx.globalAlpha = Math.max(p.alpha, 0);
-    confCtx.translate(p.x, p.y);
-    confCtx.rotate(p.rotation);
+    confCtx.translate(p.x, p.y); confCtx.rotate(p.rotation);
     confCtx.fillStyle = p.color;
     if (p.shape === 'rect') {
       confCtx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
     } else {
-      confCtx.beginPath();
-      confCtx.arc(0, 0, p.size/2, 0, Math.PI*2);
-      confCtx.fill();
+      confCtx.beginPath(); confCtx.arc(0, 0, p.size/2, 0, Math.PI*2); confCtx.fill();
     }
     confCtx.restore();
   });
