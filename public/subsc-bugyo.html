@@ -1185,6 +1185,7 @@ function toggleDay(day) {
   saveData();
   renderCalendar();
   renderHomeCatList(); // バッジ更新
+  renderHomeAlerts();
 }
 
 function renderCalendar() {
@@ -1257,7 +1258,8 @@ function renderHomeAlerts() {
     const dLeft = daysUntilCancellationDeadline(s);
     return dLeft !== null && dLeft >= 0 && dLeft <= 7;
   });
-  if (!alerts.length) { el.innerHTML = ''; return; }
+  if (!alerts.length) { el.innerHTML = ''; el.style.padding = '0'; return; }
+  el.style.padding = '';
   el.innerHTML = alerts.map(s => {
     const key  = currentMonthKey();
     const used = (s.usageLogs || {})[key] || [];
