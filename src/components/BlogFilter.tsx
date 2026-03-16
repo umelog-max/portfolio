@@ -87,7 +87,7 @@ export default function BlogFilter({ posts }: { posts: MicroCMSPost[] }) {
 
       {/* 件数表示 */}
       {(query || activeCategory !== "all") && (
-        <p className="text-xs text-slate-400 font-mono mb-4">
+        <p className="text-xs text-slate-600 font-mono mb-4">
           {filtered.length} 件 / {posts.length} 件
         </p>
       )}
