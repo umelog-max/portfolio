@@ -560,6 +560,31 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
   letter-spacing: 0.04em; text-transform: uppercase;
 }
 
+/* ===== HOME ALERT ===== */
+.home-alerts { display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 0; }
+.home-alert {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; border-radius: var(--r);
+  background: var(--yellow-light); border: 1.5px solid rgba(245,200,66,0.45);
+  cursor: pointer; animation: fadeUp 0.3s ease both;
+  transition: opacity 0.15s;
+}
+.home-alert:active { opacity: 0.75; }
+.home-alert-icon { font-size: 18px; flex-shrink: 0; }
+.home-alert-body { flex: 1; min-width: 0; }
+.home-alert-title { font-size: 13px; font-weight: 800; color: #7a5c00; line-height: 1.4; }
+.home-alert-sub   { font-size: 12px; font-weight: 700; color: #a07800; margin-top: 2px; }
+
+/* ===== SORT BAR ===== */
+.sort-bar { display: flex; gap: 6px; padding: 16px 20px 0; }
+.sort-btn {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--surface2);
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s;
+}
+.sort-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+
 /* ===== TOAST ===== */
 .toast {
   position: fixed; bottom: calc(var(--nav-h) + 16px);
@@ -625,6 +650,7 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
       <div class="greeting" id="greeting-name">こんにちは 👋</div>
       <div class="greeting-sub" id="greeting-sub"></div>
     </div>
+    <div class="home-alerts" id="home-alerts"></div>
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-icon orange">💰</div>
@@ -743,6 +769,11 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
           <div class="settings-row-icon">📤</div>
           <div class="settings-row-label">バックアップを書き出す</div>
           <div class="settings-row-value">JSON →</div>
+        </div>
+        <div class="settings-row" style="cursor:pointer" onclick="exportCSV()">
+          <div class="settings-row-icon">📊</div>
+          <div class="settings-row-label">CSVで書き出す</div>
+          <div class="settings-row-value">CSV →</div>
         </div>
         <div class="settings-row" style="cursor:pointer" onclick="importData()">
           <div class="settings-row-icon">📥</div>
@@ -918,6 +949,10 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
         <div class="detail-row-label">次回申請期限</div>
         <div class="detail-row-value" id="detail-cancel-deadline"></div>
       </div>
+      <div class="detail-row" id="detail-score-row" style="display:none">
+        <div class="detail-row-label">コスパスコア</div>
+        <div class="detail-row-value" id="detail-score-value"></div>
+      </div>
       <div class="detail-row" id="detail-note-row" style="display:none">
         <div class="detail-row-label">メモ</div>
         <div class="detail-row-value" id="detail-note" style="max-width:60%;text-align:right;white-space:pre-wrap;word-break:break-word"></div>
@@ -946,8 +981,8 @@ body.dark .icon-btn { background: #e8e4df; border-color: #d0cbc4; }
 <div class="confirm-overlay" id="confirm-overlay">
   <div class="confirm-box">
     <div class="confirm-emoji">⚠️</div>
-    <div class="confirm-title">データを削除しますか？</div>
-    <div class="confirm-desc">登録済みのサービスと設定が<br>すべて削除されます。<br>この操作は取り消せません。</div>
+    <div class="confirm-title" id="confirm-title">データを削除しますか？</div>
+    <div class="confirm-desc" id="confirm-desc">登録済みのサービスと設定がすべて削除されます。この操作は取り消せません。</div>
     <div class="confirm-btns">
       <button class="btn-confirm-cancel" onclick="closeConfirm()">キャンセル</button>
       <button class="btn-confirm-delete" onclick="confirmDelete()">削除する</button>
@@ -995,6 +1030,8 @@ let editingId   = null;
 let detailId    = null;
 let selectedIcon = '';
 let donutChart  = null;
+let sortMode    = 'category'; // 'category' | 'renewal' | 'amount'
+let confirmCallback = null;
 
 // ====== INIT ======
 function init() {
@@ -1210,6 +1247,41 @@ function renderAll() {
   renderNotifBadge();
 }
 
+// ====== HOME ALERTS (v1.2) ======
+function renderHomeAlerts() {
+  const el = document.getElementById('home-alerts');
+  const alerts = subs.filter(s => {
+    const score = calcCostScore(s);
+    if (score === null) return false;   // 記録なし → 表示しない
+    if (score >= 25) return false;      // B以上は除外
+    const dLeft = daysUntilCancellationDeadline(s);
+    return dLeft !== null && dLeft >= 0 && dLeft <= 7;
+  });
+  if (!alerts.length) { el.innerHTML = ''; return; }
+  el.innerHTML = alerts.map(s => {
+    const key  = currentMonthKey();
+    const used = (s.usageLogs || {})[key] || [];
+    const now  = new Date();
+    const dim  = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    const pct  = Math.round(used.length / dim * 100);
+    const dLeft = daysUntilCancellationDeadline(s);
+    return `<div class="home-alert" onclick="showDetail('${s.id}')">
+      <div class="home-alert-icon">⚠️</div>
+      <div class="home-alert-body">
+        <div class="home-alert-title">⚠️ ${esc(s.name)}、今月あまり使えていません（使用率${pct}%）</div>
+        <div class="home-alert-sub">解約申請期限まであと${dLeft}日です。見直しませんか？</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ====== SORT ======
+function setSort(mode) {
+  sortMode = mode;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === mode));
+  renderHomeCatList();
+}
+
 // ====== HOME ======
 function renderHome() {
   const total  = totalMonthly();
@@ -1245,6 +1317,7 @@ function renderHome() {
     : `¥${total.toLocaleString()} / 予算未設定`;
 
   renderDonutChart(total);
+  renderHomeAlerts();
   renderHomeCatList();
   document.getElementById('home-empty').style.display = subs.length===0 ? 'flex' : 'none';
 }
@@ -1300,24 +1373,43 @@ function renderHomeCatList() {
   const el = document.getElementById('home-cat-list');
   if (subs.length === 0) { el.innerHTML=''; return; }
 
-  let html = '<div class="section-title">🗂 カテゴリ別</div>';
-  let hasAny = false;
-  Object.entries(CATEGORIES).forEach(([key, cat]) => {
-    const items = subs.filter(s => s.category===key)
-      .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
-    if (!items.length) return;
-    hasAny = true;
-    const catTotal = items.reduce((s,x) => s + monthlyAmt(x), 0);
-    html += `<div class="cat-group">
-      <div class="cat-group-header">
-        <div class="cat-group-dot" style="background:${cat.color}"></div>
-        <div class="cat-group-label">${cat.emoji} ${cat.label}</div>
-        <div class="cat-group-total">¥${catTotal.toLocaleString()}/月</div>
-      </div>
-      ${items.map((s,i) => subItemHTML(s,i)).join('')}
-    </div>`;
-  });
-  el.innerHTML = hasAny ? html : '';
+  // ソートバー
+  const sortBar = `<div class="sort-bar">
+    <button class="sort-btn${sortMode==='category'?' active':''}" data-sort="category" onclick="setSort('category')">カテゴリ別</button>
+    <button class="sort-btn${sortMode==='renewal'?' active':''}" data-sort="renewal" onclick="setSort('renewal')">更新日順</button>
+    <button class="sort-btn${sortMode==='amount'?' active':''}" data-sort="amount" onclick="setSort('amount')">金額順</button>
+  </div>`;
+
+  if (sortMode === 'category') {
+    let html = sortBar + '<div class="section-title">🗂 カテゴリ別</div>';
+    let hasAny = false;
+    Object.entries(CATEGORIES).forEach(([key, cat]) => {
+      const items = subs.filter(s => s.category===key)
+        .sort((a,b) => daysUntilRenewal(a) - daysUntilRenewal(b));
+      if (!items.length) return;
+      hasAny = true;
+      const catTotal = items.reduce((s,x) => s + monthlyAmt(x), 0);
+      html += `<div class="cat-group">
+        <div class="cat-group-header">
+          <div class="cat-group-dot" style="background:${cat.color}"></div>
+          <div class="cat-group-label">${cat.emoji} ${cat.label}</div>
+          <div class="cat-group-total">¥${catTotal.toLocaleString()}/月</div>
+        </div>
+        ${items.map((s,i) => subItemHTML(s,i)).join('')}
+      </div>`;
+    });
+    el.innerHTML = hasAny ? html : sortBar;
+  } else {
+    const sorted = [...subs].sort((a,b) =>
+      sortMode === 'renewal'
+        ? daysUntilRenewal(a) - daysUntilRenewal(b)
+        : monthlyAmt(b) - monthlyAmt(a)
+    );
+    const title = sortMode === 'renewal' ? '🔄 更新日が近い順' : '💰 月額が高い順';
+    el.innerHTML = sortBar +
+      `<div class="section-title">${title}</div>` +
+      `<div class="sub-list">${sorted.map((s,i) => subItemHTML(s,i)).join('')}</div>`;
+  }
 }
 
 // ====== SUB ITEM ======
@@ -1781,19 +1873,60 @@ function showDetail(id) {
   const noteRow=document.getElementById('detail-note-row');
   if (s.note) { document.getElementById('detail-note').textContent=s.note; noteRow.style.display=''; }
   else { noteRow.style.display='none'; }
-  // カレンダーを当月にリセット
+  // コスパスコア
+  const score = calcCostScore(s);
+  const rank  = scoreRank(score);
+  const scoreRow = document.getElementById('detail-score-row');
+  const scoreVal = document.getElementById('detail-score-value');
+  if (rank) {
+    const RANK_DESC = { S:'継続推奨', A:'継続', B:'様子見', C:'見直し推奨', D:'解約を検討' };
+    scoreVal.innerHTML = `<span class="score-badge" style="color:${rank.color};background:${rank.bg};font-size:12px;padding:3px 10px">${rank.rank}</span> <span style="font-size:12px;color:var(--text-mid);font-weight:700">${RANK_DESC[rank.rank]}</span>`;
+    scoreRow.style.display = '';
+  } else {
+    scoreRow.style.display = 'none';
+  }
+
+  // カレンダーを当月にリセット・スクロール位置をトップに戻す
   calViewYear  = new Date().getFullYear();
   calViewMonth = new Date().getMonth();
   document.getElementById('detail-overlay').classList.add('active');
+  document.querySelector('.detail-sheet').scrollTop = 0;
   renderCalendar();
 }
 function closeDetail() { document.getElementById('detail-overlay').classList.remove('active'); detailId=null; }
 function editFromDetail() { const id=detailId; closeDetail(); setTimeout(()=>openAddModal(id),200); }
 function deleteFromDetail() {
-  const s=subs.find(s=>s.id===detailId);
-  if (!s||!confirm(`「${s.name}」を削除しますか？`)) return;
-  subs=subs.filter(sub=>sub.id!==detailId); saveData(); closeDetail(); renderAll();
-  showToast('削除しました');
+  const s = subs.find(s => s.id === detailId);
+  if (!s) return;
+  openConfirm(
+    `${s.name}を削除しますか？`,
+    'この操作は取り消せません。',
+    () => {
+      const id = detailId;
+      closeDetail();
+      subs = subs.filter(sub => sub.id !== id);
+      saveData(); renderAll(); showToast('削除しました');
+    }
+  );
+}
+
+// ====== CSV EXPORT ======
+function exportCSV() {
+  const headers = ['サービス名','カテゴリ','月額(円)','支払い周期','次回更新日','解約申請','メモ'];
+  const rows = subs.map(s => {
+    const cat     = CATEGORIES[s.category] || CATEGORIES.other;
+    const renewal = nextRenewalDate(s);
+    const renewStr = `${renewal.getFullYear()}/${renewal.getMonth()+1}/${renewal.getDate()}`;
+    return [s.name, cat.label, monthlyAmt(s), s.cycle==='monthly'?'毎月':'毎年', renewStr, s.cancellationRequired?'必要':'不要', s.note||''];
+  });
+  const csv = [headers, ...rows]
+    .map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+    .join('\n');
+  const bom = '\uFEFF';
+  const url = URL.createObjectURL(new Blob([bom + csv], { type: 'text/csv;charset=utf-8' }));
+  const a = Object.assign(document.createElement('a'), { href: url, download: `subtrack-${new Date().toISOString().slice(0,10)}.csv` });
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSVをエクスポートしました！');
 }
 
 // ====== THEME ======
@@ -1834,15 +1967,26 @@ function handleImport(e) {
   };
   reader.readAsText(file); e.target.value='';
 }
-function deleteAll() {
+function openConfirm(title, desc, callback) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-desc').textContent  = desc;
+  confirmCallback = callback;
   document.getElementById('confirm-overlay').classList.add('active');
 }
 function closeConfirm() {
   document.getElementById('confirm-overlay').classList.remove('active');
+  confirmCallback = null;
 }
 function confirmDelete() {
-  subs=[]; saveData(); renderAll();
-  closeConfirm(); showToast('データを削除しました');
+  if (confirmCallback) confirmCallback();
+  closeConfirm();
+}
+function deleteAll() {
+  openConfirm(
+    'データを削除しますか？',
+    '登録済みのサービスと設定がすべて削除されます。この操作は取り消せません。',
+    () => { subs=[]; saveData(); renderAll(); showToast('データを削除しました'); }
+  );
 }
 
 // ====== UTILS ======
