@@ -19,10 +19,7 @@
     overflow-x: hidden;
   }
 
-  .container {
-    width: 100%;
-    max-width: 520px;
-  }
+  .container { width: 100%; max-width: 520px; }
 
   h1 {
     text-align: center;
@@ -42,14 +39,9 @@
     opacity: 0.8;
   }
 
-  /* --- Setup Screen --- */
-  #setup-screen {
-    display: block;
-  }
-
-  #spin-screen, #result-screen {
-    display: none;
-  }
+  /* Setup Screen */
+  #setup-screen { display: block; }
+  #spin-screen, #result-screen { display: none; }
 
   .card {
     background: rgba(255,255,255,0.06);
@@ -68,30 +60,16 @@
     text-transform: uppercase;
   }
 
-  .choices-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
+  .choices-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 
-  .choice-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .choice-row { display: flex; align-items: center; gap: 10px; }
 
   .choice-num {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 900;
-    flex-shrink: 0;
-    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 900;
+    flex-shrink: 0; color: #fff;
   }
 
   .choice-input {
@@ -101,312 +79,191 @@
     border-radius: 10px;
     color: #fff;
     font-family: 'Nunito', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1rem; font-weight: 700;
     padding: 9px 14px;
     outline: none;
     transition: border-color 0.2s, background 0.2s;
   }
-
-  .choice-input::placeholder {
-    color: rgba(255,255,255,0.3);
-    font-weight: 700;
-  }
-
-  .choice-input:focus {
-    border-color: rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.15);
-  }
+  .choice-input::placeholder { color: rgba(255,255,255,0.3); font-weight: 700; }
+  .choice-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); }
 
   .remove-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,80,80,0.25);
-    color: #ff8888;
-    font-size: 1.1rem;
-    font-weight: 900;
+    width: 30px; height: 30px;
+    border-radius: 50%; border: none;
+    background: rgba(255,80,80,0.25); color: #ff8888;
+    font-size: 1.1rem; font-weight: 900;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    flex-shrink: 0;
-    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; flex-shrink: 0; line-height: 1;
   }
-
-  .remove-btn:hover {
-    background: rgba(255,80,80,0.5);
-  }
+  .remove-btn:hover { background: rgba(255,80,80,0.5); }
 
   .add-btn {
-    width: 100%;
-    padding: 9px;
+    width: 100%; padding: 9px;
     border-radius: 10px;
     border: 1.5px dashed rgba(255,255,255,0.3);
     background: transparent;
     color: rgba(255,255,255,0.5);
     font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
+    font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
   }
-
-  .add-btn:hover {
-    border-color: rgba(255,255,255,0.6);
-    color: rgba(255,255,255,0.9);
-    background: rgba(255,255,255,0.05);
-  }
+  .add-btn:hover { border-color: rgba(255,255,255,0.6); color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.05); }
 
   .start-btn {
-    width: 100%;
-    margin-top: 24px;
-    padding: 18px;
-    border-radius: 16px;
-    border: none;
+    width: 100%; margin-top: 24px; padding: 18px;
+    border-radius: 16px; border: none;
     background: linear-gradient(135deg, #ff6bcb, #ff8c42);
     color: #fff;
     font-family: 'Nunito', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 900;
-    cursor: pointer;
-    letter-spacing: 0.05em;
+    font-size: 1.4rem; font-weight: 900;
+    cursor: pointer; letter-spacing: 0.05em;
     box-shadow: 0 4px 30px rgba(255,107,203,0.5);
     transition: transform 0.15s, box-shadow 0.15s;
   }
+  .start-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 40px rgba(255,107,203,0.7); }
+  .start-btn:active { transform: scale(0.98); }
 
-  .start-btn:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 40px rgba(255,107,203,0.7);
-  }
+  /* Spin Screen */
+  .spin-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; }
 
-  .start-btn:active {
-    transform: scale(0.98);
-  }
+  .wheel-container { display: flex; flex-direction: column; align-items: center; }
 
-  /* --- Spin Screen --- */
-  .spin-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .roulette-box {
-    width: 100%;
-    max-width: 400px;
-    height: 80px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 16px;
-    border: 2px solid rgba(255,255,255,0.25);
-    background: rgba(0,0,0,0.4);
-  }
-
-  /* side fade */
-  .roulette-box::before,
-  .roulette-box::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 70px;
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  .roulette-box::before {
-    left: 0;
-    background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
-  }
-
-  .roulette-box::after {
-    right: 0;
-    background: linear-gradient(to left, rgba(0,0,0,0.8), transparent);
-  }
-
-  /* center highlight */
-  .roulette-highlight {
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;
-    border-left: 2px solid rgba(255,220,80,0.8);
-    border-right: 2px solid rgba(255,220,80,0.8);
-    z-index: 3;
-    pointer-events: none;
-    box-shadow: inset 0 0 20px rgba(255,220,80,0.15);
-  }
-
-  .roulette-track {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    will-change: transform;
-  }
-
-  .roulette-item {
-    height: 80px;
-    width: 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: #fff;
-    padding: 0 16px;
-    text-align: center;
+  .wheel-pointer {
+    width: 0; height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 24px solid #ffdf70;
+    filter: drop-shadow(0 0 8px rgba(255,220,80,0.9));
+    margin-bottom: 2px;
     flex-shrink: 0;
+  }
+
+  #wheel-canvas {
+    display: block;
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255,107,203,0.3), 0 0 80px rgba(123,97,255,0.2);
   }
 
   .spin-label {
     color: rgba(255,255,255,0.5);
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    height: 20px;
+    font-size: 0.9rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
   }
 
-  /* --- Result Screen --- */
-  .result-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    text-align: center;
-  }
+  /* Result Screen */
+  .result-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
 
   .result-label {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #aad4ff;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-size: 1rem; font-weight: 700;
+    color: #aad4ff; letter-spacing: 0.15em; text-transform: uppercase;
   }
 
   .result-answer {
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 0 0 30px currentColor;
-    animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-    line-height: 1.2;
-    word-break: break-all;
-  }
-
-  @keyframes pop-in {
-    0% { transform: scale(0.4); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    font-size: 2.8rem; font-weight: 900;
+    color: #fff; text-shadow: 0 0 30px currentColor;
+    line-height: 1.2; word-break: break-all;
   }
 
   .result-decided {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: #ffdf70;
-    text-shadow: 0 0 20px #ffdf70;
-    animation: fade-up 0.5s 0.2s ease both;
-  }
-
-  @keyframes fade-up {
-    0% { transform: translateY(10px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+    font-size: 1.5rem; font-weight: 900;
+    color: #ffdf70; text-shadow: 0 0 20px #ffdf70;
   }
 
   .result-buttons {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 8px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    justify-content: center; margin-top: 8px;
   }
 
   .btn-again {
-    padding: 13px 28px;
-    border-radius: 12px;
-    border: none;
+    padding: 13px 28px; border-radius: 12px; border: none;
     background: linear-gradient(135deg, #7b61ff, #a855f7);
     color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(123,97,255,0.5);
+    font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(123,97,255,0.5);
     transition: transform 0.15s, box-shadow 0.15s;
   }
-
-  .btn-again:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(123,97,255,0.7);
-  }
+  .btn-again:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(123,97,255,0.7); }
 
   .btn-reset {
-    padding: 13px 28px;
-    border-radius: 12px;
+    padding: 13px 28px; border-radius: 12px;
     border: 1.5px solid rgba(255,255,255,0.25);
     background: rgba(255,255,255,0.08);
     color: rgba(255,255,255,0.8);
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem;
-    font-weight: 900;
-    cursor: pointer;
-    transition: all 0.15s;
+    font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900;
+    cursor: pointer; transition: all 0.15s;
   }
+  .btn-reset:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); color: #fff; }
 
-  .btn-reset:hover {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.5);
-    color: #fff;
-  }
-
-  /* Confetti canvas */
+  /* Confetti */
   #confetti-canvas {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 100;
+    pointer-events: none; z-index: 100;
   }
 
-  /* Palette for choice bullets */
-  .palette-0  { background: #ff6bcb; }
-  .palette-1  { background: #ff8c42; }
-  .palette-2  { background: #ffd600; }
-  .palette-3  { background: #4cde80; }
-  .palette-4  { background: #00c9ff; }
-  .palette-5  { background: #7b61ff; }
-  .palette-6  { background: #ff4d6d; }
-  .palette-7  { background: #00e5c3; }
-  .palette-8  { background: #ffb347; }
-  .palette-9  { background: #b76eff; }
+  /* Flash overlay */
+  #flash-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 150;
+    opacity: 0;
+  }
+  @keyframes flash-anim {
+    0% { opacity: 0.9; }
+    100% { opacity: 0; }
+  }
+  #flash-overlay.active { animation: flash-anim 0.7s ease-out forwards; }
 
-  .color-0  { color: #ff6bcb; text-shadow: 0 0 20px #ff6bcb; }
-  .color-1  { color: #ff8c42; text-shadow: 0 0 20px #ff8c42; }
-  .color-2  { color: #ffd600; text-shadow: 0 0 20px #ffd600; }
-  .color-3  { color: #4cde80; text-shadow: 0 0 20px #4cde80; }
-  .color-4  { color: #00c9ff; text-shadow: 0 0 20px #00c9ff; }
-  .color-5  { color: #7b61ff; text-shadow: 0 0 20px #7b61ff; }
-  .color-6  { color: #ff4d6d; text-shadow: 0 0 20px #ff4d6d; }
-  .color-7  { color: #00e5c3; text-shadow: 0 0 20px #00e5c3; }
-  .color-8  { color: #ffb347; text-shadow: 0 0 20px #ffb347; }
-  .color-9  { color: #b76eff; text-shadow: 0 0 20px #b76eff; }
+  /* Result animations */
+  @keyframes pop-in {
+    0%   { transform: scale(0.3); opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    80%  { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+  @keyframes fade-up {
+    0%   { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes card-bounce {
+    0%,100% { transform: translateY(0)   scale(1); }
+    30%      { transform: translateY(-14px) scale(1.02); }
+    65%      { transform: translateY(5px)  scale(0.98); }
+  }
+
+  .result-answer.animate  { animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+  .result-decided.animate { animation: fade-up 0.5s 0.25s ease both; }
+  .card-bounce-anim       { animation: card-bounce 0.65s 0.1s ease both; }
+
+  /* Palette */
+  .palette-0 { background:#ff6bcb; } .palette-1 { background:#ff8c42; }
+  .palette-2 { background:#ffd600; } .palette-3 { background:#4cde80; }
+  .palette-4 { background:#00c9ff; } .palette-5 { background:#7b61ff; }
+  .palette-6 { background:#ff4d6d; } .palette-7 { background:#00e5c3; }
+  .palette-8 { background:#ffb347; } .palette-9 { background:#b76eff; }
+
+  .color-0 { color:#ff6bcb; text-shadow:0 0 30px #ff6bcb; }
+  .color-1 { color:#ff8c42; text-shadow:0 0 30px #ff8c42; }
+  .color-2 { color:#ffd600; text-shadow:0 0 30px #ffd600; }
+  .color-3 { color:#4cde80; text-shadow:0 0 30px #4cde80; }
+  .color-4 { color:#00c9ff; text-shadow:0 0 30px #00c9ff; }
+  .color-5 { color:#7b61ff; text-shadow:0 0 30px #7b61ff; }
+  .color-6 { color:#ff4d6d; text-shadow:0 0 30px #ff4d6d; }
+  .color-7 { color:#00e5c3; text-shadow:0 0 30px #00e5c3; }
+  .color-8 { color:#ffb347; text-shadow:0 0 30px #ffb347; }
+  .color-9 { color:#b76eff; text-shadow:0 0 30px #b76eff; }
 
   @media (max-width: 420px) {
     h1 { font-size: 2rem; }
     .result-answer { font-size: 2.2rem; }
-    .roulette-item { font-size: 1rem; width: 120px; }
-    .roulette-highlight { width: 120px; }
   }
 </style>
 </head>
 <body>
 
 <canvas id="confetti-canvas"></canvas>
+<div id="flash-overlay"></div>
 
 <div class="container">
   <h1>くじびき</h1>
@@ -426,26 +283,25 @@
   <div id="spin-screen">
     <div class="card">
       <div class="spin-wrapper">
-        <div class="spin-label" id="spin-label">まわっています...</div>
-        <div class="roulette-box">
-          <div class="roulette-highlight"></div>
-          <div class="roulette-track" id="roulette-track"></div>
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheel-canvas"></canvas>
         </div>
-        <div style="height:8px"></div>
+        <div class="spin-label" id="spin-label">まわっています...</div>
       </div>
     </div>
   </div>
 
   <!-- Result Screen -->
   <div id="result-screen">
-    <div class="card">
+    <div class="card" id="result-card">
       <div class="result-wrapper">
         <div class="result-label">決まった！</div>
         <div class="result-answer" id="result-answer"></div>
-        <div class="result-decided">これに決まり！</div>
+        <div class="result-decided" id="result-decided">これに決まり！</div>
         <div class="result-buttons">
           <button class="btn-again" id="btn-again">もう一度ひく</button>
-          <button class="btn-reset" id="btn-reset">← やり直す</button>
+          <button class="btn-reset"  id="btn-reset">← やり直す</button>
         </div>
       </div>
     </div>
@@ -453,7 +309,7 @@
 </div>
 
 <script>
-// ---- State ----
+// ---- Constants ----
 const PALETTE_COLORS = [
   '#ff6bcb','#ff8c42','#ffd600','#4cde80','#00c9ff',
   '#7b61ff','#ff4d6d','#00e5c3','#ffb347','#b76eff'
@@ -461,22 +317,187 @@ const PALETTE_COLORS = [
 const MIN_CHOICES = 2;
 const MAX_CHOICES = 10;
 
+// ---- State ----
 let choices = ['', ''];
+let wheelStoppedAngle = 0;
 
 // ---- Elements ----
 const setupScreen  = document.getElementById('setup-screen');
 const spinScreen   = document.getElementById('spin-screen');
 const resultScreen = document.getElementById('result-screen');
+const resultCard   = document.getElementById('result-card');
 const choicesList  = document.getElementById('choices-list');
 const addBtn       = document.getElementById('add-btn');
 const startBtn     = document.getElementById('start-btn');
-const rouletteTrack= document.getElementById('roulette-track');
 const spinLabel    = document.getElementById('spin-label');
 const resultAnswer = document.getElementById('result-answer');
+const resultDecided= document.getElementById('result-decided');
 const btnAgain     = document.getElementById('btn-again');
 const btnReset     = document.getElementById('btn-reset');
+const flashOverlay = document.getElementById('flash-overlay');
+const wheelCanvas  = document.getElementById('wheel-canvas');
 
-// ---- Render setup ----
+// ---- Audio ----
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playTick(normalizedSpeed) {
+  try {
+    const ctx = getAudioCtx();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'triangle';
+    osc.frequency.value = 280 + normalizedSpeed * 500;
+    const vol   = 0.04 + normalizedSpeed * 0.12;
+    const decay = 0.015 + (1 - normalizedSpeed) * 0.07;
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + decay);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + decay + 0.01);
+  } catch(e) {}
+}
+
+function playWinSound() {
+  try {
+    const ctx = getAudioCtx();
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    let t = ctx.currentTime + 0.05;
+    notes.forEach((freq, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const dur = i === notes.length - 1 ? 0.6 : 0.15;
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.start(t); osc.stop(t + dur + 0.01);
+      if (i < notes.length - 1) t += 0.12;
+    });
+    // Final chord
+    const ct = t + 0.08;
+    [523.25, 659.25, 783.99].forEach(freq => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, ct);
+      gain.gain.exponentialRampToValueAtTime(0.001, ct + 0.8);
+      osc.start(ct); osc.stop(ct + 0.81);
+    });
+  } catch(e) {}
+}
+
+// ---- Flash ----
+function triggerFlash() {
+  flashOverlay.style.background = 'rgba(255,255,255,1)';
+  flashOverlay.classList.remove('active');
+  void flashOverlay.offsetWidth;
+  flashOverlay.classList.add('active');
+}
+
+// ---- Wheel Drawing ----
+function darkenColor(hex, f) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return `rgb(${Math.round(r*f)},${Math.round(g*f)},${Math.round(b*f)})`;
+}
+
+function drawWheel(angle) {
+  const ctx = wheelCanvas.getContext('2d');
+  const S = wheelCanvas.width;
+  const cx = S / 2, cy = S / 2;
+  const R = S / 2 - 6;
+  const n = choices.length;
+  const sliceAngle = (2 * Math.PI) / n;
+
+  ctx.clearRect(0, 0, S, S);
+
+  for (let i = 0; i < n; i++) {
+    const start = angle + i * sliceAngle;
+    const end   = start + sliceAngle;
+    const mid   = start + sliceAngle / 2;
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, start, end);
+    ctx.closePath();
+    const base = PALETTE_COLORS[i % PALETTE_COLORS.length];
+    ctx.fillStyle = i % 2 === 0 ? base : darkenColor(base, 0.78);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Text
+    const textR = R * 0.60;
+    const tx = cx + Math.cos(mid) * textR;
+    const ty = cy + Math.sin(mid) * textR;
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.rotate(mid + Math.PI / 2);
+    const fs = n <= 4 ? 14 : n <= 6 ? 12 : 10;
+    ctx.font = `900 ${fs}px Nunito, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = '#fff';
+    const maxChars = n <= 4 ? 10 : n <= 6 ? 7 : 5;
+    const label = choices[i].length > maxChars ? choices[i].slice(0, maxChars) + '…' : choices[i];
+    ctx.fillText(label, 0, 0);
+    ctx.restore();
+  }
+
+  // Outer ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Center hub
+  const hubR = Math.max(16, S * 0.075);
+  const hubGrad = ctx.createRadialGradient(cx - hubR*0.3, cy - hubR*0.3, 1, cx, cy, hubR);
+  hubGrad.addColorStop(0, '#3d1060');
+  hubGrad.addColorStop(1, '#150326');
+  ctx.beginPath();
+  ctx.arc(cx, cy, hubR, 0, Math.PI * 2);
+  ctx.fillStyle = hubGrad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fill();
+}
+
+function initWheel() {
+  const size = Math.min(300, Math.floor(window.innerWidth * 0.78));
+  wheelCanvas.width  = size;
+  wheelCanvas.height = size;
+  drawWheel(wheelStoppedAngle);
+}
+
+// ---- Slice at pointer (top = -π/2 = 3π/2) ----
+function getSliceAtPointer(angle, n) {
+  const sliceAngle = 2 * Math.PI / n;
+  const coord = ((-Math.PI / 2 - angle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  return Math.floor(coord / sliceAngle) % n;
+}
+
+// ---- Setup Screen ----
 function renderSetup() {
   choicesList.innerHTML = '';
   choices.forEach((val, i) => {
@@ -515,24 +536,17 @@ function renderSetup() {
       rm.className = 'remove-btn';
       rm.innerHTML = '&times;';
       rm.title = '削除';
-      rm.addEventListener('click', () => {
-        choices.splice(i, 1);
-        renderSetup();
-      });
+      rm.addEventListener('click', () => { choices.splice(i, 1); renderSetup(); });
       row.appendChild(rm);
     }
 
     choicesList.appendChild(row);
   });
-
   addBtn.style.display = choices.length >= MAX_CHOICES ? 'none' : '';
 }
 
 function addChoice() {
-  if (choices.length < MAX_CHOICES) {
-    choices.push('');
-    renderSetup();
-  }
+  if (choices.length < MAX_CHOICES) { choices.push(''); renderSetup(); }
 }
 
 addBtn.addEventListener('click', () => {
@@ -545,84 +559,62 @@ addBtn.addEventListener('click', () => {
 // ---- Start ----
 startBtn.addEventListener('click', () => {
   const filled = choices.filter(c => c.trim() !== '');
-  if (filled.length < 2) {
-    alert('選択肢を2つ以上入力してください！');
-    return;
-  }
-  // update choices to only filled ones
+  if (filled.length < 2) { alert('選択肢を2つ以上入力してください！'); return; }
   choices = filled;
   renderSetup();
+  wheelStoppedAngle = 0;
   startSpin();
 });
 
 // ---- Spin ----
-const ITEM_WIDTH = 140;
-
 function startSpin() {
-  setupScreen.style.display = 'none';
+  setupScreen.style.display  = 'none';
   resultScreen.style.display = 'none';
-  spinScreen.style.display = 'block';
+  spinScreen.style.display   = 'block';
   spinLabel.textContent = 'まわっています...';
 
+  initWheel();
+
   const winner = Math.floor(Math.random() * choices.length);
+  const n = choices.length;
+  const sliceAngle = 2 * Math.PI / n;
 
-  // Build a long repeating list ending on winner
-  const REPS = 6; // full cycles
-  const items = [];
-  for (let r = 0; r < REPS; r++) {
-    for (let i = 0; i < choices.length; i++) {
-      items.push(i);
-    }
+  // Winner center at top (-π/2 = 3π/2):
+  // finalAngle + (winner + 0.5) * sliceAngle ≡ -π/2 (mod 2π)
+  let targetAngle = -Math.PI / 2 - (winner + 0.5) * sliceAngle;
+  const REPS = 6;
+  while (targetAngle < wheelStoppedAngle + 2 * Math.PI * REPS) {
+    targetAngle += 2 * Math.PI;
   }
-  // Add extra items so winner lands in center
-  // Center is at track offset = items.length * ITEM_WIDTH - (boxWidth/2 - ITEM_WIDTH/2)
-  // We want the winner at index = items.length at end
-  items.push(winner);
 
-  // Build DOM
-  rouletteTrack.innerHTML = '';
-  // We start so item[0] is centered, so initial offset = -(boxWidth/2 - ITEM_WIDTH/2) = -130
-  // Actually: center item is at left = 50% - 70px = boxCenter - 70
-  // We'll translate the track so items[centerIdx] is centered
+  const startAngle  = wheelStoppedAngle;
+  const totalDelta  = targetAngle - startAngle;
+  const DURATION    = 4000;
+  const startTime   = performance.now();
+  let lastTickSlice = getSliceAtPointer(startAngle, n);
 
-  items.forEach(idx => {
-    const el = document.createElement('div');
-    el.className = 'roulette-item';
-    el.textContent = choices[idx];
-    el.style.color = PALETTE_COLORS[idx % PALETTE_COLORS.length];
-    rouletteTrack.appendChild(el);
-  });
-
-  const boxWidth = rouletteTrack.parentElement.offsetWidth;
-  const centerOffset = boxWidth / 2 - ITEM_WIDTH / 2;
-
-  // Start: first item centered
-  const startX = centerOffset;
-  // End: last item (winner) centered
-  const endX = centerOffset - (items.length - 1) * ITEM_WIDTH;
-
-  rouletteTrack.style.transform = `translateX(${startX}px)`;
-
-  const DURATION = 3200; // ms
-  const startTime = performance.now();
-
-  function easeOut(t) {
-    // cubic ease out
-    return 1 - Math.pow(1 - t, 3);
-  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
 
   function tick(now) {
     const elapsed = now - startTime;
     const t = Math.min(elapsed / DURATION, 1);
-    const eased = easeOut(t);
-    const currentX = startX + (endX - startX) * eased;
-    rouletteTrack.style.transform = `translateX(${currentX}px)`;
+    const currentAngle = startAngle + totalDelta * easeOut(t);
+
+    drawWheel(currentAngle);
+
+    const slice = getSliceAtPointer(currentAngle, n);
+    if (slice !== lastTickSlice) {
+      lastTickSlice = slice;
+      const speed = Math.min(4 * Math.pow(1 - t, 3), 1);
+      playTick(speed);
+    }
 
     if (t < 1) {
       requestAnimationFrame(tick);
     } else {
-      // Done
-      setTimeout(() => showResult(winner), 200);
+      wheelStoppedAngle = targetAngle;
+      spinLabel.textContent = '決定！';
+      setTimeout(() => showResult(winner), 400);
     }
   }
 
@@ -631,22 +623,30 @@ function startSpin() {
 
 // ---- Result ----
 function showResult(winnerIdx) {
-  spinScreen.style.display = 'none';
+  spinScreen.style.display   = 'none';
   resultScreen.style.display = 'block';
 
-  resultAnswer.textContent = choices[winnerIdx];
+  triggerFlash();
+  playWinSound();
+
   resultAnswer.className = `result-answer color-${winnerIdx % 10}`;
+  resultAnswer.textContent = choices[winnerIdx];
+
+  resultAnswer.classList.remove('animate');
+  resultDecided.classList.remove('animate');
+  resultCard.classList.remove('card-bounce-anim');
+  void resultAnswer.offsetWidth;
+  resultAnswer.classList.add('animate');
+  resultDecided.classList.add('animate');
+  resultCard.classList.add('card-bounce-anim');
 
   launchConfetti();
 }
 
-btnAgain.addEventListener('click', () => {
-  startSpin();
-});
-
+btnAgain.addEventListener('click', startSpin);
 btnReset.addEventListener('click', () => {
   resultScreen.style.display = 'none';
-  setupScreen.style.display = 'block';
+  setupScreen.style.display  = 'block';
   renderSetup();
 });
 
@@ -657,18 +657,16 @@ let confParticles = [];
 let confAnimId = null;
 
 function launchConfetti() {
-  confCanvas.width = window.innerWidth;
+  confCanvas.width  = window.innerWidth;
   confCanvas.height = window.innerHeight;
-
   confParticles = [];
-  const COLORS = PALETTE_COLORS;
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 130; i++) {
     confParticles.push({
       x: Math.random() * confCanvas.width,
       y: -10 - Math.random() * 100,
       vx: (Math.random() - 0.5) * 4,
       vy: 2 + Math.random() * 4,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      color: PALETTE_COLORS[Math.floor(Math.random() * PALETTE_COLORS.length)],
       size: 6 + Math.random() * 8,
       rotation: Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.2,
@@ -676,21 +674,16 @@ function launchConfetti() {
       alpha: 1
     });
   }
-
   if (confAnimId) cancelAnimationFrame(confAnimId);
   animateConfetti();
 }
 
 function animateConfetti() {
   confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
-
   confParticles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.08;
+    p.x += p.vx; p.y += p.vy; p.vy += 0.08;
     p.rotation += p.rotSpeed;
     if (p.y > confCanvas.height * 0.7) p.alpha -= 0.02;
-
     confCtx.save();
     confCtx.globalAlpha = Math.max(p.alpha, 0);
     confCtx.translate(p.x, p.y);
@@ -705,7 +698,6 @@ function animateConfetti() {
     }
     confCtx.restore();
   });
-
   confParticles = confParticles.filter(p => p.alpha > 0);
   if (confParticles.length > 0) {
     confAnimId = requestAnimationFrame(animateConfetti);
