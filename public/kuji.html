@@ -132,6 +132,31 @@
   .start-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 40px rgba(255,107,203,0.7); }
   .start-btn:active { transform: scale(0.98); }
 
+  .share-btn {
+    width: 100%; margin-top: 12px; padding: 13px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.75);
+    font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  .share-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.45); color: #fff; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: rgba(30,20,60,0.85);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    color: #fff; padding: 12px 24px;
+    border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+    opacity: 0; transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none; z-index: 300;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
   /* Spin Screen */
   .spin-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; }
   .wheel-container { display: flex; flex-direction: column; align-items: center; }
@@ -255,6 +280,7 @@
       <div class="choices-list" id="choices-list"></div>
       <button class="add-btn" id="add-btn">＋ 選択肢を追加</button>
     </div>
+    <button class="share-btn" id="share-btn">🔗 この選択肢をシェア</button>
     <button class="start-btn" id="start-btn">くじをひく !</button>
   </div>
 
@@ -286,6 +312,8 @@
     </div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 // ---- Constants ----
@@ -702,7 +730,46 @@ function animateConfetti() {
   }
 }
 
+// ---- Share ----
+const shareBtn = document.getElementById('share-btn');
+const toastEl  = document.getElementById('toast');
+
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  setTimeout(() => toastEl.classList.remove('show'), 2500);
+}
+
+shareBtn.addEventListener('click', () => {
+  const filled = choices.filter(c => c.trim() !== '');
+  if (filled.length < 2) { alert('選択肢を2つ以上入力してください！'); return; }
+
+  const url = new URL(window.location.href);
+  url.search = '?c=' + filled.map(encodeURIComponent).join(',');
+  const shareUrl = url.toString();
+
+  if (navigator.share) {
+    navigator.share({ title: 'くじびき', url: shareUrl }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => showToast('🔗 リンクをコピーしました！'))
+      .catch(() => prompt('このURLをコピーしてください：', shareUrl));
+  }
+});
+
 // ---- Init ----
+// URLパラメータから選択肢を復元
+(function loadFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const c = params.get('c');
+  if (!c) return;
+  const loaded = c.split(',')
+    .map(s => { try { return decodeURIComponent(s).trim(); } catch { return ''; } })
+    .filter(s => s.length > 0)
+    .slice(0, MAX_CHOICES);
+  if (loaded.length >= 2) choices = loaded;
+})();
+
 renderSetup();
 </script>
 </body>
