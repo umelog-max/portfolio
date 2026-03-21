@@ -1,6 +1,16 @@
 "use client";
 
+import Script from "next/script";
 import { useState } from "react";
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (cb: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    };
+  }
+}
 
 type FieldErrors = {
   name?: string;
@@ -25,6 +35,8 @@ function validate(data: { name: string; email: string; subject: string; message:
   }
   return errors;
 }
+
+const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!;
 
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
@@ -51,10 +63,21 @@ export default function ContactForm() {
     setStatus("sending");
 
     try {
+      const recaptchaToken = await new Promise<string>((resolve, reject) => {
+        window.grecaptcha.ready(async () => {
+          try {
+            const token = await window.grecaptcha.execute(SITE_KEY, { action: "contact" });
+            resolve(token);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, recaptchaToken }),
       });
       setStatus(res.ok ? "done" : "error");
     } catch {
@@ -70,88 +93,95 @@ export default function ContactForm() {
     }`;
 
   return (
-    <div className="glass-card p-8 fade-up fade-up-delay-3">
-      {status === "done" ? (
-        <div className="flex flex-col items-center py-8">
-          <div
-            className="w-16 h-16 border-[3px] border-slate-800 bg-orange-50 flex items-center justify-center mb-5"
-            style={{ boxShadow: "4px 4px 0px #1A1A1A" }}
-          >
-            <svg viewBox="0 0 24 24" className="w-9 h-9" fill="none" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
-              <polyline points="4,13 9,18 20,7" />
-            </svg>
-          </div>
-          <p className="font-black text-slate-800 text-xl mb-2">送信しました！</p>
-          <p className="text-sm text-slate-600 mb-1">自動返信メールをお送りしましたのでご確認ください。</p>
-          <p className="text-sm text-slate-600">内容を確認次第、ご返信いたします。</p>
-        </div>
-      ) : (
-        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-          <div>
-            <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-              お名前 <span className="text-red-400">*</span>
-            </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="山田 太郎"
-              className={inputClass(!!fieldErrors.name)}
-            />
-            {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
-          </div>
+    <>
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`}
+        strategy="lazyOnload"
+      />
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-              メールアドレス <span className="text-red-400">*</span>
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="example@email.com"
-              className={inputClass(!!fieldErrors.email)}
-            />
-            {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
+      <div className="glass-card p-8 fade-up fade-up-delay-3">
+        {status === "done" ? (
+          <div className="flex flex-col items-center py-8">
+            <div
+              className="w-16 h-16 border-[3px] border-slate-800 bg-orange-50 flex items-center justify-center mb-5"
+              style={{ boxShadow: "4px 4px 0px #1A1A1A" }}
+            >
+              <svg viewBox="0 0 24 24" className="w-9 h-9" fill="none" stroke="#EA580C" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
+                <polyline points="4,13 9,18 20,7" />
+              </svg>
+            </div>
+            <p className="font-black text-slate-800 text-xl mb-2">送信しました！</p>
+            <p className="text-sm text-slate-600 mb-1">自動返信メールをお送りしましたのでご確認ください。</p>
+            <p className="text-sm text-slate-600">内容を確認次第、ご返信いたします。</p>
           </div>
+        ) : (
+          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+            <div>
+              <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                お名前 <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="name"
+                type="text"
+                placeholder="山田 太郎"
+                className={inputClass(!!fieldErrors.name)}
+              />
+              {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
+            </div>
 
-          <div>
-            <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
-              件名 <span className="text-red-400">*</span>
-            </label>
-            <input
-              id="subject"
-              type="text"
-              placeholder="案件のご相談"
-              className={inputClass(!!fieldErrors.subject)}
-            />
-            {fieldErrors.subject && <p className="text-xs text-red-500 mt-1">{fieldErrors.subject}</p>}
-          </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                メールアドレス <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="example@email.com"
+                className={inputClass(!!fieldErrors.email)}
+              />
+              {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
+            </div>
 
-          <div>
-            <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
-              メッセージ <span className="text-red-400">*</span>
-            </label>
-            <textarea
-              id="message"
-              rows={6}
-              placeholder="お問い合わせ内容をご記入ください"
-              className={inputClass(!!fieldErrors.message) + " resize-none"}
-            />
-            {fieldErrors.message && <p className="text-xs text-red-500 mt-1">{fieldErrors.message}</p>}
-          </div>
+            <div>
+              <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
+                件名 <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="subject"
+                type="text"
+                placeholder="案件のご相談"
+                className={inputClass(!!fieldErrors.subject)}
+              />
+              {fieldErrors.subject && <p className="text-xs text-red-500 mt-1">{fieldErrors.subject}</p>}
+            </div>
 
-          {status === "error" && (
-            <p className="text-sm text-red-500">送信に失敗しました。時間をおいて再度お試しください。</p>
-          )}
+            <div>
+              <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
+                メッセージ <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                id="message"
+                rows={6}
+                placeholder="お問い合わせ内容をご記入ください"
+                className={inputClass(!!fieldErrors.message) + " resize-none"}
+              />
+              {fieldErrors.message && <p className="text-xs text-red-500 mt-1">{fieldErrors.message}</p>}
+            </div>
 
-          <button
-            type="submit"
-            disabled={status === "sending"}
-            className="btn-primary w-full justify-center disabled:opacity-60"
-          >
-            {status === "sending" ? "送信中..." : "送信する →"}
-          </button>
-        </form>
-      )}
-    </div>
+            {status === "error" && (
+              <p className="text-sm text-red-500">送信に失敗しました。時間をおいて再度お試しください。</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="btn-primary w-full justify-center disabled:opacity-60"
+            >
+              {status === "sending" ? "送信中..." : "送信する →"}
+            </button>
+          </form>
+        )}
+      </div>
+    </>
   );
 }
