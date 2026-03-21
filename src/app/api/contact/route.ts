@@ -20,11 +20,27 @@ function formatJST(): string {
   });
 }
 
+async function verifyRecaptcha(token: string): Promise<boolean> {
+  const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+  });
+  const data: { success: boolean; score: number; action: string } = await res.json();
+  // スコア 0.5 未満はボットと判定
+  return data.success && data.score >= 0.5;
+}
+
 export async function POST(req: NextRequest) {
-  const { name, email, subject, message } = await req.json();
+  const { name, email, subject, message, recaptchaToken } = await req.json();
 
   if (!name || !email || !subject || !message) {
     return NextResponse.json({ error: "必須項目が不足しています" }, { status: 400 });
+  }
+
+  // reCAPTCHA 検証
+  if (!recaptchaToken || !(await verifyRecaptcha(recaptchaToken))) {
+    return NextResponse.json({ error: "スパム判定されました" }, { status: 400 });
   }
 
   const toAddress = process.env.CONTACT_TO_EMAIL!;

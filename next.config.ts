@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     SES_SECRET_ACCESS_KEY: process.env.SES_SECRET_ACCESS_KEY,
     CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL,
     CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL,
+    RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
   },
 };
 
