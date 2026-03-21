@@ -24,6 +24,9 @@ const siteDescription =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: siteUrl,
+  },
   title: {
     default: "Ume.Blog",
     template: "%s | Ume.Blog",
