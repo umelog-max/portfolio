@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { getPosts, getWorks } from "@/lib/microcms";
 
+export const revalidate = 60;
+
 const siteUrl = "https://www.umeblog.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
