@@ -28,11 +28,16 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
   });
   const data: { success: boolean; score: number; action: string } = await res.json();
   // スコア 0.5 未満はボットと判定
-  return data.success && data.score >= 0.5;
+  return data.success && data.score >= 0.7;
 }
 
 export async function POST(req: NextRequest) {
-  const { name, email, subject, message, recaptchaToken } = await req.json();
+  const { name, email, subject, message, recaptchaToken, honeypot } = await req.json();
+
+  // ハニーポット: ボットが埋めたら即拒否
+  if (honeypot) {
+    return NextResponse.json({ error: "スパム判定されました" }, { status: 400 });
+  }
 
   if (!name || !email || !subject || !message) {
     return NextResponse.json({ error: "必須項目が不足しています" }, { status: 400 });

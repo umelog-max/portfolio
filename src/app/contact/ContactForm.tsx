@@ -47,10 +47,11 @@ export default function ContactForm() {
 
     const form = e.currentTarget;
     const data = {
-      name:    (form.elements.namedItem("name")    as HTMLInputElement).value,
-      email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
-      subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
-      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+      name:      (form.elements.namedItem("name")      as HTMLInputElement).value,
+      email:     (form.elements.namedItem("email")     as HTMLInputElement).value,
+      subject:   (form.elements.namedItem("subject")   as HTMLInputElement).value,
+      message:   (form.elements.namedItem("message")   as HTMLTextAreaElement).value,
+      honeypot:  (form.elements.namedItem("honeypot")  as HTMLInputElement).value,
     };
 
     const errors = validate(data);
@@ -116,6 +117,15 @@ export default function ContactForm() {
           </div>
         ) : (
           <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+            {/* ハニーポット: ボット対策用の隠しフィールド（人間には見えない） */}
+            <input
+              type="text"
+              name="honeypot"
+              defaultValue=""
+              aria-hidden="true"
+              tabIndex={-1}
+              style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
+            />
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
                 お名前 <span className="text-red-400">*</span>
