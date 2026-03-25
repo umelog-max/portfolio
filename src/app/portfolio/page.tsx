@@ -8,6 +8,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Portfolio",
   description: "個人開発・制作実績の一覧",
+  alternates: { canonical: "/portfolio" },
 };
 
 export default async function PortfolioPage() {

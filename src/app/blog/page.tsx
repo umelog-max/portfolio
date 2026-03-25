@@ -5,6 +5,7 @@ import BlogFilter from "@/components/BlogFilter";
 export const metadata: Metadata = {
   title: "Blog",
   description: "エンジニアの日常・技術メモ・ラーメン探訪まで、気づいたことを書き殴るブログ。",
+  alternates: { canonical: "/blog" },
 };
 
 export const revalidate = 60;

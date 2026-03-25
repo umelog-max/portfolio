@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About",
   description: "気づいたらラーメン屋の前にいるエンジニア、Ume のプロフィールページ。",
+  alternates: { canonical: "/about" },
 };
 
 const timeline = [

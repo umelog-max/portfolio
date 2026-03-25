@@ -4,6 +4,7 @@ import ContactForm from "./ContactForm";
 export const metadata: Metadata = {
   title: "Contact",
   description: "案件のご相談・お問い合わせはこちら。通常 2〜3 営業日以内にご返信します。",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
