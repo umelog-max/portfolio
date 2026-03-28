@@ -1,7 +1,13 @@
-"use client";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useRef, useCallback } from "react";
 import PixelBg from "@/components/PixelBg";
+import HomeTitle from "@/components/HomeTitle";
+import TiltCard from "@/components/TiltCard";
+import { getPosts } from "@/lib/microcms";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const sections = [
   { href: "/about",     label: "About",     description: "このサイトについて",   bgColor: "#F5E6C3" },
@@ -9,118 +15,22 @@ const sections = [
   { href: "/blog",      label: "Blog",       description: "日常の記録",           bgColor: "#F5D66A" },
 ];
 
-function TiltCard({
-  href, label, description, bgColor,
-}: {
-  href: string; label: string; description: string; bgColor: string;
-}) {
-  const cardRef = useRef<HTMLAnchorElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const card = cardRef.current;
-    if (!card) return;
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    card.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateY(-6px)`;
-    card.style.transition = "transform 0.05s ease-out";
-  };
-
-  const handleMouseLeave = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.transform = "";
-    card.style.transition = "transform 0.4s ease-out";
-  };
-
-  const handleTouchStart = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.transform = "perspective(600px) rotateY(5deg) rotateX(-5deg) translateY(-6px)";
-    card.style.transition = "transform 0.15s ease-out";
-  };
-
-  const handleTouchEnd = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.transform = "";
-    card.style.transition = "transform 0.4s ease-out";
-  };
-
-  return (
-    <Link
-      ref={cardRef}
-      href={href}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      className="p-8 flex flex-col items-center text-center h-full w-full rounded-xl group"
-      style={{
-        backgroundColor: bgColor,
-        border: "2.5px solid #1A1A1A",
-        boxShadow: "5px 5px 0px #1A1A1A",
-      }}
-    >
-      <h2
-        className="text-xl font-black mb-2 tracking-tight group-hover:opacity-70 transition-opacity"
-        style={{ color: "#1A1A1A" }}
-      >
-        {label}
-      </h2>
-      <p className="text-sm leading-relaxed" style={{ color: "#444444" }}>
-        {description}
-      </p>
-      <span
-        className="mt-4 font-bold text-lg group-hover:translate-x-1 transition-transform inline-block"
-        style={{ color: "#E85544" }}
-      >
-        →
-      </span>
-    </Link>
-  );
-}
-
-export default function Home() {
-  const titleRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!titleRef.current) return;
-    const x = (e.clientX / window.innerWidth - 0.5) * 16;
-    const y = (e.clientY / window.innerHeight - 0.5) * 16;
-    titleRef.current.style.transform = `translate(${x}px, ${y}px)`;
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    if (!titleRef.current) return;
-    titleRef.current.style.transform = "";
-  }, []);
+export default async function Home() {
+  let latestPosts: Awaited<ReturnType<typeof getPosts>> = [];
+  try {
+    const all = await getPosts();
+    latestPosts = all.slice(0, 3);
+  } catch {
+    // microCMS取得失敗時はセクション非表示
+  }
 
   return (
     <>
       <PixelBg />
 
-      <div
-        className="mx-auto max-w-3xl px-6 pt-12 sm:pt-0 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="mb-8 sm:mb-16 fade-up mx-auto w-fit">
-          <div
-            ref={titleRef}
-            className="px-6 py-4 sm:px-10 sm:py-5 rounded-xl"
-            style={{
-              border: "2.5px solid #1A1A1A",
-              boxShadow: "8px 8px 0px #1A1A1A",
-              transition: "transform 0.1s ease-out",
-            }}
-          >
-            <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter pb-2 gradient-text">
-              Ume.Blog
-            </h1>
-          </div>
-        </div>
-
+      {/* ヒーローセクション */}
+      <div className="mx-auto max-w-3xl px-6 pt-12 sm:pt-0 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
+        <HomeTitle />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
           {sections.map((section, i) => (
             <div key={section.href} className={`fade-up fade-up-delay-${i + 2}`}>
@@ -128,6 +38,63 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* サイト紹介 + 最新記事 */}
+      <div className="mx-auto max-w-3xl px-6 pb-24">
+
+        {/* 一言紹介 */}
+        <section className="glass-card p-6 mb-8 text-center">
+          <p className="text-base leading-relaxed" style={{ color: "#333" }}>
+            気づいたらラーメン屋の前にいるエンジニア <strong>Ume</strong> が、技術と日常を書き殴るブログ。
+          </p>
+          <p className="text-sm mt-2" style={{ color: "#555" }}>
+            インフラ・個人開発・日常のことを気ままに発信しています。
+          </p>
+        </section>
+
+        {/* 最新記事 */}
+        {latestPosts.length > 0 && (
+          <section>
+            <h2 className="text-lg font-black mb-4 tracking-tight" style={{ color: "#1A1A1A" }}>
+              最新記事
+            </h2>
+            <div className="flex flex-col gap-3">
+              {latestPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.id}`}
+                  className="glass-card p-4 block hover:opacity-80 transition-opacity"
+                >
+                  <div className="text-xs mb-1" style={{ color: "#888" }}>
+                    {new Date(post.publishedAt).toLocaleDateString("ja-JP", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </div>
+                  <div className="font-bold text-sm sm:text-base" style={{ color: "#1A1A1A" }}>
+                    {post.title}
+                  </div>
+                  {post.excerpt && (
+                    <div className="text-xs mt-1 line-clamp-2" style={{ color: "#555" }}>
+                      {post.excerpt}
+                    </div>
+                  )}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 text-right">
+              <Link
+                href="/blog"
+                className="text-sm font-bold hover:opacity-70 transition-opacity"
+                style={{ color: "#E85544" }}
+              >
+                すべての記事を見る →
+              </Link>
+            </div>
+          </section>
+        )}
       </div>
     </>
   );
