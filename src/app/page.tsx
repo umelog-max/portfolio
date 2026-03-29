@@ -46,7 +46,7 @@ export default async function Home() {
         {/* 一言紹介 */}
         <section className="glass-card p-6 mb-8 text-center">
           <p className="text-base leading-relaxed" style={{ color: "#333" }}>
-            気づいたらラーメン屋の前にいるエンジニア <strong>Ume</strong> が、技術と日常を書き殴るブログ。
+            気づいたらラーメン屋に誘われるエンジニアの、技術と日常を書き殴るブログ。
           </p>
           <p className="text-sm mt-2" style={{ color: "#555" }}>
             インフラ・個人開発・日常のことを気ままに発信しています。
