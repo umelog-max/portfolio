@@ -58,7 +58,7 @@ export default function AboutPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
-            name: "Umeda",
+            name: "Ume",
             url: "https://www.umeblog.com/about",
             sameAs: ["https://www.umeblog.com"],
             jobTitle: "Engineer",
@@ -79,7 +79,7 @@ export default function AboutPage() {
             U
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900">Umeda</h2>
+            <h2 className="text-xl font-black text-slate-900">Ume</h2>
             <p className="text-sm font-medium" style={{ color: "#f97316" }}>
               Engineer
             </p>
