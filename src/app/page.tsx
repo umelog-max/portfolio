@@ -29,7 +29,7 @@ export default async function Home() {
       <PixelBg />
 
       {/* ヒーローセクション */}
-      <div className="mx-auto max-w-3xl px-6 pt-12 sm:pt-0 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
+      <div className="mx-auto max-w-3xl px-6 pt-24 sm:pt-32 pb-12 flex flex-col items-center">
         <HomeTitle />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
           {sections.map((section, i) => (
